@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('features');
-            $table->decimal('amount', 8,16)->default(0.00);
-            $table->string('discount',10)->default(0);
+            $table->decimal('amount', 10, 2)->default(0.00);
+            $table->decimal('discount', 10, 2)->default(0.00);
             $table->string('coupon')->nullable();
             $table->timestamps();
         });
