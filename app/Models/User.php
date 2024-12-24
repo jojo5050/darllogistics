@@ -45,4 +45,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function vehiclesAssigned()
+    {
+        return $this->hasMany(AssignedVehicle::class, 'driver_id');
+    }
+
+    public function wages()
+    {
+        return $this->hasMany(Wage::class, 'driver_id');
+    }
 }

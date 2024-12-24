@@ -1,0 +1,117 @@
+<?php
+
+use App\Http\Controllers\AssignedLoadController;
+use App\Http\Controllers\AssignedVehicleController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LoadController;
+use App\Http\Controllers\PickupController;
+use App\Http\Controllers\StaffSalaryController;
+use App\Http\Controllers\SubscriberController;
+use App\Http\Controllers\TicketController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\WageController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::prefix('api')->group(function () {
+        // Vehicles Routes
+        Route::prefix('vehicles')->group(function () {
+            Route::get('/', [VehicleController::class, 'index']); // List all vehicles
+            Route::post('/', [VehicleController::class, 'store']); // Create a new vehicle
+            Route::get('/{id}', [VehicleController::class, 'show']); // Show a single vehicle
+            Route::put('/{id}', [VehicleController::class, 'update']); // Update a vehicle
+            Route::delete('/{id}', [VehicleController::class, 'destroy']); // Delete a vehicle
+        });
+
+        // Vehicles Assigned Routes
+        Route::prefix('vehicles-assigned')->group(function () {
+            Route::get('/', [AssignedVehicleController::class, 'index']);
+            Route::post('/', [AssignedVehicleController::class, 'store']);
+            Route::get('/{id}', [AssignedVehicleController::class, 'show']);
+            Route::put('/{id}', [AssignedVehicleController::class, 'update']);
+            Route::delete('/{id}', [AssignedVehicleController::class, 'destroy']);
+        });
+
+        // Wages Routes
+        Route::prefix('wages')->group(function () {
+            Route::get('/', [WageController::class, 'index']);
+            Route::post('/', [WageController::class, 'store']);
+            Route::get('/{id}', [WageController::class, 'show']);
+            Route::put('/{id}', [WageController::class, 'update']);
+            Route::delete('/{id}', [WageController::class, 'destroy']);
+        });
+
+        // Users Routes
+        Route::prefix('users')->group(function () {
+            Route::get('/', [UserController::class, 'index']);
+            Route::post('/', [UserController::class, 'store']);
+            Route::get('/{id}', [UserController::class, 'show']);
+            Route::put('/{id}', [UserController::class, 'update']);
+            Route::delete('/{id}', [UserController::class, 'destroy']);
+        });
+
+        // Loads Routes
+        Route::prefix('loads')->group(function () {
+            Route::get('/', [LoadController::class, 'index']);
+            Route::post('/', [LoadController::class, 'store']);
+            Route::get('/{id}', [LoadController::class, 'show']);
+            Route::put('/{id}', [LoadController::class, 'update']);
+            Route::delete('/{id}', [LoadController::class, 'destroy']);
+        });
+
+        // Loads Assigned Routes
+        Route::prefix('loads-assigned')->group(function () {
+            Route::get('/', [AssignedLoadController::class, 'index']);
+            Route::post('/', [AssignedLoadController::class, 'store']);
+            Route::get('/{id}', [AssignedLoadController::class, 'show']);
+            Route::put('/{id}', [AssignedLoadController::class, 'update']);
+            Route::delete('/{id}', [AssignedLoadController::class, 'destroy']);
+        });
+
+        // Tickets Routes
+        Route::prefix('tickets')->group(function () {
+            Route::get('/', [TicketController::class, 'index']);
+            Route::post('/', [TicketController::class, 'store']);
+            Route::get('/{id}', [TicketController::class, 'show']);
+            Route::put('/{id}', [TicketController::class, 'update']);
+            Route::delete('/{id}', [TicketController::class, 'destroy']);
+        });
+
+        // Subscribers Routes
+        Route::prefix('subscribers')->group(function () {
+            Route::get('/', [SubscriberController::class, 'index']);
+            Route::post('/', [SubscriberController::class, 'store']);
+            Route::get('/{id}', [SubscriberController::class, 'show']);
+            Route::put('/{id}', [SubscriberController::class, 'update']);
+            Route::delete('/{id}', [SubscriberController::class, 'destroy']);
+        });
+
+        // Pickups Routes
+        Route::prefix('pickups')->group(function () {
+            Route::get('/', [PickupController::class, 'index']);
+            Route::post('/', [PickupController::class, 'store']);
+            Route::get('/{id}', [PickupController::class, 'show']);
+            Route::put('/{id}', [PickupController::class, 'update']);
+            Route::delete('/{id}', [PickupController::class, 'destroy']);
+        });
+
+        // Staff Salaries Routes
+        Route::prefix('staff-salaries')->group(function () {
+            Route::get('/', [StaffSalaryController::class, 'index']);
+            Route::post('/', [StaffSalaryController::class, 'store']);
+            Route::get('/{id}', [StaffSalaryController::class, 'show']);
+            Route::put('/{id}', [StaffSalaryController::class, 'update']);
+            Route::delete('/{id}', [StaffSalaryController::class, 'destroy']);
+        });
+    });
+});
+
