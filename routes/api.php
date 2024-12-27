@@ -14,15 +14,27 @@ use App\Http\Controllers\WageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+use function Pest\Laravel\json;
+
+Route::get('/', function () {
+    return response()->json([
+        "message" => "API reached successfully.",
+        "code" => 1,
+        "status" => "success"
+    ]);
+});
+
+Route::post('/v2/login', [AuthController::class, 'login']);
+Route::post('/v2/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
 
-    Route::prefix('api')->group(function () {
+    Route::prefix('v2')->group(function () {
+
+        Route::get('/user', function (Request $request) {
+            return $request->user();
+        });
+
         // Vehicles Routes
         Route::prefix('vehicles')->group(function () {
             Route::get('/', [VehicleController::class, 'index']); // List all vehicles

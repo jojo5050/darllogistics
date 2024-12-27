@@ -8,14 +8,15 @@ class Profile extends Model
 {
     protected $fillable = [
         'user_id',
+        'image_path',
         'country_id',
-        'state',
+        'state_id',
         'address1',
         'address2',
         'gender',
-        'currency',
         'zip_code',
         'payment_method',
+        'currency',
     ];
 
     public function user()
