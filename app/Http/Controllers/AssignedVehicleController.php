@@ -7,20 +7,10 @@ use Illuminate\Http\Request;
 
 class AssignedVehicleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $assignedVehicles = AssignedVehicle::with('driver')->get();
+        return response()->json($assignedVehicles);
     }
 
     /**
@@ -28,38 +18,70 @@ class AssignedVehicleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'driver_id' => 'required|exists:users,id',
+            'date_assigned' => 'required|date',
+            'status' => 'nullable|integer',
+            'dropped_date' => 'required|date',
+            'load_id' => 'required|integer',
+            'layover' => 'nullable|string',
+            'layover_amount' => 'nullable|numeric',
+            'payment_status' => 'nullable|integer',
+            'payroll_status' => 'nullable|integer',
+            'truck' => 'nullable|string',
+            'trailer' => 'nullable|string',
+            'tractor' => 'nullable|string',
+        ]);
+
+        $assignedVehicle = AssignedVehicle::create($validatedData);
+
+        return response()->json(['message' => 'Assigned Vehicle created successfully', 'data' => $assignedVehicle], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(AssignedVehicle $assignedVehicle)
+    public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AssignedVehicle $assignedVehicle)
-    {
-        //
+        $assignedVehicle = AssignedVehicle::with('driver')->findOrFail($id);
+        return response()->json($assignedVehicle);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AssignedVehicle $assignedVehicle)
+    public function update(Request $request, $id)
     {
-        //
+        $assignedVehicle = AssignedVehicle::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'driver_id' => 'required|exists:users,id',
+            'date_assigned' => 'required|date',
+            'status' => 'nullable|integer',
+            'dropped_date' => 'required|date',
+            'load_id' => 'required|integer',
+            'layover' => 'nullable|string',
+            'layover_amount' => 'nullable|numeric',
+            'payment_status' => 'nullable|integer',
+            'payroll_status' => 'nullable|integer',
+            'truck' => 'nullable|string',
+            'trailer' => 'nullable|string',
+            'tractor' => 'nullable|string',
+        ]);
+
+        $assignedVehicle->update($validatedData);
+
+        return response()->json(['message' => 'Assigned Vehicle updated successfully', 'data' => $assignedVehicle]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AssignedVehicle $assignedVehicle)
+    public function destroy($id)
     {
-        //
+        $assignedVehicle = AssignedVehicle::findOrFail($id);
+        $assignedVehicle->delete();
+
+        return response()->json(['message' => 'Assigned Vehicle deleted successfully']);
     }
 }

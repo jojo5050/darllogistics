@@ -7,20 +7,10 @@ use Illuminate\Http\Request;
 
 class PickupController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $pickups = Pickup::with(['load', 'driver'])->get();
+        return response()->json($pickups);
     }
 
     /**
@@ -28,38 +18,54 @@ class PickupController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'load_id' => 'required|exists:loads,id',
+            'driver_id' => 'required|exists:users,id',
+            'location' => 'required|string|max:255',
+            'pickup_time' => 'required|date_format:Y-m-d H:i:s',
+        ]);
+
+        $pickup = Pickup::create($validatedData);
+
+        return response()->json(['message' => 'Pickup created successfully', 'data' => $pickup], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Pickup $pickup)
+    public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Pickup $pickup)
-    {
-        //
+        $pickup = Pickup::with(['load', 'driver'])->findOrFail($id);
+        return response()->json($pickup);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Pickup $pickup)
+    public function update(Request $request, $id)
     {
-        //
+        $pickup = Pickup::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'load_id' => 'required|exists:loads,id',
+            'driver_id' => 'required|exists:users,id',
+            'location' => 'required|string|max:255',
+            'pickup_time' => 'required|date_format:Y-m-d H:i:s',
+        ]);
+
+        $pickup->update($validatedData);
+
+        return response()->json(['message' => 'Pickup updated successfully', 'data' => $pickup]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pickup $pickup)
+    public function destroy($id)
     {
-        //
+        $pickup = Pickup::findOrFail($id);
+        $pickup->delete();
+
+        return response()->json(['message' => 'Pickup deleted successfully']);
     }
 }

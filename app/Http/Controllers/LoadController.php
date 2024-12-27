@@ -7,59 +7,45 @@ use Illuminate\Http\Request;
 
 class LoadController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return response()->json(Load::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Load $load)
     {
-        //
+        return response()->json($load);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Load $load)
+    public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'description' => 'nullable|string',
+            'pickup_date' => 'nullable|date',
+            'delivery_date' => 'nullable|date',
+            'weight' => 'nullable|numeric',
+        ]);
+
+        $load = Load::create($data);
+        return response()->json($load, 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Load $load)
     {
-        //
+        $data = $request->validate([
+            'description' => 'nullable|string',
+            'pickup_date' => 'nullable|date',
+            'delivery_date' => 'nullable|date',
+            'weight' => 'nullable|numeric',
+        ]);
+
+        $load->update($data);
+        return response()->json($load);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Load $load)
     {
-        //
+        $load->delete();
+        return response()->json(['message' => 'Load deleted successfully']);
     }
 }

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
+use App\Models\Driver;
 use Illuminate\Http\Request;
 
-class CustomerController extends Controller
+class DriverController extends Controller
 {
     public function index()
     {
-        $customers = Customer::all();
-        return response()->json($customers);
+        $drivers = Driver::all();
+        return response()->json($drivers);
     }
 
     /**
@@ -20,17 +20,20 @@ class CustomerController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:customers',
             'phone' => 'nullable|string|max:20',
+            'license' => 'nullable|string|max:50',
+            'license_expiry' => 'nullable|date',
+            'email' => 'nullable|email|unique:drivers',
             'address' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:100',
             'state' => 'nullable|string|max:100',
             'country' => 'nullable|string|max:100',
+            'status' => 'nullable|string|in:active,inactive',
         ]);
 
-        $customer = Customer::create($validatedData);
+        $driver = Driver::create($validatedData);
 
-        return response()->json(['message' => 'Customer created successfully', 'data' => $customer], 201);
+        return response()->json(['message' => 'Driver created successfully', 'data' => $driver], 201);
     }
 
     /**
@@ -38,8 +41,8 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        $customer = Customer::findOrFail($id);
-        return response()->json($customer);
+        $driver = Driver::findOrFail($id);
+        return response()->json($driver);
     }
 
     /**
@@ -47,21 +50,24 @@ class CustomerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $customer = Customer::findOrFail($id);
+        $driver = Driver::findOrFail($id);
 
         $validatedData = $request->validate([
             'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email|unique:customers,email,' . $customer->id,
             'phone' => 'nullable|string|max:20',
+            'license' => 'nullable|string|max:50',
+            'license_expiry' => 'nullable|date',
+            'email' => 'nullable|email|unique:drivers,email,' . $driver->id,
             'address' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:100',
             'state' => 'nullable|string|max:100',
             'country' => 'nullable|string|max:100',
+            'status' => 'nullable|string|in:active,inactive',
         ]);
 
-        $customer->update($validatedData);
+        $driver->update($validatedData);
 
-        return response()->json(['message' => 'Customer updated successfully', 'data' => $customer]);
+        return response()->json(['message' => 'Driver updated successfully', 'data' => $driver]);
     }
 
     /**
@@ -69,9 +75,9 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        $customer = Customer::findOrFail($id);
-        $customer->delete();
+        $driver = Driver::findOrFail($id);
+        $driver->delete();
 
-        return response()->json(['message' => 'Customer deleted successfully']);
+        return response()->json(['message' => 'Driver deleted successfully']);
     }
 }

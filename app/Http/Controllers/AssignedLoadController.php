@@ -7,59 +7,45 @@ use Illuminate\Http\Request;
 
 class AssignedLoadController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return response()->json(AssignedLoad::with(['load', 'driver'])->get());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(AssignedLoad $assignedLoad)
     {
-        //
+        return response()->json($assignedLoad->load(['load', 'driver']));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AssignedLoad $assignedLoad)
+    public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'load_id' => 'required|exists:loads,id',
+            'driver_id' => 'required|exists:users,id',
+            'date_assigned' => 'required|date',
+            'status' => 'nullable|integer',
+        ]);
+
+        $AssignedLoad = AssignedLoad::create($data);
+        return response()->json($AssignedLoad, 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, AssignedLoad $assignedLoad)
     {
-        //
+        $data = $request->validate([
+            'load_id' => 'exists:loads,id',
+            'driver_id' => 'exists:users,id',
+            'date_assigned' => 'date',
+            'status' => 'nullable|integer',
+        ]);
+
+        $assignedLoad->update($data);
+        return response()->json($assignedLoad);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(AssignedLoad $assignedLoad)
     {
-        //
+        $assignedLoad->delete();
+        return response()->json(['message' => 'Load assignment deleted successfully']);
     }
 }
