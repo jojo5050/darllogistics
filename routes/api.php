@@ -24,6 +24,7 @@ Route::get('/', function () {
     ]);
 });
 
+Route::post('/v2/register', [AuthController::class, 'register']);
 Route::post('/v2/login', [AuthController::class, 'login']);
 Route::post('/v2/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
