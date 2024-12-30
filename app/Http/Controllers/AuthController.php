@@ -25,7 +25,7 @@ class AuthController extends Controller
             'state_id' => 'required|string|max:255',
             'address1' => 'required|string|max:255',
             'address2' => 'nullable|string|max:255',
-            'gender' => 'required|string|max:10',
+            'gender' => 'nullable|string|max:10',
             'zip_code' => 'required|string|max:20',
             'payment_method' => 'required|string|max:50',
             'currency' => 'required|string|max:10',
@@ -47,11 +47,11 @@ class AuthController extends Controller
             'state_id' => $validatedData['state_id'],
             'address1' => $validatedData['address1'],
             'address2' => $validatedData['address2'] ?? null,
-            'gender' => $validatedData['gender'],
+            'gender' => $validatedData['gender'] ?? null,
             'zip_code' => $validatedData['zip_code'],
             'payment_method' => $validatedData['payment_method'],
             'currency' => $validatedData['currency'],
-            'image_path' => $validatedData['image_path'] ?? 'default.png',
+            'image_path' => $validatedData['image_path'] ?? null,
         ]);
 
         return response()->json([
