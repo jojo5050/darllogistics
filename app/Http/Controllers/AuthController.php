@@ -19,6 +19,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:65|unique:users,email',
             'phone' => 'required|string|max:22|unique:users,phone',
             'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|string',
 
             // Profile fields
             'country_id' => 'required|string',
@@ -40,6 +41,7 @@ class AuthController extends Controller
             'email' => $validatedData['email'],
             'phone' => $validatedData['phone'],
             'password' => Hash::make($validatedData['password']),
+            'role' => $validatedData['role'],
         ]);
 
         // Create the profile
