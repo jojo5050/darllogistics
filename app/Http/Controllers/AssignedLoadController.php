@@ -25,14 +25,14 @@ class AssignedLoadController extends Controller
                 'status' => 'success',
                 'message' => 'No assigned loads found for this user.',
                 'data' => [],
-            ], 200);
+            ], 201);
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Assigned loads retrieved successfully.',
             'data' => $loads,
-        ], 200);
+        ], 201);
     }
 
     public function show(AssignedLoad $assignedLoad)

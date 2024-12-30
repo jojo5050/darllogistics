@@ -10,7 +10,7 @@ class TicketController extends Controller
     public function index()
     {
         $tickets = Ticket::all();
-        return response()->json($tickets, 200);
+        return response()->json($tickets, 201);
     }
 
     public function userTickets(Request $request)
@@ -29,7 +29,7 @@ class TicketController extends Controller
             'status' => 'success',
             'message' => 'User tickets retrieved successfully.',
             'data' => $tickets,
-        ], 200);
+        ], 201);
     }
 
     /**
@@ -63,7 +63,7 @@ class TicketController extends Controller
             return response()->json(['message' => 'Ticket not found.'], 404);
         }
 
-        return response()->json($ticket, 200);
+        return response()->json($ticket, 201);
     }
 
     /**
@@ -88,7 +88,7 @@ class TicketController extends Controller
         return response()->json([
             'message' => 'Ticket updated successfully.',
             'ticket' => $ticket,
-        ], 200);
+        ], 201);
     }
 
     /**
@@ -104,6 +104,6 @@ class TicketController extends Controller
 
         $ticket->delete();
 
-        return response()->json(['message' => 'Ticket deleted successfully.'], 200);
+        return response()->json(['message' => 'Ticket deleted successfully.'], 201);
     }
 }

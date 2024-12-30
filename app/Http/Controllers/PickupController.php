@@ -26,14 +26,14 @@ class PickupController extends Controller
                 'status' => 'success',
                 'message' => 'No pickups found for this user.',
                 'data' => [],
-            ], 200);
+            ], 201);
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Pickups retrieved successfully.',
             'data' => $pickups,
-        ], 200);
+        ], 201);
     }
 
     /**

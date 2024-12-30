@@ -11,7 +11,7 @@ class WageController extends Controller
     public function index()
     {
         $wages = Wage::all();
-        return response()->json($wages, 200);
+        return response()->json($wages, 201);
     }
 
     public function userWages(Request $request)
@@ -27,14 +27,14 @@ class WageController extends Controller
                 'status' => 'success',
                 'message' => 'No wages found for this user.',
                 'data' => [],
-            ], 200);
+            ], 201);
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Wages retrieved successfully.',
             'data' => $wages,
-        ], 200);
+        ], 201);
     }
 
     // Show a specific wage by ID
@@ -46,7 +46,7 @@ class WageController extends Controller
             return response()->json(['message' => 'Wage not found'], 404);
         }
 
-        return response()->json($wage, 200);
+        return response()->json($wage, 201);
     }
 
     // Store a new wage
@@ -98,7 +98,7 @@ class WageController extends Controller
         ]);
 
         $wage->update($validatedData);
-        return response()->json($wage, 200);
+        return response()->json($wage, 201);
     }
 
     // Delete a specific wage
@@ -111,6 +111,6 @@ class WageController extends Controller
         }
 
         $wage->delete();
-        return response()->json(['message' => 'Wage deleted successfully'], 200);
+        return response()->json(['message' => 'Wage deleted successfully'], 201);
     }
 }

@@ -26,14 +26,14 @@ class AssignedVehicleController extends Controller
                 'status' => 'success',
                 'message' => 'No vehicles found for this user.',
                 'data' => [],
-            ], 200);
+            ], 201);
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Vehicles retrieved successfully.',
             'data' => $vehicles,
-        ], 200);
+        ], 201);
     }
 
     /**

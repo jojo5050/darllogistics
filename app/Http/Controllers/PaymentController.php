@@ -30,14 +30,14 @@ class PaymentController extends Controller
                 'status' => 'success',
                 'message' => 'No payments found for this user.',
                 'data' => [],
-            ], 200);
+            ], 201);
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Payments retrieved successfully.',
             'data' => $payments,
-        ], 200);
+        ], 201);
     }
 
     /**
