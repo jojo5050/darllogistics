@@ -5,6 +5,7 @@ use App\Http\Controllers\AssignedVehicleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\PickupController;
+use App\Http\Controllers\PlanController;
 use App\Http\Controllers\StaffSalaryController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\TicketController;
@@ -125,6 +126,16 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{id}', [StaffSalaryController::class, 'update']);
             Route::delete('/{id}', [StaffSalaryController::class, 'destroy']);
         });
+
+        // Plan routes
+        Route::prefix('plans')->group(function () {
+            Route::get('/', [PlanController::class, 'index'])->name('plans.index');
+            Route::post('/', [PlanController::class, 'store'])->name('plans.store');
+            Route::get('/{id}', [PlanController::class, 'show'])->name('plans.show');
+            Route::put('/{id}', [PlanController::class, 'update'])->name('plans.update');
+            Route::delete('/{id}', [PlanController::class, 'destroy'])->name('plans.destroy');
+        });
+
     });
 });
 
