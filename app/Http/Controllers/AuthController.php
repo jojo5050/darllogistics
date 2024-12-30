@@ -21,15 +21,17 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
 
             // Profile fields
-            'country_id' => 'required|string|max:255',
-            'state_id' => 'required|string|max:255',
-            'address1' => 'required|string|max:255',
-            'address2' => 'nullable|string|max:255',
+            'country_id' => 'required|string',
+            'state_id' => 'required|string',
+            'city_id' => 'required|string',
+            'address1' => 'required|string',
+            'address2' => 'nullable|string',
             'gender' => 'nullable|string|max:10',
-            'zip_code' => 'required|string|max:20',
-            'payment_method' => 'required|string|max:50',
-            'currency' => 'required|string|max:10',
-            'image_path' => 'nullable|string|max:255',
+            'dot_number' => 'nullable|string',
+            'mc_number' => 'nullable|string',
+            'zip_code' => 'nullable|string',
+            'payment_method' => 'nullable|string',
+            'currency' => 'nullable|string',
         ]);
 
         // Create the user
@@ -45,12 +47,15 @@ class AuthController extends Controller
             'user_id' => $user->id,
             'country_id' => $validatedData['country_id'],
             'state_id' => $validatedData['state_id'],
+            'city_id' => $validatedData['city_id'],
             'address1' => $validatedData['address1'],
             'address2' => $validatedData['address2'] ?? null,
             'gender' => $validatedData['gender'] ?? null,
+            'dot_number' => $validatedData['dot_number'],
+            'mc_number' => $validatedData['mc_number'],
             'zip_code' => $validatedData['zip_code'],
-            'payment_method' => $validatedData['payment_method'],
-            'currency' => $validatedData['currency'],
+            'payment_method' => $validatedData['payment_method'] ?? null,
+            'currency' => $validatedData['currency'] ?? null,
             'image_path' => $validatedData['image_path'] ?? null,
         ]);
 
