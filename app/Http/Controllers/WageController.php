@@ -7,59 +7,110 @@ use Illuminate\Http\Request;
 
 class WageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // List all wages
     public function index()
     {
-        //
+        $wages = Wage::all();
+        return response()->json($wages, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function userWages(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'driver_id' => 'required|exists:users,id',
+        ]);
+
+        $wages = Wage::where('driver_id', $validatedData['driver_id'])->get();
+
+        if ($wages->isEmpty()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No wages found for this user.',
+                'data' => [],
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Wages retrieved successfully.',
+            'data' => $wages,
+        ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Show a specific wage by ID
+    public function show($id)
+    {
+        $wage = Wage::find($id);
+
+        if (!$wage) {
+            return response()->json(['message' => 'Wage not found'], 404);
+        }
+
+        return response()->json($wage, 200);
+    }
+
+    // Store a new wage
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'driver_id' => 'required|exists:users,id',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'gross_pay' => 'required|numeric|min:0',
+            'amount_paid' => 'nullable|numeric|min:0',
+            'date_paid' => 'required|date',
+            'time_paid' => 'required',
+            'comment' => 'nullable|string',
+            'payment_method' => 'nullable|string',
+            'balance' => 'nullable|numeric|min:0',
+            'balance_paid' => 'nullable|numeric|min:0',
+            'balance_paid_date' => 'nullable|date',
+            'balance_paid_time' => 'nullable'
+        ]);
+
+        $wage = Wage::create($validatedData);
+        return response()->json($wage, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Wage $wage)
+    // Update a specific wage
+    public function update(Request $request, $id)
     {
-        //
+        $wage = Wage::find($id);
+
+        if (!$wage) {
+            return response()->json(['message' => 'Wage not found'], 404);
+        }
+
+        $validatedData = $request->validate([
+            'driver_id' => 'sometimes|required|exists:users,id',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'gross_pay' => 'sometimes|required|numeric|min:0',
+            'amount_paid' => 'nullable|numeric|min:0',
+            'date_paid' => 'sometimes|required|date',
+            'time_paid' => 'sometimes|required',
+            'comment' => 'nullable|string',
+            'payment_method' => 'nullable|string',
+            'balance' => 'nullable|numeric|min:0',
+            'balance_paid' => 'nullable|numeric|min:0',
+            'balance_paid_date' => 'nullable|date',
+            'balance_paid_time' => 'nullable'
+        ]);
+
+        $wage->update($validatedData);
+        return response()->json($wage, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Wage $wage)
+    // Delete a specific wage
+    public function destroy($id)
     {
-        //
-    }
+        $wage = Wage::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Wage $wage)
-    {
-        //
-    }
+        if (!$wage) {
+            return response()->json(['message' => 'Wage not found'], 404);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Wage $wage)
-    {
-        //
+        $wage->delete();
+        return response()->json(['message' => 'Wage deleted successfully'], 200);
     }
 }

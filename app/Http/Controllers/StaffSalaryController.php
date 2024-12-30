@@ -7,59 +7,92 @@ use Illuminate\Http\Request;
 
 class StaffSalaryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Fetch all staff salaries
     public function index()
     {
-        //
+        $staffSalaries = StaffSalary::all();
+        return response()->json($staffSalaries);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function userSalaries(Request $request)
     {
-        //
+        $user = $request->user();
+
+        // Assuming the user has one profile
+        $staffSalaries = $user->salaries;
+
+        if (!$staffSalaries) {
+            return response()->json(['message' => 'Salary not found'], 404);
+        }
+
+        return response()->json(['message' => 'Staff salaries fetched successfully', 'data' => $staffSalaries], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Fetch a specific staff salary by ID
+    public function show($id)
+    {
+        $staffSalary = StaffSalary::find($id);
+
+        if (!$staffSalary) {
+            return response()->json(['message' => 'Staff salary not found'], 404);
+        }
+
+        return response()->json($staffSalary);
+    }
+
+    // Create a new staff salary
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'gross_salary' => 'required|numeric',
+            'deductions' => 'nullable|numeric',
+            'net_salary' => 'required|numeric',
+            'payment_date' => 'required|date',
+            'payment_method' => 'required|string',
+            'comment' => 'nullable|string',
+        ]);
+
+        $staffSalary = StaffSalary::create($validated);
+
+        return response()->json($staffSalary, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(StaffSalary $staffSalary)
+    // Update an existing staff salary by ID
+    public function update(Request $request, $id)
     {
-        //
+        $staffSalary = StaffSalary::find($id);
+
+        if (!$staffSalary) {
+            return response()->json(['message' => 'Staff salary not found'], 404);
+        }
+
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'gross_salary' => 'required|numeric',
+            'deductions' => 'nullable|numeric',
+            'net_salary' => 'required|numeric',
+            'payment_date' => 'required|date',
+            'payment_method' => 'required|string',
+            'comment' => 'nullable|string',
+        ]);
+
+        $staffSalary->update($validated);
+
+        return response()->json($staffSalary);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(StaffSalary $staffSalary)
+    // Delete a staff salary by ID
+    public function destroy($id)
     {
-        //
-    }
+        $staffSalary = StaffSalary::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, StaffSalary $staffSalary)
-    {
-        //
-    }
+        if (!$staffSalary) {
+            return response()->json(['message' => 'Staff salary not found'], 404);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(StaffSalary $staffSalary)
-    {
-        //
+        $staffSalary->delete();
+
+        return response()->json(['message' => 'Staff salary deleted successfully']);
     }
 }

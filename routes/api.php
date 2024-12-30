@@ -4,8 +4,10 @@ use App\Http\Controllers\AssignedLoadController;
 use App\Http\Controllers\AssignedVehicleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LoadController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PickupController;
 use App\Http\Controllers\PlanController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StaffSalaryController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\TicketController;
@@ -49,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Vehicles Assigned Routes
         Route::prefix('vehicles-assigned')->group(function () {
             Route::get('/', [AssignedVehicleController::class, 'index']);
+            Route::get('/{driver_id}/vehicles', [AssignedVehicleController::class, 'userVehicles']); // List all vehicles for user
             Route::post('/', [AssignedVehicleController::class, 'store']);
             Route::get('/{id}', [AssignedVehicleController::class, 'show']);
             Route::put('/{id}', [AssignedVehicleController::class, 'update']);
@@ -58,6 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Wages Routes
         Route::prefix('wages')->group(function () {
             Route::get('/', [WageController::class, 'index']);
+            Route::get('/{driver_id}/wages', [WageController::class, 'userWages']);
             Route::post('/', [WageController::class, 'store']);
             Route::get('/{id}', [WageController::class, 'show']);
             Route::put('/{id}', [WageController::class, 'update']);
@@ -71,6 +75,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{id}', [UserController::class, 'show']);
             Route::put('/{id}', [UserController::class, 'update']);
             Route::delete('/{id}', [UserController::class, 'destroy']);
+
+            Route::get('/profiles', [ProfileController::class, 'index']);
+            Route::get('/profiles/{id}', [ProfileController::class, 'show']);
+            Route::put('/profiles/{id}', [ProfileController::class, 'update']);
+            Route::get('/profile', [ProfileController::class, 'userProfile']);
+            Route::delete('/profiles/{id}', [ProfileController::class, 'destroy']);
         });
 
         // Loads Routes
@@ -85,6 +95,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Loads Assigned Routes
         Route::prefix('loads-assigned')->group(function () {
             Route::get('/', [AssignedLoadController::class, 'index']);
+            Route::get('/{driver_id}/loads', [AssignedLoadController::class, 'userLoads']);
             Route::post('/', [AssignedLoadController::class, 'store']);
             Route::get('/{id}', [AssignedLoadController::class, 'show']);
             Route::put('/{id}', [AssignedLoadController::class, 'update']);
@@ -94,6 +105,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Tickets Routes
         Route::prefix('tickets')->group(function () {
             Route::get('/', [TicketController::class, 'index']);
+            Route::get('/{user_id}/tickets', [TicketController::class, 'userTickets']);
             Route::post('/', [TicketController::class, 'store']);
             Route::get('/{id}', [TicketController::class, 'show']);
             Route::put('/{id}', [TicketController::class, 'update']);
@@ -112,6 +124,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Pickups Routes
         Route::prefix('pickups')->group(function () {
             Route::get('/', [PickupController::class, 'index']);
+            Route::get('/{driver_id}/pickups', [PickupController::class, 'userPickups']);
             Route::post('/', [PickupController::class, 'store']);
             Route::get('/{id}', [PickupController::class, 'show']);
             Route::put('/{id}', [PickupController::class, 'update']);
@@ -121,6 +134,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Staff Salaries Routes
         Route::prefix('staff-salaries')->group(function () {
             Route::get('/', [StaffSalaryController::class, 'index']);
+            Route::get('/{user_id}/salaries', [StaffSalaryController::class, 'userSalaries']);
             Route::post('/', [StaffSalaryController::class, 'store']);
             Route::get('/{id}', [StaffSalaryController::class, 'show']);
             Route::put('/{id}', [StaffSalaryController::class, 'update']);
@@ -129,13 +143,18 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Plan routes
         Route::prefix('plans')->group(function () {
-            Route::get('/', [PlanController::class, 'index'])->name('plans.index');
-            Route::post('/', [PlanController::class, 'store'])->name('plans.store');
-            Route::get('/{id}', [PlanController::class, 'show'])->name('plans.show');
-            Route::put('/{id}', [PlanController::class, 'update'])->name('plans.update');
-            Route::delete('/{id}', [PlanController::class, 'destroy'])->name('plans.destroy');
+            Route::get('/', [PlanController::class, 'index']);
+            Route::post('/', [PlanController::class, 'store']);
+            Route::get('/{id}', [PlanController::class, 'show']);
+            Route::put('/{id}', [PlanController::class, 'update']);
+            Route::delete('/{id}', [PlanController::class, 'destroy']);
         });
 
+        // Payments
+        Route::prefix('payments')->group(function () {
+            Route::get('/{user_id}/payments', [PaymentController::class, 'userPayments']);
+            Route::post('/', [PaymentController::class, 'index']);
+        });
     });
 });
 

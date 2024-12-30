@@ -12,6 +12,29 @@ class AssignedLoadController extends Controller
         return response()->json(AssignedLoad::with(['load', 'driver'])->get());
     }
 
+    public function userLoads(Request $request)
+    {
+        $validatedData = $request->validate([
+            'driver_id' => 'required|exists:users,id',
+        ]);
+
+        $loads = AssignedLoad::where('driver_id', $validatedData['driver_id'])->get();
+
+        if ($loads->isEmpty()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No assigned loads found for this user.',
+                'data' => [],
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Assigned loads retrieved successfully.',
+            'data' => $loads,
+        ], 200);
+    }
+
     public function show(AssignedLoad $assignedLoad)
     {
         return response()->json($assignedLoad->load(['load', 'driver']));

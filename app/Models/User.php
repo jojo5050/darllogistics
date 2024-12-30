@@ -53,7 +53,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Profile::class);
     }
-    
+
     public function vehiclesAssigned()
     {
         return $this->hasMany(AssignedVehicle::class, 'driver_id');
@@ -62,5 +62,10 @@ class User extends Authenticatable
     public function wages()
     {
         return $this->hasMany(Wage::class, 'driver_id');
+    }
+
+    public function salaries()
+    {
+        return $this->hasMany(StaffSalary::class, 'user_id');
     }
 }

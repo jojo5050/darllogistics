@@ -13,6 +13,29 @@ class AssignedVehicleController extends Controller
         return response()->json($assignedVehicles);
     }
 
+    public function userVehicles(Request $request)
+    {
+        $validatedData = $request->validate([
+            'driver_id' => 'required|exists:users,id',
+        ]);
+
+        $vehicles = AssignedVehicle::where('driver_id', $validatedData['driver_id'])->get();
+
+        if ($vehicles->isEmpty()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No vehicles found for this user.',
+                'data' => [],
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Vehicles retrieved successfully.',
+            'data' => $vehicles,
+        ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

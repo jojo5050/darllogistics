@@ -17,12 +17,15 @@ return new class extends Migration
             $table->string('image_path')->nullable();
             $table->string('country_id');
             $table->string('state_id');
+            $table->string('city_id');
             $table->string('address1');
             $table->string('address2')->nullable();
             $table->string('gender', 10)->nullable();
-            $table->string('zip_code');
-            $table->string('payment_method');
-            $table->string('currency');
+            $table->string('dot_number')->nullable();
+            $table->string('mc_number')->nullable();
+            $table->string('zip_code')->nullable();
+            $table->string('payment_method')->nullable();
+            $table->string('currency')->nullable();
             $table->timestamps();
         });
     }

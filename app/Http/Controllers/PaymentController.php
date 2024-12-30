@@ -13,7 +13,31 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        //
+        $payments = Payment::all();
+        return response()->json($payments);
+    }
+
+    public function userPayments(Request $request)
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        $payments = Payment::where('user_id', $validatedData['user_id'])->get();
+
+        if ($payments->isEmpty()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No payments found for this user.',
+                'data' => [],
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payments retrieved successfully.',
+            'data' => $payments,
+        ], 200);
     }
 
     /**
@@ -68,9 +92,15 @@ class PaymentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Payment $payment)
+    public function show($id)
     {
-        //
+        $payment = Payment::find($id);
+
+        if (!$payment) {
+            return response()->json(['message' => 'Payment not found'], 404);
+        }
+
+        return response()->json($payment);
     }
 
     /**

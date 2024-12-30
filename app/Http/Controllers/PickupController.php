@@ -13,6 +13,29 @@ class PickupController extends Controller
         return response()->json($pickups);
     }
 
+    public function userPickups(Request $request)
+    {
+        $validatedData = $request->validate([
+            'driver_id' => 'required|exists:users,id',
+        ]);
+
+        $pickups = Pickup::where('driver_id', $validatedData['driver_id'])->get();
+
+        if ($pickups->isEmpty()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'No pickups found for this user.',
+                'data' => [],
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Pickups retrieved successfully.',
+            'data' => $pickups,
+        ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

@@ -15,8 +15,9 @@ class Profile extends Model
         'address2',
         'gender',
         'zip_code',
-        'payment_method',
-        'currency',
+        'city_id',
+        'dot_number',
+        'mc_number',
     ];
 
     public function user()
