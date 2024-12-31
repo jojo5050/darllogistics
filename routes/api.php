@@ -31,6 +31,9 @@ Route::post('/v2/register', [AuthController::class, 'register']);
 Route::post('/v2/login', [AuthController::class, 'login']);
 Route::post('/v2/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
+Route::post('/subscribers', [SubscriberController::class, 'store']);
+Route::get('/plans', [PlanController::class, 'index']);
+
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('v2')->group(function () {
@@ -115,7 +118,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Subscribers Routes
         Route::prefix('subscribers')->group(function () {
             Route::get('/', [SubscriberController::class, 'index']);
-            Route::post('/', [SubscriberController::class, 'store']);
+
             Route::get('/{id}', [SubscriberController::class, 'show']);
             Route::put('/{id}', [SubscriberController::class, 'update']);
             Route::delete('/{id}', [SubscriberController::class, 'destroy']);
@@ -143,7 +146,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Plan routes
         Route::prefix('plans')->group(function () {
-            Route::get('/', [PlanController::class, 'index']);
+
             Route::post('/', [PlanController::class, 'store']);
             Route::get('/{id}', [PlanController::class, 'show']);
             Route::put('/{id}', [PlanController::class, 'update']);
