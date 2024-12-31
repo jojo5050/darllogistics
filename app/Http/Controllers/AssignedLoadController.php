@@ -9,7 +9,16 @@ class AssignedLoadController extends Controller
 {
     public function index()
     {
-        return response()->json(AssignedLoad::with(['load', 'driver'])->get());
+        try{
+            return response()->json(['data'=> AssignedLoad::with(['load', 'driver'])->get(), 'message' => 'Fetched assigned loads successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch assigned loads. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function userLoads(Request $request)
@@ -18,26 +27,47 @@ class AssignedLoadController extends Controller
             'driver_id' => 'required|exists:users,id',
         ]);
 
-        $loads = AssignedLoad::where('driver_id', $validatedData['driver_id'])->get();
+        try{
 
-        if ($loads->isEmpty()) {
+            $loads = AssignedLoad::where('driver_id', $validatedData['driver_id'])->get();
+
+            if ($loads->isEmpty()) {
+                return response()->json([
+                    'status' => 'success',
+                    'code' => 1,
+                    'message' => 'No assigned loads found for this user.',
+                    'data' => [],
+                ], 201);
+            }
+
             return response()->json([
                 'status' => 'success',
-                'message' => 'No assigned loads found for this user.',
-                'data' => [],
+                'code' => 1,
+                'message' => 'Assigned loads retrieved successfully.',
+                'data' => $loads,
             ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch driver loads. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Assigned loads retrieved successfully.',
-            'data' => $loads,
-        ], 201);
     }
 
     public function show(AssignedLoad $assignedLoad)
     {
-        return response()->json($assignedLoad->load(['load', 'driver']));
+        try{
+            return response()->json(['data' => $assignedLoad->load(['load', 'driver']), 'message' => 'Fetched assigned load successfully',  'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch driver assigned load. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function store(Request $request)
@@ -49,8 +79,19 @@ class AssignedLoadController extends Controller
             'status' => 'nullable|integer',
         ]);
 
-        $AssignedLoad = AssignedLoad::create($data);
-        return response()->json($AssignedLoad, 201);
+        try{
+
+            $AssignedLoad = AssignedLoad::create($data);
+            return response()->json(['data' => $AssignedLoad, 'message' => 'Successfully assigned load to driver', 'code' => 1, 'status' => 'success'], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to create assigned load. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function update(Request $request, AssignedLoad $assignedLoad)
@@ -62,13 +103,31 @@ class AssignedLoadController extends Controller
             'status' => 'nullable|integer',
         ]);
 
-        $assignedLoad->update($data);
-        return response()->json($assignedLoad);
+        try{
+            $assignedLoad->update($data);
+            return response()->json(['data' => $assignedLoad, 'message' => 'Successfully updated driver assigned load', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to update driver assigned load. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroy(AssignedLoad $assignedLoad)
     {
-        $assignedLoad->delete();
-        return response()->json(['message' => 'Load assignment deleted successfully']);
+        try{
+            $assignedLoad->delete();
+            return response()->json(['message' => 'Load assignment deleted successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to delete driver assigned load. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

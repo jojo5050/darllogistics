@@ -9,8 +9,17 @@ class PlanController extends Controller
 {
     public function index()
     {
-        $plans = Plan::all();
-        return response()->json($plans);
+        try{
+            $plans = Plan::all();
+            return response()->json(['message' => 'Plans fetched successfully', 'code' => 1, 'status' => 'success', 'data' => $plans], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch plans. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -26,9 +35,20 @@ class PlanController extends Controller
             'coupon' => 'nullable|string|max:255',
         ]);
 
-        $plan = Plan::create($validatedData);
+        try{
 
-        return response()->json(['message' => 'Plan created successfully', 'data' => $plan], 201);
+            $plan = Plan::create($validatedData);
+
+            return response()->json(['message' => 'Plan created successfully', 'data' => $plan], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to create plan. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -36,8 +56,17 @@ class PlanController extends Controller
      */
     public function show($id)
     {
-        $plan = Plan::findOrFail($id);
-        return response()->json($plan);
+        try{
+            $plan = Plan::findOrFail($id);
+            return response()->json($plan);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch plan. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -55,9 +84,18 @@ class PlanController extends Controller
             'coupon' => 'nullable|string|max:255',
         ]);
 
-        $plan->update($validatedData);
+        try{
+            $plan->update($validatedData);
 
-        return response()->json(['message' => 'Plan updated successfully', 'data' => $plan]);
+            return response()->json(['message' => 'Plan updated successfully', 'data' => $plan]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to update plan. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -65,9 +103,18 @@ class PlanController extends Controller
      */
     public function destroy($id)
     {
-        $plan = Plan::findOrFail($id);
-        $plan->delete();
+        try{
+            $plan = Plan::findOrFail($id);
+            $plan->delete();
 
-        return response()->json(['message' => 'Plan deleted successfully']);
+            return response()->json(['message' => 'Plan deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to delete plan. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
