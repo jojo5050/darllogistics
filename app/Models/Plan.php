@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Plan extends Model
 {
-    //
+    protected $fillable = [
+        'name',
+        'features',
+        'amount',
+        'discount',
+        'coupon'
+    ];
 }
