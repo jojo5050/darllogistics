@@ -9,12 +9,30 @@ class LoadController extends Controller
 {
     public function index()
     {
-        return response()->json(Load::all());
+        try{
+            return response()->json(['data'=>Load::paginate(30), 'message' => 'load created successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch loads. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function show(Load $load)
     {
-        return response()->json($load);
+        try{
+            return response()->json(['data'=>$load, 'message' => 'load created successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch load. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function store(Request $request)
@@ -25,9 +43,17 @@ class LoadController extends Controller
             'delivery_date' => 'nullable|date',
             'weight' => 'nullable|numeric',
         ]);
-
-        $load = Load::create($data);
-        return response()->json($load, 201);
+        try{
+            $load = Load::create($data);
+            return response()->json(['data'=>$load, 'message' => 'load created successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to create load. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function update(Request $request, Load $load)
@@ -38,14 +64,31 @@ class LoadController extends Controller
             'delivery_date' => 'nullable|date',
             'weight' => 'nullable|numeric',
         ]);
-
-        $load->update($data);
-        return response()->json($load);
+        try{
+            $load->update($data);
+            return response()->json(['message' => 'Load updated successfully', 'data' => $load, 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch update load. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function destroy(Load $load)
     {
-        $load->delete();
-        return response()->json(['message' => 'Load deleted successfully']);
+        try{
+            $load->delete();
+            return response()->json(['message' => 'Load deleted successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to delete load. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
