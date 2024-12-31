@@ -31,8 +31,8 @@ Route::post('/v2/register', [AuthController::class, 'register']);
 Route::post('/v2/login', [AuthController::class, 'login']);
 Route::post('/v2/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::post('/subscribers', [SubscriberController::class, 'store']);
-Route::get('/plans', [PlanController::class, 'index']);
+Route::post('/v2/subscribers', [SubscriberController::class, 'store']);
+Route::get('/v2/plans', [PlanController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
