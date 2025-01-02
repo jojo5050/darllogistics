@@ -9,8 +9,17 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        $customers = Customer::all();
-        return response()->json($customers);
+        try{
+            $customers = Customer::all();
+            return response()->json(['data'=>$customers, 'message' => 'customers fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch customers. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -28,9 +37,20 @@ class CustomerController extends Controller
             'country' => 'nullable|string|max:100',
         ]);
 
-        $customer = Customer::create($validatedData);
+        try{
 
-        return response()->json(['message' => 'Customer created successfully', 'data' => $customer], 201);
+            $customer = Customer::create($validatedData);
+
+            return response()->json(['message' => 'Customer created successfully', 'status' => 'success', 'code' => 1, 'data' => $customer], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to create customer. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -38,8 +58,17 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        $customer = Customer::findOrFail($id);
-        return response()->json($customer);
+        try{
+            $customer = Customer::findOrFail($id);
+            return response()->json(['data'=>$customer, 'message' => 'customer fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch customer. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -59,9 +88,20 @@ class CustomerController extends Controller
             'country' => 'nullable|string|max:100',
         ]);
 
-        $customer->update($validatedData);
+        try{
 
-        return response()->json(['message' => 'Customer updated successfully', 'data' => $customer]);
+            $customer->update($validatedData);
+
+            return response()->json(['message' => 'Customer updated successfully', 'status' => 'success', 'data' => $customer, 'code' => 1], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to update customer. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
