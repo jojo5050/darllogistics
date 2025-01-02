@@ -69,7 +69,7 @@ class PaymentController extends Controller
             'currency' => 'required|string',
             'payment_method' => 'required|string',
             'status' => 'required|string|in:success,pending,failed',
-            'gateway_response' => 'nullable|string',
+            'gateway_response' => 'nullable|json',
         ]);
 
         $user = $request->user();

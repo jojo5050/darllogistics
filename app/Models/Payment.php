@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
+    protected $casts = [
+        'gateway_response' => 'array',
+    ];
+
     protected $fillable = [
         'user_id',
         'plan_id',
