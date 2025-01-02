@@ -13,8 +13,17 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        $payments = Payment::all();
-        return response()->json($payments);
+        try{
+            $payments = Payment::all();
+            return response()->json(['data'=>$payments, 'message' => 'payments fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch payments. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function userPayments(Request $request)
@@ -73,7 +82,7 @@ class PaymentController extends Controller
 
             return response()->json(['message' => 'Payment already confirmed.', 'status' => 'success', 'code' => 1]);
         }else{
-            Payment::create([
+            $payment = Payment::create([
                 'user_id' => $userId,
                 'plan_id' => $planId,
                 'amount' => $request->amount,
@@ -84,7 +93,7 @@ class PaymentController extends Controller
                 'gateway_response' => $request->gateway_response,
             ]);
 
-            return response()->json(['message' => 'Payment details saved successfully.', 'status' => 'success', 'code' => 1]);
+            return response()->json(['message' => 'Payment details saved successfully.', 'data' => $payment, 'status' => 'success', 'code' => 1]);
         }
 
     }
