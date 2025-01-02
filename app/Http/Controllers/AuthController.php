@@ -62,10 +62,13 @@ class AuthController extends Controller
                 'image_path' => $validatedData['image_path'] ?? null,
             ]);
 
+            $token = $user->createToken('auth_token')->plainTextToken;
+
             return response()->json([
                 'code' => 1,
                 'message' => 'User registered successfully!',
                 'user' => $user,
+                'token' => $token,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
