@@ -62,40 +62,55 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'plan_id' => 'required|exists:plans,id',
+            'transaction_reference' => 'required|string',
+            'amount' => 'required|numeric|min:0.01',
+            'currency' => 'required|string',
+            'payment_method' => 'required|string',
+            'status' => 'required|string|in:success,pending,failed',
+            'gateway_response' => 'nullable|string',
         ]);
 
-        $plan = Plan::findOrFail($request->plan_id);
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
 
-        $planId = $request->plan_id;
-        $ref = $request->transaction_reference;
-        $userId = $request->user()->id;
+        $plan = Plan::findOrFail($validated['plan_id']);
 
-        if(Payment::where('transaction_reference', $ref)->exists()){
-            $payment = Payment::where('transaction_reference', $ref)->first();
-            if ($payment->status != 'success') {
-                $payment->status = $request->status;
-                $payment->gateway_response = $request->gateway_response;
+        $existingPayment = Payment::where('transaction_reference', $validated['transaction_reference'])->first();
+
+        if ($existingPayment) {
+            if ($existingPayment->status != 'success') {
+                $existingPayment->update([
+                    'status' => $validated['status'],
+                    'gateway_response' => $validated['gateway_response'],
+                ]);
+
                 return response()->json(['message' => 'Payment updated successfully.', 'status' => 'success', 'code' => 1]);
             }
 
             return response()->json(['message' => 'Payment already confirmed.', 'status' => 'success', 'code' => 1]);
-        }else{
-            $payment = Payment::create([
-                'user_id' => $userId,
-                'plan_id' => $planId,
-                'amount' => $request->amount,
-                'currency' => $request->currency,
-                'transaction_reference' => $request->transaction_reference,
-                'payment_method' => $request->payment_method,
-                'status' => $request->status,
-                'gateway_response' => $request->gateway_response,
-            ]);
-
-            return response()->json(['message' => 'Payment details saved successfully.', 'data' => $payment, 'status' => 'success', 'code' => 1]);
         }
 
+        $payment = Payment::create([
+            'user_id' => $user->id,
+            'plan_id' => $validated['plan_id'],
+            'amount' => $validated['amount'],
+            'currency' => $validated['currency'],
+            'transaction_reference' => $validated['transaction_reference'],
+            'payment_method' => $validated['payment_method'],
+            'status' => $validated['status'],
+            'gateway_response' => $validated['gateway_response'],
+        ]);
+
+        return response()->json([
+            'message' => 'Payment details saved successfully.',
+            'data' => $payment,
+            'status' => 'success',
+            'code' => 1,
+        ]);
     }
 
     /**
