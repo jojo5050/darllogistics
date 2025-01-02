@@ -9,8 +9,17 @@ class AssignedVehicleController extends Controller
 {
     public function index()
     {
-        $assignedVehicles = AssignedVehicle::with('driver')->get();
-        return response()->json($assignedVehicles);
+        try{
+            $assignedVehicles = AssignedVehicle::with('driver')->get();
+            return response()->json(['data'=>$assignedVehicles, 'message' => 'fetched assigned vehicles successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch assigned vehicles. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function userVehicles(Request $request)
@@ -19,21 +28,32 @@ class AssignedVehicleController extends Controller
             'driver_id' => 'required|exists:users,id',
         ]);
 
-        $vehicles = AssignedVehicle::where('driver_id', $validatedData['driver_id'])->get();
+        try{
 
-        if ($vehicles->isEmpty()) {
+            $vehicles = AssignedVehicle::where('driver_id', $validatedData['driver_id'])->get();
+
+            if ($vehicles->isEmpty()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'No vehicles found for this user.',
+                    'data' => [],
+                ], 201);
+            }
+
             return response()->json([
                 'status' => 'success',
-                'message' => 'No vehicles found for this user.',
-                'data' => [],
+                'message' => 'Vehicles retrieved successfully.',
+                'data' => $vehicles,
             ], 201);
-        }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Vehicles retrieved successfully.',
-            'data' => $vehicles,
-        ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch assigned vehicles. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -56,9 +76,18 @@ class AssignedVehicleController extends Controller
             'tractor' => 'nullable|string',
         ]);
 
-        $assignedVehicle = AssignedVehicle::create($validatedData);
+        try{
+            $assignedVehicle = AssignedVehicle::create($validatedData);
 
-        return response()->json(['message' => 'Assigned Vehicle created successfully', 'data' => $assignedVehicle], 201);
+            return response()->json(['message' => 'Assigned Vehicle created successfully', 'code' => 1, 'status' => 'success', 'data' => $assignedVehicle], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to assign vehicle. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -66,8 +95,17 @@ class AssignedVehicleController extends Controller
      */
     public function show($id)
     {
-        $assignedVehicle = AssignedVehicle::with('driver')->findOrFail($id);
-        return response()->json($assignedVehicle);
+        try{
+            $assignedVehicle = AssignedVehicle::with('driver')->findOrFail($id);
+            return response()->json(['data'=>$assignedVehicle, 'message' => 'load created successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch assigned vehicle. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -92,9 +130,20 @@ class AssignedVehicleController extends Controller
             'tractor' => 'nullable|string',
         ]);
 
-        $assignedVehicle->update($validatedData);
+        try{
 
-        return response()->json(['message' => 'Assigned Vehicle updated successfully', 'data' => $assignedVehicle]);
+            $assignedVehicle->update($validatedData);
+
+            return response()->json(['message' => 'Assigned Vehicle updated successfully', 'code' => 1, 'status' => 'success', 'data' => $assignedVehicle], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to update assigned vehicle. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -102,9 +151,18 @@ class AssignedVehicleController extends Controller
      */
     public function destroy($id)
     {
-        $assignedVehicle = AssignedVehicle::findOrFail($id);
-        $assignedVehicle->delete();
+        try{
+            $assignedVehicle = AssignedVehicle::findOrFail($id);
+            $assignedVehicle->delete();
 
-        return response()->json(['message' => 'Assigned Vehicle deleted successfully']);
+            return response()->json(['message' => 'Assigned Vehicle deleted successfully', 'status' => 'success', 'code' => 1], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to delete assigned vehicle. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
