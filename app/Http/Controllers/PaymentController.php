@@ -69,8 +69,13 @@ class PaymentController extends Controller
             'currency' => 'required|string',
             'payment_method' => 'required|string',
             'status' => 'required|string|in:success,pending,failed',
-            'gateway_response' => 'nullable|json',
+            'gateway_response' => 'nullable|array',
         ]);
+
+        $gatewayResponse = $request->gateway_response;
+        if (is_array($gatewayResponse)) {
+            $gatewayResponse = json_encode($gatewayResponse);
+        }
 
         $user = $request->user();
         if (!$user) {
@@ -85,7 +90,7 @@ class PaymentController extends Controller
             if ($existingPayment->status != 'success') {
                 $existingPayment->update([
                     'status' => $validated['status'],
-                    'gateway_response' => $validated['gateway_response'],
+                    'gateway_response' => $gatewayResponse,
                 ]);
 
                 return response()->json(['message' => 'Payment updated successfully.', 'status' => 'success', 'code' => 1]);
@@ -102,7 +107,7 @@ class PaymentController extends Controller
             'transaction_reference' => $validated['transaction_reference'],
             'payment_method' => $validated['payment_method'],
             'status' => $validated['status'],
-            'gateway_response' => $validated['gateway_response'],
+            'gateway_response' => $gatewayResponse,
         ]);
 
         return response()->json([
