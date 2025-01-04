@@ -24,7 +24,7 @@ class LoadController extends Controller
     public function show(Load $load)
     {
         try{
-            return response()->json(['data'=>$load, 'message' => 'load created successfully', 'code' => 1, 'status' => 'success'], 201);
+            return response()->json(['data'=>$load, 'message' => 'load fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'code' => 0,

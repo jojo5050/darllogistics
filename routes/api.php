@@ -90,9 +90,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('loads')->group(function () {
             Route::get('/', [LoadController::class, 'index']);
             Route::post('/', [LoadController::class, 'store']);
-            Route::get('/{id}', [LoadController::class, 'show']);
-            Route::put('/{id}', [LoadController::class, 'update']);
-            Route::delete('/{id}', [LoadController::class, 'destroy']);
+            Route::get('/{load_id}', [LoadController::class, 'show']);
+            Route::put('/{load_id}', [LoadController::class, 'update']);
+            Route::delete('/{load_id}', [LoadController::class, 'destroy']);
         });
 
         // Loads Assigned Routes
