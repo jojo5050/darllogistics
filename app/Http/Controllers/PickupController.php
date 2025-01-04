@@ -7,19 +7,20 @@ use Illuminate\Http\Request;
 
 class PickupController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pickups = Pickup::with(['load', 'driver'])->get();
-        return response()->json($pickups);
+        if($request->query('driver_id'))
+        {
+            return $this->userPickups($request->query('driver_id'));
+        }else{
+            $pickups = Pickup::with(['load', 'driver'])->get();
+            return response()->json($pickups);
+        }
     }
 
-    public function userPickups(Request $request)
+    public function userPickups($driver_id)
     {
-        $validatedData = $request->validate([
-            'driver_id' => 'required|exists:users,id',
-        ]);
-
-        $pickups = Pickup::where('driver_id', $validatedData['driver_id'])->get();
+        $pickups = Pickup::where('driver_id', $driver_id)->get();
 
         if ($pickups->isEmpty()) {
             return response()->json([
