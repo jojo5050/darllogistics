@@ -98,7 +98,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Loads Assigned Routes
         Route::prefix('loads-assigned')->group(function () {
             Route::get('/', [AssignedLoadController::class, 'index']);
-            Route::get('/{driver_id}/loads', [AssignedLoadController::class, 'userLoads']);
+            Route::get('/loads/{driver_id}', [AssignedLoadController::class, 'userLoads']);
             Route::post('/', [AssignedLoadController::class, 'store']);
             Route::get('/{id}', [AssignedLoadController::class, 'show']);
             Route::put('/{id}', [AssignedLoadController::class, 'update']);
