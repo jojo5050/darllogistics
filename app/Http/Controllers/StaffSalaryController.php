@@ -3,29 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Models\StaffSalary;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class StaffSalaryController extends Controller
 {
     // Fetch all staff salaries
-    public function index()
+    public function index(Request $request)
     {
-        $staffSalaries = StaffSalary::all();
-        return response()->json($staffSalaries);
+        if($request->query('user_id'))
+        {
+            return $this->userSalaries($request->query('user_id'));
+        }else{
+            $staffSalaries = StaffSalary::all();
+            return response()->json($staffSalaries);
+        }
     }
 
-    public function userSalaries(Request $request)
+    public function userSalaries($user_id)
     {
-        $user = $request->user();
+        $user = User::find($user_id);
 
         // Assuming the user has one profile
         $staffSalaries = $user->salaries;
 
         if (!$staffSalaries) {
-            return response()->json(['message' => 'Salary not found'], 404);
+            return response()->json(['message' => 'Salary not found', 'status' => 'failed', 'code' => 0, 'data' => []], 404);
         }
 
-        return response()->json(['message' => 'Staff salaries fetched successfully', 'data' => $staffSalaries], 201);
+        return response()->json(['message' => 'Staff salaries fetched successfully', 'status' => 'success', 'code' => 1, 'data' => $staffSalaries], 201);
     }
 
     // Fetch a specific staff salary by ID
