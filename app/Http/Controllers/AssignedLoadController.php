@@ -65,7 +65,7 @@ class AssignedLoadController extends Controller
         $id = $request->id;
         $assignedLoad = AssignedLoad::find($id);
         try{
-            return response()->json(['data' => $assignedLoad->load(['load', 'driver']), 'message' => 'Fetched assigned load successfully',  'code' => 1, 'status' => 'success'], 201);
+            return response()->json(['data' => $assignedLoad->load(['_load', 'driver']), 'message' => 'Fetched assigned load successfully',  'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'code' => 0,
