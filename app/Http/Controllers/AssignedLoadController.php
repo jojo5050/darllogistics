@@ -60,8 +60,10 @@ class AssignedLoadController extends Controller
         }
     }
 
-    public function show(AssignedLoad $assignedLoad)
+    public function show(Request $request)
     {
+        $id = $request->id;
+        $assignedLoad = AssignedLoad::find($id);
         try{
             return response()->json(['data' => $assignedLoad->load(['load', 'driver']), 'message' => 'Fetched assigned load successfully',  'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
@@ -98,8 +100,10 @@ class AssignedLoadController extends Controller
         }
     }
 
-    public function update(Request $request, AssignedLoad $assignedLoad)
+    public function update(Request $request)
     {
+        $id = $request->id;
+        $assignedLoad = AssignedLoad::find($id);
         $data = $request->validate([
             'load_id' => 'exists:loads,id',
             'driver_id' => 'exists:users,id',
@@ -120,8 +124,10 @@ class AssignedLoadController extends Controller
         }
     }
 
-    public function destroy(AssignedLoad $assignedLoad)
+    public function destroy(Request $request)
     {
+        $id = $request->id;
+        $assignedLoad = AssignedLoad::find($id);
         try{
             $assignedLoad->delete();
             return response()->json(['message' => 'Load assignment deleted successfully', 'code' => 1, 'status' => 'success'], 201);
