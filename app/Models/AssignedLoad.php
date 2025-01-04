@@ -13,7 +13,7 @@ class AssignedLoad extends Model
         'status',
     ];
 
-    public function _load()
+    public function load()
     {
         return $this->belongsTo(Load::class);
     }
