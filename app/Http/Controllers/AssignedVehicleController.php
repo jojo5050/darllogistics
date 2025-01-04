@@ -7,30 +7,31 @@ use Illuminate\Http\Request;
 
 class AssignedVehicleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        try{
-            $assignedVehicles = AssignedVehicle::with('driver')->get();
-            return response()->json(['data'=>$assignedVehicles, 'message' => 'fetched assigned vehicles successfully', 'code' => 1, 'status' => 'success'], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'code' => 0,
-                'status' => 'failed',
-                'message' => 'Failed to fetch assigned vehicles. Please try again.',
-                'error' => $e->getMessage(),
-            ], 500);
+        if($request->query('driver_id'))
+        {
+            return $this->userVehicles($request->query('driver_id'));
+        }else{
+            try{
+                $assignedVehicles = AssignedVehicle::with('driver')->get();
+                return response()->json(['data'=>$assignedVehicles, 'message' => 'fetched assigned vehicles successfully', 'code' => 1, 'status' => 'success'], 201);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'code' => 0,
+                    'status' => 'failed',
+                    'message' => 'Failed to fetch assigned vehicles. Please try again.',
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
         }
     }
 
-    public function userVehicles(Request $request)
+    public function userVehicles($driver_id)
     {
-        $validatedData = $request->validate([
-            'driver_id' => 'required|exists:users,id',
-        ]);
-
         try{
 
-            $vehicles = AssignedVehicle::where('driver_id', $validatedData['driver_id'])->get();
+            $vehicles = AssignedVehicle::where('driver_id', $driver_id)->get();
 
             if ($vehicles->isEmpty()) {
                 return response()->json([
@@ -93,8 +94,9 @@ class AssignedVehicleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Request $request)
     {
+        $id = $request->id;
         try{
             $assignedVehicle = AssignedVehicle::with('driver')->findOrFail($id);
             return response()->json(['data'=>$assignedVehicle, 'message' => 'load created successfully', 'code' => 1, 'status' => 'success'], 201);
@@ -111,8 +113,9 @@ class AssignedVehicleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
+        $id = $request->id;
         $assignedVehicle = AssignedVehicle::findOrFail($id);
 
         $validatedData = $request->validate([
@@ -149,8 +152,9 @@ class AssignedVehicleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
+        $id = $request->id;
         try{
             $assignedVehicle = AssignedVehicle::findOrFail($id);
             $assignedVehicle->delete();
