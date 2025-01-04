@@ -21,8 +21,9 @@ class LoadController extends Controller
         }
     }
 
-    public function show(Load $load)
+    public function show(Request $request)
     {
+        $load = Load::find($request->load_id);
         try{
             return response()->json(['data'=>$load, 'message' => 'load fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
@@ -56,8 +57,9 @@ class LoadController extends Controller
         }
     }
 
-    public function update(Request $request, Load $load)
+    public function update(Request $request)
     {
+        $load = Load::find($request->load_id);
         $data = $request->validate([
             'description' => 'nullable|string',
             'pickup_date' => 'nullable|date',
@@ -77,8 +79,9 @@ class LoadController extends Controller
         }
     }
 
-    public function destroy(Load $load)
+    public function destroy(Request $request)
     {
+        $load = Load::find($request->load_id);
         try{
             $load->delete();
             return response()->json(['message' => 'Load deleted successfully', 'code' => 1, 'status' => 'success'], 201);
