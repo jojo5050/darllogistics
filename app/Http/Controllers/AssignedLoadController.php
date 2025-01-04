@@ -9,9 +9,9 @@ class AssignedLoadController extends Controller
 {
     public function index(Request $request)
     {
-        if(isset($request->driver_id))
+        if($request->query('driver_id'))
         {
-            $this->userLoads($request->driver_id);
+            $this->userLoads($request->query('driver_id'));
         }else{
 
             try{
