@@ -11,7 +11,7 @@ class AssignedLoadController extends Controller
     {
         if($request->query('driver_id'))
         {
-            $this->userLoads($request->query('driver_id'));
+            return $this->userLoads($request->query('driver_id'));
         }else{
 
             try{
