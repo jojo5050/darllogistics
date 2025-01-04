@@ -54,7 +54,6 @@ Route::middleware('auth:sanctum')->group(function () {
         // Vehicles Assigned Routes
         Route::prefix('vehicles-assigned')->group(function () {
             Route::get('/', [AssignedVehicleController::class, 'index']);
-            Route::get('/{driver_id}/vehicles', [AssignedVehicleController::class, 'userVehicles']); // List all vehicles for user
             Route::post('/', [AssignedVehicleController::class, 'store']);
             Route::get('/{id}', [AssignedVehicleController::class, 'show']);
             Route::put('/{id}', [AssignedVehicleController::class, 'update']);
@@ -64,7 +63,6 @@ Route::middleware('auth:sanctum')->group(function () {
         // Wages Routes
         Route::prefix('wages')->group(function () {
             Route::get('/', [WageController::class, 'index']);
-            Route::get('/{driver_id}/wages', [WageController::class, 'userWages']);
             Route::post('/', [WageController::class, 'store']);
             Route::get('/{id}', [WageController::class, 'show']);
             Route::put('/{id}', [WageController::class, 'update']);
@@ -107,7 +105,6 @@ Route::middleware('auth:sanctum')->group(function () {
         // Tickets Routes
         Route::prefix('tickets')->group(function () {
             Route::get('/', [TicketController::class, 'index']);
-            Route::get('/{user_id}/tickets', [TicketController::class, 'userTickets']);
             Route::post('/', [TicketController::class, 'store']);
             Route::get('/{id}', [TicketController::class, 'show']);
             Route::put('/{id}', [TicketController::class, 'update']);
@@ -126,7 +123,6 @@ Route::middleware('auth:sanctum')->group(function () {
         // Pickups Routes
         Route::prefix('pickups')->group(function () {
             Route::get('/', [PickupController::class, 'index']);
-            Route::get('/{driver_id}/pickups', [PickupController::class, 'userPickups']);
             Route::post('/', [PickupController::class, 'store']);
             Route::get('/{id}', [PickupController::class, 'show']);
             Route::put('/{id}', [PickupController::class, 'update']);
@@ -136,7 +132,6 @@ Route::middleware('auth:sanctum')->group(function () {
         // Staff Salaries Routes
         Route::prefix('staff-salaries')->group(function () {
             Route::get('/', [StaffSalaryController::class, 'index']);
-            Route::get('/{user_id}/salaries', [StaffSalaryController::class, 'userSalaries']);
             Route::post('/', [StaffSalaryController::class, 'store']);
             Route::get('/{id}', [StaffSalaryController::class, 'show']);
             Route::put('/{id}', [StaffSalaryController::class, 'update']);
