@@ -7,29 +7,33 @@ use Illuminate\Http\Request;
 
 class AssignedLoadController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        try{
-            return response()->json(['data'=> AssignedLoad::with(['load', 'driver'])->get(), 'message' => 'Fetched assigned loads successfully', 'code' => 1, 'status' => 'success'], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'code' => 0,
-                'status' => 'failed',
-                'message' => 'Failed to fetch assigned loads. Please try again.',
-                'error' => $e->getMessage(),
-            ], 500);
+        if(isset($request->driver_id))
+        {
+            $this->userLoads($request->driver_id);
+        }else{
+
+            try{
+                return response()->json(['data'=> AssignedLoad::with(['load', 'driver'])->get(), 'message' => 'Fetched assigned loads successfully', 'code' => 1, 'status' => 'success'], 201);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'code' => 0,
+                    'status' => 'failed',
+                    'message' => 'Failed to fetch assigned loads. Please try again.',
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
+
         }
     }
 
-    public function userLoads(Request $request)
+    public function userLoads($driver_id)
     {
-        $validatedData = $request->validate([
-            'driver_id' => 'required|exists:users,id',
-        ]);
 
         try{
 
-            $loads = AssignedLoad::where('driver_id', $validatedData['driver_id'])->get();
+            $loads = AssignedLoad::where('driver_id', $driver_id)->get();
 
             if ($loads->isEmpty()) {
                 return response()->json([

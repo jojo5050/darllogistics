@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class LoadController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try{
             return response()->json(['data'=>Load::paginate(30), 'message' => 'load created successfully', 'code' => 1, 'status' => 'success'], 201);
