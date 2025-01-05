@@ -15,7 +15,7 @@ class AssignedLoadController extends Controller
         }else{
 
             try{
-                return response()->json(['data'=> AssignedLoad::with(['load', 'driver'])->get(), 'message' => 'Fetched assigned loads successfully', 'code' => 1, 'status' => 'success'], 201);
+                return response()->json(['data'=> AssignedLoad::with(['_load', 'driver'])->get(), 'message' => 'Fetched assigned loads successfully', 'code' => 1, 'status' => 'success'], 201);
             } catch (\Exception $e) {
                 return response()->json([
                     'code' => 0,
