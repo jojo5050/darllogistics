@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -96,6 +97,7 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
         $profile = Profile::where('user_id', $user->id)->first();
+        $payment = Payment::where('user_id', $user->id)->get();
 
         return response()->json([
             'code' => 1,
@@ -103,6 +105,7 @@ class AuthController extends Controller
             'token' => $token,
             'user' => $user,
             'profile' => $profile,
+            'payment' => $payment
         ]);
     }
 
