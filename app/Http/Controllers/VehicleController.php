@@ -34,9 +34,18 @@ class VehicleController extends Controller
             'status' => 'nullable|integer',
         ]);
 
-        $vehicle = Vehicle::create($validatedData);
+        try{
+            $vehicle = Vehicle::create($validatedData);
+            return response()->json(['message' => 'Vehicle registered successfully', 'data' => $vehicle, 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to register vehicle. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
 
-        return response()->json(['message' => 'Vehicle created successfully', 'vehicle' => $vehicle], 201);
     }
 
     /**
@@ -47,10 +56,20 @@ class VehicleController extends Controller
         $vehicle = Vehicle::find($id);
 
         if (!$vehicle) {
-            return response()->json(['message' => 'Vehicle not found'], 404);
+            return response()->json(['message' => 'Vehicle not found', 'data' => [], 'code' => 1, 'status' => 'success'], 201);
         }
 
-        return response()->json($vehicle);
+        try{
+            return response()->json(['message' => 'Vehicle fetched successfully', 'data' => $vehicle, 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch vehicle. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+
     }
 
     /**
@@ -69,7 +88,7 @@ class VehicleController extends Controller
         $vehicle = Vehicle::find($id);
 
         if (!$vehicle) {
-            return response()->json(['message' => 'Vehicle not found'], 404);
+            return response()->json(['message' => 'Vehicle not found', 'data' => [], 'code' => 0, 'status' => 'failed'], 404);
         }
 
         $validatedData = $request->validate([
@@ -80,9 +99,17 @@ class VehicleController extends Controller
             'status' => 'nullable|integer',
         ]);
 
-        $vehicle->update($validatedData);
-
-        return response()->json(['message' => 'Vehicle updated successfully', 'vehicle' => $vehicle]);
+        try{
+            $vehicle->update($validatedData);
+            return response()->json(['message' => 'Vehicle updated successfully', 'data' => $vehicle, 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to update vehicle. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -93,11 +120,19 @@ class VehicleController extends Controller
         $vehicle = Vehicle::find($id);
 
         if (!$vehicle) {
-            return response()->json(['message' => 'Vehicle not found'], 404);
+            return response()->json(['message' => 'Vehicle not found', 'data' => [], 'code' => 0, 'status' => 'failed'], 404);
         }
 
-        $vehicle->delete();
-
-        return response()->json(['message' => 'Vehicle deleted successfully']);
+        try{
+            $vehicle->delete();
+            return response()->json(['message' => 'Vehicle deleted successfully', 'data' => $vehicle, 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to delete vehicle. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
