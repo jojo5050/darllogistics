@@ -39,7 +39,7 @@ class PlanController extends Controller
 
             $plan = Plan::create($validatedData);
 
-            return response()->json(['message' => 'Plan created successfully', 'data' => $plan], 201);
+            return response()->json(['message' => 'Plan created successfully', 'data' => $plan, 'status' => 'success', 'code' => 1], 201);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -87,7 +87,7 @@ class PlanController extends Controller
         try{
             $plan->update($validatedData);
 
-            return response()->json(['message' => 'Plan updated successfully', 'data' => $plan]);
+            return response()->json(['message' => 'Plan updated successfully', 'data' => $plan, 'status' => 'success', 'code' => 1]);
         } catch (\Exception $e) {
             return response()->json([
                 'code' => 0,
@@ -107,7 +107,7 @@ class PlanController extends Controller
             $plan = Plan::findOrFail($id);
             $plan->delete();
 
-            return response()->json(['message' => 'Plan deleted successfully']);
+            return response()->json(['message' => 'Plan deleted successfully', 'status' => 'success', 'code' => 1]);
         } catch (\Exception $e) {
             return response()->json([
                 'code' => 0,
