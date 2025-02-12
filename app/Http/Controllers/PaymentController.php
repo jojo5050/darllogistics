@@ -28,11 +28,9 @@ class PaymentController extends Controller
 
     public function userPayments(Request $request)
     {
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
-        ]);
+        $user_id = $request->user_id;
 
-        $payments = Payment::where('user_id', $validatedData['user_id'])->get();
+        $payments = Payment::where('user_id', $user_id)->get();
 
         if ($payments->isEmpty()) {
             return response()->json([
