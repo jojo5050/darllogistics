@@ -13,11 +13,7 @@ return new class extends Migration
     {
         Schema::create('loads', function (Blueprint $table) {
             $table->id();
-            $table->string('description')->nullable();
-            $table->date('pickup_date')->nullable();
-            $table->date('delivery_date')->nullable();
-            $table->decimal('weight', 10, 2)->nullable();
-
+            $table->unsignedBigInteger('user_id')->constrained()->onDelete('cascade');
             $table->string('pickup_state');
             $table->string('pickup_time_range');
             $table->string('pickup_address');
