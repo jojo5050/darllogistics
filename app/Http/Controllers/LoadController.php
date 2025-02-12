@@ -39,14 +39,29 @@ class LoadController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'description' => 'nullable|string',
-            'pickup_date' => 'nullable|date',
-            'delivery_date' => 'nullable|date',
-            'weight' => 'nullable|numeric',
+            'user_id' => 'required|exists:users,id',
+            'pickup_state' => 'required|string',
+            'pickup_time_range' => 'nullable|string',
+            'pickup_address' => 'required|string',
+            'loading_method' => 'nullable|string',
+            'temperature' => 'nullable|string',
+            'commodities' => 'nullable|array',
+            'rate' => 'required|numeric',
+            'driver_id' => 'nullable|exists:drivers,id',
+            'vehicle_id' => 'nullable|exists:vehicles,id',
+            'dispatcher_id' => 'nullable|exists:users,id',
+            'fee_type' => 'required|string',
+            'amount' => 'required|numeric'
         ]);
-        try{
+
+        try {
             $load = Load::create($data);
-            return response()->json(['data'=>$load, 'message' => 'load created successfully', 'code' => 1, 'status' => 'success'], 201);
+            return response()->json([
+                'data' => $load,
+                'message' => 'Load created successfully',
+                'code' => 1,
+                'status' => 'success'
+            ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'code' => 0,
@@ -61,10 +76,19 @@ class LoadController extends Controller
     {
         $load = Load::find($request->load_id);
         $data = $request->validate([
-            'description' => 'nullable|string',
-            'pickup_date' => 'nullable|date',
-            'delivery_date' => 'nullable|date',
-            'weight' => 'nullable|numeric',
+            'user_id' => 'required|exists:users,id',
+            'pickup_state' => 'required|string',
+            'pickup_time_range' => 'nullable|string',
+            'pickup_address' => 'required|string',
+            'loading_method' => 'nullable|string',
+            'temperature' => 'nullable|string',
+            'commodities' => 'nullable|array',
+            'rate' => 'required|numeric',
+            'driver_id' => 'nullable|exists:drivers,id',
+            'vehicle_id' => 'nullable|exists:vehicles,id',
+            'dispatcher_id' => 'nullable|exists:users,id',
+            'fee_type' => 'required|string',
+            'amount' => 'required|numeric'
         ]);
         try{
             $load->update($data);

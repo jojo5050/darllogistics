@@ -11,7 +11,6 @@ class Load extends Model
         'pickup_state',
         'pickup_time_range',
         'pickup_address',
-        'vehicleType',
         'loading_method',
         'temperature',
         'commodities',
