@@ -65,7 +65,7 @@ class PaymentController extends Controller
         $validated = $request->validate([
             'plan_id' => 'required|exists:plans,id',
             'transaction_reference' => 'required|string',
-            'amount' => 'required|numeric|min:0.01',
+            'amount' => 'required|numeric|min:0.00',
             'currency' => 'required|string',
             'payment_method' => 'required|string',
             'status' => 'required|string|in:success,pending,failed',
@@ -126,10 +126,10 @@ class PaymentController extends Controller
         $payment = Payment::find($id);
 
         if (!$payment) {
-            return response()->json(['message' => 'Payment not found'], 404);
+            return response()->json(['message' => 'Payment not found', 'data' => [], 'status' => 'failed', 'code' => 1], 404);
         }
 
-        return response()->json($payment);
+        return response()->json(['data'=> $payment, 'message' => 'Payment fetched', 'status' => 'success', 'code' => 1], 201);
     }
 
     /**
