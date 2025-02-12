@@ -82,7 +82,7 @@ class LoadController extends Controller
             'pickup_address' => 'required|string',
             'loading_method' => 'nullable|string',
             'temperature' => 'nullable|string',
-            'commodities' => 'nullable|string',
+            'commodities' => 'required|string',
             'rate' => 'required|numeric',
             'driver_id' => 'nullable|exists:drivers,id',
             'vehicle_id' => 'nullable|exists:vehicles,id',
