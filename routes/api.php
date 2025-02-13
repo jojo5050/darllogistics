@@ -158,6 +158,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('drivers')->group(function () {
             Route::get('/', [UserController::class, 'drivers']);
         });
+
+        // Dispatchers
+        Route::prefix('dispatchers')->group(function () {
+            Route::get('/', [UserController::class, 'dispatchers']);
+        });
     });
 });
 

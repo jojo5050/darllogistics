@@ -64,6 +64,21 @@ class UserController extends Controller
         }
     }
 
+    public function dispatchers(Request $request)
+    {
+        try{
+            $data = User::where('role', 'dispatcher')->get();
+            return response()->json(['data' => $data, 'message' => 'Dispatchers fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch dispatchers. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function destroy(User $user)
     {
         $user->delete();
