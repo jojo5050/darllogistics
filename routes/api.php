@@ -153,6 +153,11 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/', [PaymentController::class, 'store']);
             Route::get('/', [PaymentController::class, 'index']);
         });
+
+        // Drivers
+        Route::prefix('drivers')->group(function () {
+            Route::get('/', [UserController::class, 'drivers']);
+        });
     });
 });
 

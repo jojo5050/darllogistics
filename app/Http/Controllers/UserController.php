@@ -49,6 +49,21 @@ class UserController extends Controller
         return response()->json($user);
     }
 
+    public function drivers(Request $request)
+    {
+        try{
+            $data = User::where('role', 'driver')->get();
+            return response()->json(['data' => $data, 'message' => 'Drivers fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch drivers. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function destroy(User $user)
     {
         $user->delete();
