@@ -38,37 +38,54 @@ class LoadController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'pickup_state' => 'required|string',
-            'pickup_time_range' => 'nullable|string',
-            'pickup_address' => 'required|string',
-            'loading_method' => 'nullable|string',
-            'temperature' => 'nullable|string',
-            'commodities' => 'nullable|string',
-            'rate' => 'required|numeric',
-            'driver_id' => 'nullable|exists:drivers,id',
-            'vehicle_id' => 'nullable|exists:vehicles,id',
-            'dispatcher_id' => 'nullable|exists:users,id',
-            'fee_type' => 'required|string',
-            'amount' => 'required|numeric'
-        ]);
+        $data = $request->all();
 
         try {
-            $load = Load::create($data);
+
+            $load = Load::create([
+                'user_id' => $data['user_id'],
+                'broker' => $data['broker'],
+                'temperature' => $data['temperature'],
+                'commodity' => $data['commodity'],
+                'load_number' => $data['load_number'],
+                'dispatcher_id' => $data['dispatcher_id'],
+                'rate' => $data['rate']
+            ]);
+
+            foreach ($data['pickups'] as $pickup) {
+                $load->pickups()->create([
+                    'latitude' => $pickup['latitude'],
+                    'longitude' => $pickup['longitude'],
+                    'pickup_date' => $pickup['date'],
+                    'pickup_time' => $pickup['time'],
+                ]);
+            }
+
+            foreach ($data['drops'] as $drop) {
+                $load->drops()->create([
+                    'latitude' => $drop['latitude'],
+                    'longitude' => $drop['longitude'],
+                    'drop_date' => $drop['date'],
+                    'drop_time' => $drop['time'],
+                ]);
+            }
+
             return response()->json([
                 'data' => $load,
                 'message' => 'Load created successfully',
                 'code' => 1,
                 'status' => 'success'
             ], 201);
+
         } catch (\Exception $e) {
+
             return response()->json([
                 'code' => 0,
                 'status' => 'failed',
                 'message' => 'Failed to create load. Please try again.',
                 'error' => $e->getMessage(),
             ], 500);
+
         }
     }
 

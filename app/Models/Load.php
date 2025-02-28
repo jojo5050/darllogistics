@@ -7,20 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Load extends Model
 {
     protected $fillable = [
-        'user_id',
-        'pickup_state',
-        'pickup_time_range',
-        'pickup_address',
-        'loading_method',
-        'temperature',
-        'commodities',
-        'rate',
-        'driver_id',
-        'vehicle_id',
-        'dispatcher_id',
-        'fee_type',
-        'amount'
+        'user_id', 'broker', 'temperature', 'commodity', 'load_number', 'dispatcher_id', 'rate'
     ];
+
+    public function pickups()
+    {
+        return $this->hasMany(Pickup::class);
+    }
+
+    public function drops()
+    {
+        return $this->hasMany(Drop::class);
+    }
 
     public function assigned()
     {
