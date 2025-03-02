@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('pickups', function (Blueprint $table) {
             $table->id();
             $table->foreignId('load_id')->constrained('loads')->onDelete('cascade');
-            $table->string('latitude');
-            $table->string('longitude');
+            $table->string('address');
             $table->date('pickup_date');
             $table->time('pickup_time');
             $table->timestamps();

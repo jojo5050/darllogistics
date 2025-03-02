@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('drops', function (Blueprint $table) {
             $table->id();
             $table->foreignId('load_id')->constrained('loads')->onDelete('cascade');
-            $table->string('latitude');
-            $table->string('longitude');
+            $table->string('address');
             $table->date('drop_date');
             $table->time('drop_time');
             $table->timestamps();

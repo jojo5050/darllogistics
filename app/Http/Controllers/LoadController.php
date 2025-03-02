@@ -23,8 +23,9 @@ class LoadController extends Controller
 
     public function show(Request $request)
     {
-        $load = Load::find($request->load_id);
         try{
+            $load = Load::find($request->load_id);
+            $load->load('pickups', 'drops');
             return response()->json(['data'=>$load, 'message' => 'load fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
             return response()->json([
@@ -54,8 +55,7 @@ class LoadController extends Controller
 
             foreach ($data['pickups'] as $pickup) {
                 $load->pickups()->create([
-                    'latitude' => $pickup['latitude'],
-                    'longitude' => $pickup['longitude'],
+                    'address' => $pickup['address'],
                     'pickup_date' => $pickup['date'],
                     'pickup_time' => $pickup['time'],
                 ]);
@@ -63,12 +63,13 @@ class LoadController extends Controller
 
             foreach ($data['drops'] as $drop) {
                 $load->drops()->create([
-                    'latitude' => $drop['latitude'],
-                    'longitude' => $drop['longitude'],
+                    'address' => $drop['address'],
                     'drop_date' => $drop['date'],
                     'drop_time' => $drop['time'],
                 ]);
             }
+
+            $load->load('pickups', 'drops');
 
             return response()->json([
                 'data' => $load,

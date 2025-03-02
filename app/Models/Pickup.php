@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pickup extends Model
 {
-    protected $fillable = ['load_id', 'latitude', 'longitude', 'pickup_date', 'pickup_time'];
+    protected $fillable = ['load_id', 'address', 'pickup_date', 'pickup_time'];
 
     public function _load()
     {
