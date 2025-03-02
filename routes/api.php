@@ -3,6 +3,7 @@
 use App\Http\Controllers\AssignedLoadController;
 use App\Http\Controllers\AssignedVehicleController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DropController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PickupController;
@@ -124,9 +125,20 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('pickups')->group(function () {
             Route::get('/', [PickupController::class, 'index']);
             Route::post('/', [PickupController::class, 'store']);
+            Route::get('/load/{load_id}', [PickupController::class, 'loads']);
             Route::get('/{id}', [PickupController::class, 'show']);
             Route::put('/{id}', [PickupController::class, 'update']);
             Route::delete('/{id}', [PickupController::class, 'destroy']);
+        });
+
+        // Drops Routes
+        Route::prefix('drops')->group(function () {
+            Route::get('/', [DropController::class, 'index']);
+            Route::post('/', [DropController::class, 'store']);
+            Route::get('/load/{load_id}', [DropController::class, 'loads']);
+            Route::get('/{id}', [DropController::class, 'show']);
+            Route::put('/{id}', [DropController::class, 'update']);
+            Route::delete('/{id}', [DropController::class, 'destroy']);
         });
 
         // Staff Salaries Routes

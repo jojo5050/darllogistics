@@ -63,6 +63,17 @@ class PickupController extends Controller
         return response()->json($pickup);
     }
 
+    public function loads(Request $request)
+    {
+        $load_id = $request->load_id;
+        try {
+            $drop = Pickup::where('load_id', $load_id)->get();
+            return response()->json(['data' => $drop, 'message' => 'Pickups fetched successfully for load', 'status' => 'success', 'code' => 1], 201);
+        }catch(\Exception $e){
+            return response()->json(['data' => [], 'message' => 'failed to fetch load pickups', 'status' => 'failed', 'code' => 0], 201);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      */
