@@ -24,4 +24,14 @@ class Load extends Model
     {
         return $this->hasMany(AssignedLoad::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function dispatcher()
+    {
+        return $this->belongsTo(User::class, 'dispatcher_id');
+    }
 }

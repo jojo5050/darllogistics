@@ -24,9 +24,31 @@ class LoadController extends Controller
     public function show(Request $request)
     {
         try{
-            $load = Load::find($request->load_id);
-            $load->load('pickups', 'drops');
-            return response()->json(['data'=>$load, 'message' => 'load fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+            $load = Load::with(['pickups', 'drops'])->find($request->load_id);
+
+            if ($load) {
+                $user = $load->user;
+                $dispatcher = $load->dispatcher;
+
+                $loadData = $load->toArray();
+                $userData = $user ? $user->toArray() : [];
+                $dispatcherData = $dispatcher ? $dispatcher->toArray() : [];
+
+                return response()->json([
+                    'data' => array_merge($loadData, ['user' => $userData], ['dispatcher' => $dispatcherData]),
+                    'message' => 'Load fetched successfully',
+                    'code' => 1,
+                    'status' => 'success'
+                ], 201);
+            }
+
+            return response()->json([
+                'data' => [],
+                'message' => 'Load not found',
+                'code' => 0,
+                'status' => 'error'
+            ], 201);
+
         } catch (\Exception $e) {
             return response()->json([
                 'code' => 0,
