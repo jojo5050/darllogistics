@@ -95,6 +95,25 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{id}', [RouteController::class, 'destroy']);
         });
 
+        // Pickups Routes
+        Route::prefix('pickups')->group(function () {
+            Route::get('/', [PickupController::class, 'index']);
+            Route::post('/', [PickupController::class, 'store']);
+            Route::get('/load/{load_id}', [PickupController::class, 'loads']);
+            Route::get('/{id}', [PickupController::class, 'show']);
+            Route::put('/{id}', [PickupController::class, 'update']);
+            Route::delete('/{id}', [PickupController::class, 'destroy']);
+        });
+
+        // Drops Routes
+        Route::prefix('routes')->group(function () {
+            Route::get('/deliveries', [PickupController::class, 'delivery']);
+            Route::post('/pickups', [PickupController::class, 'pickup']);
+            Route::get('/deliveries/{id}', [PickupController::class, 'singleDelivery']);
+            Route::get('/pickups/{id}', [PickupController::class, 'singlePickup']);
+            Route::delete('/route-job/{id}', [PickupController::class, 'destroy']);
+        });
+
         // Loads Assigned Routes
         Route::prefix('loads-assigned')->group(function () {
             Route::get('/drivers/{driver_id}', [RouteController::class, 'driverRoutes']);
@@ -116,26 +135,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{id}', [SubscriberController::class, 'show']);
             Route::put('/{id}', [SubscriberController::class, 'update']);
             Route::delete('/{id}', [SubscriberController::class, 'destroy']);
-        });
-
-        // Pickups Routes
-        Route::prefix('pickups')->group(function () {
-            Route::get('/', [PickupController::class, 'index']);
-            Route::post('/', [PickupController::class, 'store']);
-            Route::get('/load/{load_id}', [PickupController::class, 'loads']);
-            Route::get('/{id}', [PickupController::class, 'show']);
-            Route::put('/{id}', [PickupController::class, 'update']);
-            Route::delete('/{id}', [PickupController::class, 'destroy']);
-        });
-
-        // Drops Routes
-        Route::prefix('drops')->group(function () {
-            Route::get('/', [DropController::class, 'index']);
-            Route::post('/', [DropController::class, 'store']);
-            Route::get('/load/{load_id}', [DropController::class, 'loads']);
-            Route::get('/{id}', [DropController::class, 'show']);
-            Route::put('/{id}', [DropController::class, 'update']);
-            Route::delete('/{id}', [DropController::class, 'destroy']);
         });
 
         // Staff Salaries Routes

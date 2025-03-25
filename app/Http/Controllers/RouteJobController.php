@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\RouteJob;
+use Exception;
 use Illuminate\Http\Request;
 
 class RouteJobController extends Controller
@@ -66,9 +67,14 @@ class RouteJobController extends Controller
         return response()->json($routeJob);
     }
 
-    public function destroy(RouteJob $routeJob)
+    public function destroy(Request $request)
     {
-        $routeJob->delete();
-        return response()->json(null, 204);
+        try{
+            $routeJob = RouteJob::where('id', $request->id)->first();
+            $routeJob->delete();
+            return response()->json(['status' => 'success', 'message' => 'Route Job deleted'],201);
+        }catch(Exception $e){
+            return response()->json(['status' => 'success', 'message' => 'Error: '.$e->getMessage()],201);
+        }
     }
 }

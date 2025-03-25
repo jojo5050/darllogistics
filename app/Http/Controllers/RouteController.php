@@ -117,6 +117,40 @@ class RouteController extends Controller
         }
     }
 
+    public function pickup()
+    {
+        try{
+            $data = Route::whereHas('routeJobs', function ($query) {
+                $query->where('jobType', 'pickup');
+            })->with('routeJobs')->get();
+
+            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function delivery()
+    {
+        try{
+            $data = Route::whereHas('routeJobs', function ($query) {
+                $query->where('jobType', 'delivery');
+            })->with('routeJobs')->get();
+
+            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
     public function update(Request $request, Route $route)
     {
         $validated = $request->validate([
@@ -129,9 +163,58 @@ class RouteController extends Controller
         return response()->json($route);
     }
 
-    public function destroy(Route $route)
+    public function singleDelivery(Request $request)
     {
+        try{
+            $route = Route::where('id', $request->id)
+                ->whereHas('routeJobs', function ($query) {
+                    $query->where('jobType', 'delivery');
+                })
+                ->with('routeJobs')
+                ->first();
+
+            if (!$route) {
+                return response()->json(['status' => 'failed', 'message' => 'Route not found or no deliveries'], 404);
+            }
+
+            return response()->json(['data' => $route, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function singlePickup(Request $request)
+    {
+        try{
+            $route = Route::where('id', $request->id)
+                ->whereHas('routeJobs', function ($query) {
+                    $query->where('jobType', 'pickup');
+                })
+                ->with('routeJobs')
+                ->first();
+
+            if (!$route) {
+                return response()->json(['status' => 'failed', 'message' => 'Route not found or no deliveries'], 404);
+            }
+
+            return response()->json(['data' => $route, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        $route = Route::where('id', $request->id)->first();
         $route->delete();
-        return response()->json(null, 204);
+        return response()->json(['status' => 'success', 'message' => 'Route not found or no deliveries'], 204);
     }
 }
