@@ -38,6 +38,44 @@ class RouteJobController extends Controller
         return response()->json($routeJob, 201);
     }
 
+    public function pickups()
+    {
+        try{
+            $data = RouteJob::where('jobType', 'pickup')->get();
+
+            if (!$data) {
+                return response()->json(['status' => 'failed', 'message' => 'Route job not found'], 404);
+            }
+
+            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function deliveries()
+    {
+        try{
+            $data = RouteJob::where('jobType', 'delivery')->get();
+
+            if (!$data) {
+                return response()->json(['status' => 'failed', 'message' => 'Route job not found'], 404);
+            }
+
+            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
     public function show(RouteJob $routeJob)
     {
         return response()->json($routeJob);

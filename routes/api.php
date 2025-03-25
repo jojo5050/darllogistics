@@ -10,6 +10,7 @@ use App\Http\Controllers\PickupController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RouteController;
+use App\Http\Controllers\RouteJobController;
 use App\Http\Controllers\StaffSalaryController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\TicketController;
@@ -95,23 +96,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{id}', [RouteController::class, 'destroy']);
         });
 
-        // Pickups Routes
-        Route::prefix('pickups')->group(function () {
-            Route::get('/', [PickupController::class, 'index']);
-            Route::post('/', [PickupController::class, 'store']);
-            Route::get('/load/{load_id}', [PickupController::class, 'loads']);
-            Route::get('/{id}', [PickupController::class, 'show']);
-            Route::put('/{id}', [PickupController::class, 'update']);
-            Route::delete('/{id}', [PickupController::class, 'destroy']);
-        });
+        Route::get('/deliveries', [RouteJobController::class, 'deliveries']);
+        Route::get('/pickups', [RouteJobController::class, 'pickups']);
 
-        // Drops Routes
-        Route::prefix('routes')->group(function () {
-            Route::get('/deliveries', [PickupController::class, 'delivery']);
-            Route::post('/pickups', [PickupController::class, 'pickup']);
-            Route::get('/deliveries/{id}', [PickupController::class, 'singleDelivery']);
-            Route::get('/pickups/{id}', [PickupController::class, 'singlePickup']);
-            Route::delete('/route-job/{id}', [PickupController::class, 'destroy']);
+        Route::prefix('route-jobs')->group(function () {
+            Route::get('/{id}', [RouteController::class, 'show']);
+            Route::delete('/{id}', [RouteController::class, 'destroy']);
         });
 
         // Loads Assigned Routes

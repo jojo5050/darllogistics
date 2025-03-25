@@ -106,41 +106,10 @@ class RouteController extends Controller
     {
         try{
             $route = Route::where('id', $request->id)->first();
+            if (!$route) {
+                return response()->json(['status' => 'failed', 'message' => 'Route not found'], 404);
+            }
             $data = $route->load(['user', 'driver', 'jobs']);
-            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
-        }catch(Exception $e){
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Error: '.$e->getMessage(),
-                'data' => [],
-            ], 201);
-        }
-    }
-
-    public function pickup()
-    {
-        try{
-            $data = Route::whereHas('routeJobs', function ($query) {
-                $query->where('jobType', 'pickup');
-            })->with('routeJobs')->get();
-
-            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
-        }catch(Exception $e){
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Error: '.$e->getMessage(),
-                'data' => [],
-            ], 201);
-        }
-    }
-
-    public function delivery()
-    {
-        try{
-            $data = Route::whereHas('routeJobs', function ($query) {
-                $query->where('jobType', 'delivery');
-            })->with('routeJobs')->get();
-
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
         }catch(Exception $e){
             return response()->json([
@@ -161,54 +130,6 @@ class RouteController extends Controller
         $route->update($validated);
 
         return response()->json($route);
-    }
-
-    public function singleDelivery(Request $request)
-    {
-        try{
-            $route = Route::where('id', $request->id)
-                ->whereHas('routeJobs', function ($query) {
-                    $query->where('jobType', 'delivery');
-                })
-                ->with('routeJobs')
-                ->first();
-
-            if (!$route) {
-                return response()->json(['status' => 'failed', 'message' => 'Route not found or no deliveries'], 404);
-            }
-
-            return response()->json(['data' => $route, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
-        }catch(Exception $e){
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Error: '.$e->getMessage(),
-                'data' => [],
-            ], 201);
-        }
-    }
-
-    public function singlePickup(Request $request)
-    {
-        try{
-            $route = Route::where('id', $request->id)
-                ->whereHas('routeJobs', function ($query) {
-                    $query->where('jobType', 'pickup');
-                })
-                ->with('routeJobs')
-                ->first();
-
-            if (!$route) {
-                return response()->json(['status' => 'failed', 'message' => 'Route not found or no deliveries'], 404);
-            }
-
-            return response()->json(['data' => $route, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
-        }catch(Exception $e){
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Error: '.$e->getMessage(),
-                'data' => [],
-            ], 201);
-        }
     }
 
     public function destroy(Request $request)
