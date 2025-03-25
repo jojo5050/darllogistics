@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pickups', function (Blueprint $table) {
+        Schema::create('routes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('load_id')->constrained('loads')->onDelete('cascade');
-            $table->string('address');
-            $table->date('pickup_date');
-            $table->time('pickup_time');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('vehicle_id')->constrained()->onDelete('cascade');
+            $table->foreignId('driver_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pickups');
+        Schema::dropIfExists('routes');
     }
 };

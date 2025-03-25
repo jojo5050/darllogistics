@@ -9,6 +9,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PickupController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RouteController;
 use App\Http\Controllers\StaffSalaryController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\TicketController;
@@ -86,21 +87,17 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
         // Loads Routes
-        Route::prefix('loads')->group(function () {
-            Route::get('/', [LoadController::class, 'index']);
-            Route::post('/', [LoadController::class, 'store']);
-            Route::get('/{load_id}', [LoadController::class, 'show']);
-            Route::put('/{load_id}', [LoadController::class, 'update']);
-            Route::delete('/{load_id}', [LoadController::class, 'destroy']);
+        Route::prefix('routes')->group(function () {
+            Route::get('/', [RouteController::class, 'index']);
+            Route::post('/', [RouteController::class, 'store']);
+            Route::get('/{id}', [RouteController::class, 'show']);
+            Route::put('/{id}', [RouteController::class, 'update']);
+            Route::delete('/{id}', [RouteController::class, 'destroy']);
         });
 
         // Loads Assigned Routes
         Route::prefix('loads-assigned')->group(function () {
-            Route::get('/', [AssignedLoadController::class, 'index']);
-            Route::post('/', [AssignedLoadController::class, 'store']);
-            Route::get('/{id}', [AssignedLoadController::class, 'show']);
-            Route::put('/{id}', [AssignedLoadController::class, 'update']);
-            Route::delete('/{id}', [AssignedLoadController::class, 'destroy']);
+            Route::get('/drivers/{driver_id}', [RouteController::class, 'driverRoutes']);
         });
 
         // Tickets Routes
