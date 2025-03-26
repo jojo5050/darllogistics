@@ -9,8 +9,17 @@ class VehicleController extends Controller
 {
     public function index()
     {
-        $vehicles = Vehicle::all();
-        return response()->json($vehicles);
+        try{
+            $vehicles = Vehicle::all();
+            return response()->json(['message' => 'Vehicle registered successfully', 'data' => $vehicles, 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to register vehicle. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
