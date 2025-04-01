@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ExtraFee;
 use App\Models\Route;
 use App\Models\RouteJob;
 use Exception;
@@ -13,7 +14,7 @@ class RouteController extends Controller
     public function index()
     {
         try{
-            $data = Route::with(['user', 'driver', 'jobs'])->get();
+            $data = Route::with(['user', 'driver', 'jobs', 'extraFees'])->get();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Routes fecthed successfully.',
@@ -31,7 +32,7 @@ class RouteController extends Controller
     public function driverRoutes(Request $request)
     {
         try{
-            $data = Route::where('driver_id', $request->driver_id)->with(['driver', 'jobs'])->get();
+            $data = Route::where('driver_id', $request->driver_id)->with(['driver', 'jobs', 'extraFees'])->get();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Driver assigned routes fecthed successfully.',
@@ -50,8 +51,13 @@ class RouteController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'vehicle_id' => 'required|string|max:225',
-            'driver_id' => 'required|string|max:225',
+            'vehicle_id' => 'required|exists:vehicles,id',
+            'driver_id' => 'required|exists:users,id',
+            'dispatcher_id' => 'required|exists:users,id',
+            'load_name' => 'required|string',
+            'load_number' => 'required|integer',
+            'broker_name' => 'required|string',
+            'broker_email' => 'required|email',
             'route' => 'required|array',
             'route.*.jobType' => 'required|in:pickup,delivery',
             'route.*.address' => 'required|string|max:255',
@@ -67,6 +73,9 @@ class RouteController extends Controller
             'route.*.rate' => 'nullable|numeric|min:0',
             'route.*.quantity' => 'nullable|integer|min:1',
             'route.*.weightType' => 'nullable|string|max:50',
+            'extra_fee' => 'array',
+            'extra_fee.*.feeType' => 'nullable|string',
+            'extra_fee.*.amount' => 'nullable|numeric|min:0',
         ]);
 
         // dd($validated);
@@ -78,6 +87,11 @@ class RouteController extends Controller
                 'user_id' => $validated['user_id'],
                 'vehicle_id' => $validated['vehicle_id'],
                 'driver_id' => $validated['driver_id'],
+                'dispatcher_id' => $validated['dispatcher_id'],
+                'load_name' => $validated['load_name'],
+                'load_number' => $validated['load_number'],
+                'broker_name' => $validated['broker_name'],
+                'broker_email' => $validated['broker_email'],
             ]);
 
             // Create related jobs for this route
@@ -86,11 +100,17 @@ class RouteController extends Controller
                 RouteJob::create($jobData);
             }
 
+            // Create extra_fees for this route
+            foreach ($validated['extra_fee'] as $extraFee) {
+                $extraFee['route_id'] = $route->id;
+                ExtraFee::create($extraFee);
+            }
+
             DB::commit();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Route and jobs created successfully',
-                'data' => $route->load(['user', 'driver', 'jobs']) // Load jobs relationship
+                'data' => $route->load(['user', 'driver', 'jobs', 'extraFees'])
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -109,7 +129,7 @@ class RouteController extends Controller
             if (!$route) {
                 return response()->json(['status' => 'failed', 'message' => 'Route not found'], 404);
             }
-            $data = $route->load(['user', 'driver', 'jobs']);
+            $data = $route->load(['user', 'driver', 'jobs', 'extraFees']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
         }catch(Exception $e){
             return response()->json([
