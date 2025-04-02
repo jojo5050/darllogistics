@@ -9,12 +9,28 @@ class UserController extends Controller
 {
     public function index()
     {
-        return response()->json(User::all());
+        try{
+            $data = User::with('profile')->get();
+            return response()->json(['data' => $data, 'message' => 'Users fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch users. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
-    public function show(User $user)
+    public function show(Request $request)
     {
-        return response()->json($user);
+        $user = User::find($request->id);
+        if($user){
+            $data = $user;
+            $data['avatar'] = 'https://ui-avatars.com/api/?name='.$user->name;
+            return response()->json(['data' => $data, 'message' => 'User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+        }
+        return response()->json(['data' => [], 'message' => 'User not found', 'code' => 1, 'status' => 'success'], 201);
     }
 
     public function store(Request $request)

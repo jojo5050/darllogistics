@@ -42,7 +42,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('v2')->group(function () {
 
         Route::get('/user', function (Request $request) {
-            return $request->user();
+            $data = $request->user();
+            $data['profile'] = $data->profile;
+            $data['payment'] = $data->payment;
+            return response()->json(['data' => $data, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         });
 
         // Vehicles Routes
