@@ -110,7 +110,7 @@ class RouteController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Route and jobs created successfully',
-                'data' => $route->load(['user', 'driver', 'jobs', 'extraFees'])
+                'data' => $route->load(['user', 'dispatcher', 'driver', 'jobs', 'extraFees'])
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -129,7 +129,7 @@ class RouteController extends Controller
             if (!$route) {
                 return response()->json(['status' => 'failed', 'message' => 'Route not found'], 404);
             }
-            $data = $route->load(['user', 'driver', 'jobs', 'extraFees']);
+            $data = $route->load(['user', 'dispatcher', 'driver', 'jobs', 'extraFees']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
         }catch(Exception $e){
             return response()->json([

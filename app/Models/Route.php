@@ -18,6 +18,11 @@ class Route extends Model
         return $this->belongsTo(User::class, 'driver_id');
     }
 
+    public function dispatcher()
+    {
+        return $this->belongsTo(User::class, 'dispatcher_id');
+    }
+
     public function jobs()
     {
         return $this->hasMany(RouteJob::class);
