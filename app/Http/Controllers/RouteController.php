@@ -14,7 +14,7 @@ class RouteController extends Controller
     public function index()
     {
         try{
-            $data = Route::with(['user', 'driver', 'jobs', 'extraFees'])->get();
+            $data = Route::with(['user', 'dispatcher', 'driver', 'jobs', 'extraFees'])->get();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Routes fecthed successfully.',
@@ -32,7 +32,7 @@ class RouteController extends Controller
     public function driverRoutes(Request $request)
     {
         try{
-            $data = Route::where('driver_id', $request->driver_id)->with(['driver', 'jobs', 'extraFees'])->get();
+            $data = Route::where('driver_id', $request->driver_id)->with(['driver', 'dispatcher', 'jobs', 'extraFees'])->get();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Driver assigned routes fecthed successfully.',
