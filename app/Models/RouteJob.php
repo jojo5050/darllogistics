@@ -9,7 +9,7 @@ class RouteJob extends Model
     protected $fillable = [
         'route_id', 'jobType', 'address', 'date', 'time', 'jobDescription',
         'email', 'phone', 'appointmentID', 'trailerType', 'loadingMethod',
-        'goodsDescription', 'rate', 'quantity', 'weightType'
+        'goodsDescription', 'quantity', 'weightType'
     ];
 
     public function route()

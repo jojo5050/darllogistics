@@ -58,6 +58,7 @@ class RouteController extends Controller
             'load_number' => 'required|integer',
             'broker_name' => 'required|string',
             'broker_email' => 'required|email',
+            'rate' => 'nullable|numeric|min:0',
             'route' => 'required|array',
             'route.*.jobType' => 'required|in:pickup,delivery',
             'route.*.address' => 'required|string|max:255',
@@ -70,7 +71,6 @@ class RouteController extends Controller
             'route.*.trailerType' => 'nullable|string|max:100',
             'route.*.loadingMethod' => 'nullable|string|max:100',
             'route.*.goodsDescription' => 'nullable|string',
-            'route.*.rate' => 'nullable|numeric|min:0',
             'route.*.quantity' => 'nullable|integer|min:1',
             'route.*.weightType' => 'nullable|string|max:50',
             'extra_fee' => 'array',
@@ -92,6 +92,7 @@ class RouteController extends Controller
                 'load_number' => $validated['load_number'],
                 'broker_name' => $validated['broker_name'],
                 'broker_email' => $validated['broker_email'],
+                'rate' => $validated['rate'],
             ]);
 
             // Create related jobs for this route
