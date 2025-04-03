@@ -28,7 +28,7 @@ class UserController extends Controller
         if($user){
             $data = $user;
             $data['profile'] = $data->profile;
-            $data['avatar'] = 'https://ui-avatars.com/api/?name='.$user->name;
+            $data['profile']['avatar'] = 'https://ui-avatars.com/api/?name='.$user->name;
             return response()->json(['data' => $data, 'message' => 'User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         }
         return response()->json(['data' => [], 'message' => 'User not found', 'code' => 1, 'status' => 'success'], 201);
