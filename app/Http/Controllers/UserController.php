@@ -27,6 +27,7 @@ class UserController extends Controller
         $user = User::find($request->id);
         if($user){
             $data = $user;
+            $data['profile'] = $data->profile;
             $data['avatar'] = 'https://ui-avatars.com/api/?name='.$user->name;
             return response()->json(['data' => $data, 'message' => 'User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         }
@@ -68,7 +69,7 @@ class UserController extends Controller
     public function drivers(Request $request)
     {
         try{
-            $data = User::where('role', 'driver')->get();
+            $data = User::where('role', 'driver')->with('profile')->get();
             return response()->json(['data' => $data, 'message' => 'Drivers fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
             return response()->json([
@@ -83,7 +84,7 @@ class UserController extends Controller
     public function dispatchers(Request $request)
     {
         try{
-            $data = User::where('role', 'dispatcher')->get();
+            $data = User::where('role', 'dispatcher')->with('profile')->get();
             return response()->json(['data' => $data, 'message' => 'Dispatchers fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
             return response()->json([
