@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Profile;
 use App\Models\User;
 use Exception;
@@ -34,6 +35,17 @@ class UserController extends Controller
             return response()->json(['data' => $data, 'message' => 'User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         }
         return response()->json(['data' => [], 'message' => 'User not found', 'code' => 1, 'status' => 'success'], 201);
+    }
+
+    public function showCompanies(Request $request)
+    {
+        try{
+            $user = User::find($request->id);
+            $companies = Company::where('user_id', $user->id)->get();
+            return response()->json(['data' => $companies, 'message' => 'Fetched user cpmpanies successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch(Exception $e) {
+            return response()->json(['data' => [], 'message' => 'Companies not found', 'code' => 1, 'status' => 'success'], 500);
+        }
     }
 
     public function store(Request $request)

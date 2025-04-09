@@ -3,6 +3,7 @@
 use App\Http\Controllers\AssignedLoadController;
 use App\Http\Controllers\AssignedVehicleController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DropController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\PaymentController;
@@ -81,6 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [UserController::class, 'index']);
             Route::post('/', [UserController::class, 'store']);
             Route::get('/{id}', [UserController::class, 'show']);
+            Route::get('/companies/{id}', [UserController::class, 'showCompanies']);
             Route::put('/{id}', [UserController::class, 'update']);
             Route::delete('/{id}', [UserController::class, 'destroy']);
 
@@ -88,6 +90,14 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/profiles/{id}', [ProfileController::class, 'show']);
             Route::put('/profiles/{id}', [ProfileController::class, 'update']);
             Route::get('/profile', [ProfileController::class, 'userProfile']);
+        });
+
+        Route::prefix('companies')->group(function () {
+            Route::get('/', [CompanyController::class, 'index']);
+            Route::post('/', [CompanyController::class, 'store']);
+            Route::get('/{id}', [CompanyController::class, 'show']);
+            Route::put('/{id}', [CompanyController::class, 'update']);
+            Route::delete('/{id}', [CompanyController::class, 'destroy']);
         });
 
         // Loads Routes
