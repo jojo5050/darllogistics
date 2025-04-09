@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -36,34 +38,54 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role' => 'nullable|string',
-        ]);
+        try{
+            $data = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:8',
+                'role' => 'nullable|string',
+                'company_id' => 'required|exists:companies,id',
+                'country_id' => 'required|string',
+                'state_id' => 'required|string',
+                'city_id' => 'required|string',
+            ]);
 
-        $data['password'] = bcrypt($data['password']);
-        $user = User::create($data);
+            $data['password'] = bcrypt($data['password']);
+            $user = User::create($data);
 
-        return response()->json($user, 201);
+            $profile = new Profile();
+            $profile->user_id = $user->id;
+            $profile->company_id = $data['company_id'];
+            $profile->country_id = $data['country_id'];
+            $profile->state_id = $data['state_id'];
+            $profile->city_id = $data['city_id'];
+
+            return response()->json(['data' => $user, 'message' => 'User added successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch(Exception $e) {
+            return response()->json(['data' => [], 'message' => 'Failed to add user. Error: '.$e->getMessage(), 'code' => 0, 'status' => 'failed'], 500);
+        }
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'string|max:255',
-            'email' => 'email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8',
-            'role' => 'nullable|string',
-        ]);
+        try{
+            $user = User::find($request->id);
+            $data = $request->validate([
+                'name' => 'string|max:255',
+                'email' => 'email|unique:users,email,' . $user->id,
+                'password' => 'nullable|string|min:8',
+                'role' => 'nullable|string',
+            ]);
 
-        if (isset($data['password'])) {
-            $data['password'] = bcrypt($data['password']);
+            if (isset($data['password'])) {
+                $data['password'] = bcrypt($data['password']);
+            }
+
+            $user->update($data);
+            return response()->json(['data' => $user, 'message' => 'User updated successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (Exception $e) {
+            return response()->json(['data' => [], 'message' => 'Failed to update user. Error: '.$e->getMessage(), 'code' => 0, 'status' => 'failed'], 500);
         }
-
-        $user->update($data);
-        return response()->json($user);
     }
 
     public function drivers(Request $request)
@@ -96,9 +118,17 @@ class UserController extends Controller
         }
     }
 
-    public function destroy(User $user)
+    public function destroy(Request $request)
     {
-        $user->delete();
-        return response()->json(['message' => 'User deleted successfully']);
+        $user = User::find($request->id);
+        if($user){
+            $user->delete();
+            return response()->json(['message' => 'User deleted successfully', 'code' => 1, 'status' => 'success']);
+        }
+        return response()->json([
+            'code' => 0,
+            'status' => 'failed',
+            'message' => 'User does not exist.',
+        ], 500);
     }
 }

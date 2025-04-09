@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('wages', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->foreignId('driver_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();

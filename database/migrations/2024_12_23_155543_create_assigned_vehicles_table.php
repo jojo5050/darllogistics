@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('assigned_vehicles', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained()->onDelete('cascade');
             $table->foreignId('driver_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
             $table->date('date_assigned');
             $table->integer('status')->nullable();

@@ -55,7 +55,7 @@ class RouteController extends Controller
             'driver_id' => 'required|exists:users,id',
             'dispatcher_id' => 'required|exists:users,id',
             'load_name' => 'required|string',
-            'load_number' => 'required|integer',
+            'load_number' => 'required|string',
             'broker_name' => 'required|string',
             'broker_email' => 'required|email',
             'rate' => 'nullable|numeric|min:0',

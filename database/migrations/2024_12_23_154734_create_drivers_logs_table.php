@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('drivers_logs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('driver_id')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('rate_confirmation_id')->unique()->nullable();
             $table->string('rate_confirmation')->unique()->nullable();
             $table->timestamp('date_uploaded')->useCurrent();

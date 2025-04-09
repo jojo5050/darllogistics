@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('shipments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('tracking_number')->unique();
             $table->string('origin');
             $table->string('destination');
@@ -20,7 +21,6 @@ return new class extends Migration
             $table->decimal('weight', 8, 2)->nullable();
             $table->decimal('cost', 10, 2)->nullable();
             $table->unsignedBigInteger('driver_id')->nullable();
-            $table->foreign('driver_id')->references('id')->on('drivers')->onDelete('set null');
             $table->timestamps();
         });
     }
