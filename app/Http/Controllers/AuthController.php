@@ -138,8 +138,7 @@ class AuthController extends Controller
             return response()->json([
                 'code' => 1,
                 'message' => 'User registered successfully!',
-                'user' => $user->load('profile'),
-                'company' => $user->profile->company,
+                'user' => $user->load('profile', 'company'),
                 'token' => $token,
             ], 201);
         } catch (\Exception $e) {
