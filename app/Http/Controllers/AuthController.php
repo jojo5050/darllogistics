@@ -116,7 +116,7 @@ class AuthController extends Controller
             ]);
 
             // Create the profile
-            Profile::create([
+            $profile = Profile::create([
                 'user_id' => $user->id,
                 'company_id' => $validatedData['company_id'],
                 'country_id' => $validatedData['country_id'],
@@ -138,7 +138,9 @@ class AuthController extends Controller
             return response()->json([
                 'code' => 1,
                 'message' => 'User registered successfully!',
-                'user' => $user->load('profile', 'company'),
+                'user' => $user,
+                'profile' => $profile,
+                'company' => $user->profile->company,
                 'token' => $token,
             ], 201);
         } catch (\Exception $e) {
