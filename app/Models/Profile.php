@@ -18,10 +18,16 @@ class Profile extends Model
         'city_id',
         'dot_number',
         'mc_number',
+        'company_id',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }
