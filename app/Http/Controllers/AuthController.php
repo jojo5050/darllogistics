@@ -139,7 +139,6 @@ class AuthController extends Controller
                 'code' => 1,
                 'message' => 'User registered successfully!',
                 'user' => $user,
-                'profile' => $profile,
                 'company' => $user->profile->company,
                 'token' => $token,
             ], 201);
