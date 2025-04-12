@@ -55,7 +55,7 @@ class CompanyController extends Controller
             return response()->json(['data' => $company, 'code' => 1, 'message' => 'Success', 'status' => 'success'], 201);
 
         } catch(Exception $e) {
-            return response()->json(['data' => [], 'code' => 0, 'message' => 'Success', 'status' => 'failed'], 500);
+            return response()->json(['data' => [], 'code' => 0, 'message' => 'Failed. Error: '.$e->getMessage(), 'status' => 'failed'], 500);
         }
     }
 
