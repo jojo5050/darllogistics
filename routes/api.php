@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user', function (Request $request) {
             $data = $request->user();
             $data['profile'] = $data->profile;
+            $data['company'] = $data->company;
             $data['profile']['avatar'] = 'https://ui-avatars.com/api/?name='.$data->name;
             $data['payment'] = $data->payment;
             return response()->json(['data' => $data, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
@@ -99,6 +100,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{id}', [CompanyController::class, 'update']);
             Route::delete('/{id}', [CompanyController::class, 'destroy']);
         });
+
+        Route::post('/v2/add-company-staff', [AuthController::class, 'registerCOmpanyStaff']);
 
         // Loads Routes
         Route::prefix('routes')->group(function () {
