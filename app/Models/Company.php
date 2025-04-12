@@ -28,4 +28,9 @@ class Company extends Model
         'facebook',
         'website',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
