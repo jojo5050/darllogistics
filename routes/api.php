@@ -101,7 +101,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{id}', [CompanyController::class, 'destroy']);
         });
 
-        Route::post('/add-company-staff', [AuthController::class, 'registerCOmpanyStaff']);
+        Route::post('/add-company-staff', [AuthController::class, 'registerCompanyStaff']);
 
         // Loads Routes
         Route::prefix('routes')->group(function () {

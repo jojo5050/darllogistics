@@ -81,7 +81,7 @@ class AuthController extends Controller
         }
     }
 
-    public function registerCOmpanyStaff(Request $request)
+    public function registerCompanyStaff(Request $request)
     {
         try {
             $validatedData = $request->validate([
@@ -139,9 +139,7 @@ class AuthController extends Controller
             return response()->json([
                 'code' => 1,
                 'message' => 'User registered successfully!',
-                'user' => $user,
-                'company' => $user->company,
-                'profile' => $user->profile,
+                'user' => $user->load('profile', 'company'),
                 'token' => $token,
             ], 201);
         } catch (\Exception $e) {
