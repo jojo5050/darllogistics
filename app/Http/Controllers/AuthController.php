@@ -69,6 +69,7 @@ class AuthController extends Controller
                 'code' => 1,
                 'message' => 'User registered successfully!',
                 'user' => $user,
+                'profile' => $user->profile,
                 'token' => $token,
             ], 201);
         } catch (\Exception $e) {
@@ -139,6 +140,8 @@ class AuthController extends Controller
                 'code' => 1,
                 'message' => 'User registered successfully!',
                 'user' => $user,
+                'company' => $user->company,
+                'profile' => $user->profile,
                 'token' => $token,
             ], 201);
         } catch (\Exception $e) {
