@@ -11,12 +11,12 @@ class VehicleController extends Controller
     {
         try{
             $vehicles = Vehicle::all();
-            return response()->json(['message' => 'Vehicle registered successfully', 'data' => $vehicles, 'code' => 1, 'status' => 'success'], 201);
+            return response()->json(['message' => 'Vehicles fetched successfully', 'data' => $vehicles, 'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'code' => 0,
                 'status' => 'failed',
-                'message' => 'Failed to register vehicle. Please try again.',
+                'message' => 'Failed to fetch vehicle. Please try again.',
                 'error' => $e->getMessage(),
             ], 500);
         }
