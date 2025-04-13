@@ -41,6 +41,7 @@ class VehicleController extends Controller
             'vin' => 'nullable|string|max:225',
             'plateNumber' => 'nullable|string|max:225',
             'status' => 'nullable|integer',
+            'company_id' => 'required|exists:vehicles,id',
         ]);
 
         try{
