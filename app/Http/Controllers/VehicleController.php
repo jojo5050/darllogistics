@@ -35,16 +35,17 @@ class VehicleController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'vehicleType' => 'nullable|string|max:225',
-            'number' => 'nullable|string|max:225',
-            'vin' => 'nullable|string|max:225',
-            'plateNumber' => 'nullable|string|max:225',
-            'status' => 'nullable|integer',
-            'company_id' => 'required|exists:vehicles,id',
-        ]);
-
         try{
+            $validatedData = $request->validate([
+                'vehicleType' => 'nullable|string|max:225',
+                'number' => 'nullable|string|max:225',
+                'vin' => 'nullable|string|max:225',
+                'plateNumber' => 'nullable|string|max:225',
+                'status' => 'nullable|integer',
+                'company_id' => 'required|exists:vehicles,id',
+            ]);
+
+
             $vehicle = Vehicle::create($validatedData);
             return response()->json(['message' => 'Vehicle registered successfully', 'data' => $vehicle, 'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
