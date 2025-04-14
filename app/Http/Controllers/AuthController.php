@@ -24,10 +24,10 @@ class AuthController extends Controller
                 'role' => 'required|string',
 
                 // Profile fields
-                'country_id' => 'required|string',
-                'state_id' => 'required|string',
-                'city_id' => 'required|string',
-                'address1' => 'required|string',
+                'country_id' => 'nullable|string',
+                'state_id' => 'nullable|string',
+                'city_id' => 'nullable|string',
+                'address1' => 'nullable|string',
                 'address2' => 'nullable|string',
                 'gender' => 'nullable|string|max:10',
                 'dot_number' => 'nullable|string',
@@ -93,10 +93,10 @@ class AuthController extends Controller
 
                 // Profile fields
                 'company_id' => 'required|exists:companies,id',
-                'country_id' => 'required|string',
-                'state_id' => 'required|string',
-                'city_id' => 'required|string',
-                'address1' => 'required|string',
+                'country_id' => 'nullable|string',
+                'state_id' => 'nullable|string',
+                'city_id' => 'nullable|string',
+                'address1' => 'nullable|string',
                 'address2' => 'nullable|string',
                 'gender' => 'nullable|string|max:10',
                 'dot_number' => 'nullable|string',
