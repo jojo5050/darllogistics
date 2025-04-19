@@ -43,12 +43,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('v2')->group(function () {
 
         Route::get('/user', function (Request $request) {
-            $data = $request->user();
-            $data['profile'] = $data->profile;
-            $data['company'] = $data->company;
-            $data['profile']['avatar'] = 'https://ui-avatars.com/api/?name='.$data->name;
-            $data['payment'] = $data->payment;
-            return response()->json(['data' => $data, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+            $user = $request->user();
+
+            $user->load(['profile', 'company', 'payment']);
+
+            if ($user->profile) {
+                $user->profile->avatar_url = 'https://ui-avatars.com/api/?name=' . urlencode($user->name);
+            }
+
+            return response()->json([
+                'data' => $user,
+                'message' => 'Auth User fetched successfully',
+                'code' => 1,
+                'status' => 'success'
+            ], 200);
         });
 
         // Vehicles Routes
