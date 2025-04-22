@@ -14,7 +14,7 @@ class RouteController extends Controller
     public function index()
     {
         try{
-            $data = Route::with(['user', 'dispatcher', 'driver', 'jobs', 'extraFees'])->get();
+            $data = Route::with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->get();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Routes fecthed successfully.',
@@ -32,7 +32,7 @@ class RouteController extends Controller
     public function driverRoutes(Request $request)
     {
         try{
-            $data = Route::where('driver_id', $request->driver_id)->with(['driver', 'dispatcher', 'jobs', 'extraFees'])->get();
+            $data = Route::where('driver_id', $request->driver_id)->with(['driver', 'company', 'dispatcher', 'jobs', 'extraFees'])->get();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Driver assigned routes fecthed successfully.',
@@ -52,6 +52,7 @@ class RouteController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'vehicle_id' => 'required|exists:vehicles,id',
+            'company_id' => 'required|exists:companies,id',
             'driver_id' => 'required|exists:users,id',
             'dispatcher_id' => 'required|exists:users,id',
             'load_name' => 'required|string',
@@ -87,6 +88,7 @@ class RouteController extends Controller
                 'user_id' => $validated['user_id'],
                 'vehicle_id' => $validated['vehicle_id'],
                 'driver_id' => $validated['driver_id'],
+                'company_id' => $validated['company_id'],
                 'dispatcher_id' => $validated['dispatcher_id'],
                 'load_name' => $validated['load_name'],
                 'load_number' => $validated['load_number'],
@@ -130,7 +132,7 @@ class RouteController extends Controller
             if (!$route) {
                 return response()->json(['status' => 'failed', 'message' => 'Route not found'], 404);
             }
-            $data = $route->load(['user', 'dispatcher', 'driver', 'jobs', 'extraFees']);
+            $data = $route->load(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
         }catch(Exception $e){
             return response()->json([

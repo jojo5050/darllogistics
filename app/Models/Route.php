@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Route extends Model
 {
-    protected $fillable = ['user_id', 'rate', 'vehicle_id', 'driver_id', 'dispatcher_id', 'load_name', 'load_number', 'broker_name', 'broker_email'];
+    protected $fillable = ['user_id', 'rate', 'vehicle_id', 'driver_id', 'company_id', 'dispatcher_id', 'load_name', 'load_number', 'broker_name', 'broker_email'];
 
     public function user()
     {
@@ -16,6 +16,11 @@ class Route extends Model
     public function driver()
     {
         return $this->belongsTo(User::class, 'driver_id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 
     public function dispatcher()
