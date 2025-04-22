@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotificationMailer;
 use App\Models\Company;
 use App\Models\Profile;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -54,7 +56,6 @@ class UserController extends Controller
             $data = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
-                'password' => 'required|string|min:8',
                 'role' => 'nullable|string',
                 'company_id' => 'required|exists:companies,id',
                 'country_id' => 'required|string',
@@ -62,7 +63,9 @@ class UserController extends Controller
                 'city_id' => 'required|string',
             ]);
 
-            $data['password'] = bcrypt($data['password']);
+            $password = ucfirst(uniqid());
+
+            $data['password'] = bcrypt($password);
             $user = User::create($data);
 
             $profile = new Profile();
@@ -72,7 +75,17 @@ class UserController extends Controller
             $profile->state_id = $data['state_id'];
             $profile->city_id = $data['city_id'];
 
-            return response()->json(['data' => $user, 'message' => 'User added successfully', 'code' => 1, 'status' => 'success'], 201);
+            $profile->save();
+
+            $message = '<p>Dear '.$data['name'].'</p>';
+            $message .= '<p>This is to inform you that you have been registered as '.$data['role'].' in '.$profile->comapny->name.' on '.$_ENV['APP_NAME'].'</p>';
+            $message .= '<p>Below are your login details:</p>';
+            $message .= '<p>Email: '.$data['email'].'</p>';
+            $message .= '<p>Password: '.$password.'</p>';
+
+            Mail::to($data['email'])->send(new NotificationMailer($message));
+
+            return response()->json(['data' => $user->load(['profile', 'company']), 'message' => 'User added successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch(Exception $e) {
             return response()->json(['data' => [], 'message' => 'Failed to add user. Error: '.$e->getMessage(), 'code' => 0, 'status' => 'failed'], 500);
         }
