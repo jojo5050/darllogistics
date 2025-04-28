@@ -89,7 +89,6 @@ class AuthController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:65|unique:users,email',
                 'phone' => 'required|string|max:22|unique:users,phone',
-                'password' => 'required|string|min:8|confirmed',
                 'role' => 'required|string',
 
                 // Profile fields
