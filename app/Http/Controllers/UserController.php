@@ -88,7 +88,7 @@ class UserController extends Controller
 
             Mail::to($data['email'])->send(new NotificationMailer($message));
 
-            $d = [$user, $profile, $company];
+            $d = ["user" => $user, "profile" => $profile, "company" => $company];
 
             return response()->json(['data' => $d, 'message' => 'User added successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch(Exception $e) {
