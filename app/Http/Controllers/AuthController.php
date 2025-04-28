@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Payment;
 use App\Models\Profile;
 use App\Models\User;
@@ -168,6 +169,7 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
         $profile = Profile::where('user_id', $user->id)->first();
+        $company = Company::where('user_id', $user->id)->first();
         $profile['avatar'] = 'https://ui-avatars.com/api/?name='.$user->name;
         $payment = Payment::where('user_id', $user->id)->orderBy('id', 'desc')->first();
 
@@ -177,6 +179,7 @@ class AuthController extends Controller
             'token' => $token,
             'user' => $user,
             'profile' => $profile,
+            'company' => $company,
             'payment' => $payment
         ]);
     }
