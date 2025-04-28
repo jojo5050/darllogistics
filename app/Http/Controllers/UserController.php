@@ -88,7 +88,9 @@ class UserController extends Controller
 
             Mail::to($data['email'])->send(new NotificationMailer($message));
 
-            return response()->json(['data' => $user->load(['profile', 'company']), 'message' => 'User added successfully', 'code' => 1, 'status' => 'success'], 201);
+            $d = [$user, $profile, $company];
+
+            return response()->json(['data' => $d, 'message' => 'User added successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch(Exception $e) {
             return response()->json(['data' => [], 'message' => 'Failed to add user. Error: '.$e->getMessage(), 'code' => 0, 'status' => 'failed'], 500);
         }
