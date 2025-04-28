@@ -177,10 +177,7 @@ class AuthController extends Controller
             'code' => 1,
             'message' => 'Login successful!',
             'token' => $token,
-            'user' => $user,
-            'profile' => $profile,
-            'company' => $company,
-            'payment' => $payment
+            'data' => array_merge($user, $profile, $company, $payment)
         ]);
     }
 
