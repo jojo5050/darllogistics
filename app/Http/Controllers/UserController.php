@@ -78,8 +78,10 @@ class UserController extends Controller
 
             $profile->save();
 
+            $company = Company::where('id', $data['company_id'])->first();
+
             $message = '<p>Dear '.$data['name'].'</p>';
-            $message .= '<p>This is to inform you that you have been registered as '.$data['role'].' in '.$profile->comapny->name.' on '.$_ENV['APP_NAME'].'</p>';
+            $message .= '<p>This is to inform you that you have been registered as '.$data['role'].' in '.$company->name.' on '.$_ENV['APP_NAME'].'</p>';
             $message .= '<p>Below are your login details:</p>';
             $message .= '<p>Email: '.$data['email'].'</p>';
             $message .= '<p>Password: '.$password.'</p>';
