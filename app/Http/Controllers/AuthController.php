@@ -177,8 +177,14 @@ class AuthController extends Controller
             'code' => 1,
             'message' => 'Login successful!',
             'token' => $token,
-            'data' => array_merge($user, $profile, $company, $payment)
+            'data' => array_merge(
+                $user->toArray(),
+                $profile->toArray(),
+                $company->toArray(),
+                $payment->toArray()
+            ),
         ]);
+
     }
 
     public function logout(Request $request)
