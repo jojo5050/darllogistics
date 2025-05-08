@@ -58,6 +58,7 @@ class UserController extends Controller
                 'email' => 'required|email|unique:users,email',
                 'phone' => 'required|unique:users,phone',
                 'role' => 'nullable|string',
+                'company_type' => 'nullable|string',
                 'company_id' => 'required|exists:companies,id',
                 'country_id' => 'required|string',
                 'state_id' => 'required|string',
@@ -72,6 +73,7 @@ class UserController extends Controller
 
             $profile = new Profile();
             $profile->user_id = $user->id;
+            $profile->company_type = $data['company_type'];
             $profile->company_id = $data['company_id'];
             $profile->country_id = $data['country_id'];
             $profile->state_id = $data['state_id'];

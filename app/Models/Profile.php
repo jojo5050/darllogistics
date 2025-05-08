@@ -16,6 +16,7 @@ class Profile extends Model
         'zip_code',
         'city_id',
         'company_id',
+        'company_type',
     ];
 
     public function user()
