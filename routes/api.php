@@ -178,6 +178,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('drivers')->group(function () {
             Route::get('/', [UserController::class, 'drivers']);
             Route::get('/routes/{driver_id}', [RouteController::class, 'driverRoutes']);
+            Route::post('/upload-bol', [RouteController::class, 'UploadBol']);
         });
 
         // Dispatchers

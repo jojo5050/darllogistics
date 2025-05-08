@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bol;
 use App\Models\ExtraFee;
 use App\Models\Route;
 use App\Models\RouteJob;
@@ -249,6 +250,45 @@ class RouteController extends Controller
                 'status' => 'failed',
                 'message' => 'Error: '.$e->getMessage(),
                 'data' => [],
+            ], 201);
+        }
+
+    }
+
+    public function UploadBol(Request $request)
+    {
+        try{
+            $validated = $request->validate([
+                'company_id' => 'required|integer|exists:companies,id',
+                'route_id' => 'required|integer|exists:routes,id',
+                'driver_id' => 'required|integer|exists:users,id',
+                'image.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+
+            $paths = [];
+
+            foreach ($request->file('image') as $file) {
+                $path = $file->store('bol/images', 'public');
+                $paths[] = $path;
+                $bol = new Bol();
+                $bol->bol = $path;
+                $bol->company_id = $request->company_d;
+                $bol->user_id = $request->driver_id;
+                $bol->route_id = $request->route_id;
+                $bol->save();
+            }
+
+            return response()->json([
+                'message' => 'BOL file(s) uploaded successfully',
+                'data' => $bol->load(['user', 'company']),
+                'files' => $paths,
+                'status' => 'success'
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'message' => 'BOL file(s) upload failed. Error: '.$e->getMessage(),
+                'status' => 'failed',
+                'code' => 0,
             ], 201);
         }
 
