@@ -11,7 +11,7 @@ class CompanyController extends Controller
     public function index()
     {
         try{
-            $data = Company::all();
+            $data = Company::paginate(30);
             return response()->json(['data' => $data, 'message' => 'Companies fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
             return response()->json([

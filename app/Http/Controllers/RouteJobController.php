@@ -10,7 +10,8 @@ class RouteJobController extends Controller
 {
     public function index()
     {
-        return response()->json(RouteJob::all());
+        $routeJobs = RouteJob::paginate(30);
+        return response()->json(['data' => $routeJobs, 'message' => 'Route jobs fetched successfully', 'status' => 'success'], 201);
     }
 
     public function store(Request $request)
@@ -41,7 +42,7 @@ class RouteJobController extends Controller
     public function pickups()
     {
         try{
-            $data = RouteJob::where('jobType', 'pickup')->get();
+            $data = RouteJob::where('jobType', 'pickup')->paginate(30);
 
             if (!$data) {
                 return response()->json(['status' => 'failed', 'message' => 'Route job not found'], 404);
@@ -60,7 +61,7 @@ class RouteJobController extends Controller
     public function deliveries()
     {
         try{
-            $data = RouteJob::where('jobType', 'delivery')->get();
+            $data = RouteJob::where('jobType', 'delivery')->paginate(30);
 
             if (!$data) {
                 return response()->json(['status' => 'failed', 'message' => 'Route job not found'], 404);

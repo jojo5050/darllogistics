@@ -14,7 +14,7 @@ class RouteController extends Controller
     public function index()
     {
         try{
-            $data = Route::with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->get();
+            $data = Route::with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Routes fecthed successfully.',
