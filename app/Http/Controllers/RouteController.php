@@ -294,7 +294,6 @@ class RouteController extends Controller
             return response()->json([
                 'message' => 'BOL file(s) uploaded successfully',
                 'data' => $data,
-                'files' => $paths,
                 'status' => 'success'
             ], 201);
 
