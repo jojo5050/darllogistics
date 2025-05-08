@@ -278,7 +278,7 @@ class RouteController extends Controller
                 $bol->save();
             }
 
-            $data = Bol::where('route_id', $request->route_id)->load(['route', 'user', 'company']);
+            $data = Bol::where('route_id', $request->route_id)->get()->load(['route', 'user', 'company']);
 
             return response()->json([
                 'message' => 'BOL file(s) uploaded successfully',
