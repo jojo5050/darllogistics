@@ -132,7 +132,7 @@ class UserController extends Controller
             $profile->city_id = $data['city_id'];
             $profile->percentage = $data['percentage'];
 
-            $profile->save();
+            $profile->update();
 
             return response()->json(['data' => $user->load('profile', 'company'), 'message' => 'User updated successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch (Exception $e) {
