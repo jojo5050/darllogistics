@@ -32,7 +32,7 @@ class RouteController extends Controller
     public function driverRoutes(Request $request)
     {
         try{
-            $data = Route::where('driver_id', $request->driver_id)->with(['driver', 'company', 'dispatcher', 'jobs', 'extraFees'])->get();
+            $data = Route::where('driver_id', $request->driver_id)->with(['driver', 'company', 'dispatcher', 'jobs', 'extraFees'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Driver assigned routes fecthed successfully.',
