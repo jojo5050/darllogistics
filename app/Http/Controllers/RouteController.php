@@ -273,7 +273,7 @@ class RouteController extends Controller
 
             foreach ($request->file('image') as $file) {
                 $path = $file->store('bol/images', 'public');
-                $path = env('APP_URL')."/".$path;
+                $path = env('APP_URL')."/"."storage"."/".$path;
                 $paths[] = $path;
 
                 $bol = new Bol();
