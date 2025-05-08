@@ -143,6 +143,45 @@ class RouteController extends Controller
         }
     }
 
+    public function companyRoutes(Request $request)
+    {
+        try{
+            $route = Route::where('company_id', $request->id)->paginate(30);
+            if ($route->isEmpty()) {
+                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+            }
+            $data = $route->load(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees']);
+            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function dropRoute(Request $request)
+    {
+        try{
+            $route = Route::find($request->id);
+            if($route)
+            {
+                $route->status = 'delivered';
+                $route->save();
+
+                return response()->json(['data' => $route, 'message' => 'Route updated successfully', 'status' => 'success'], 201);
+            }
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+
+    }
+
     public function update(Request $request, Route $route)
     {
         $validated = $request->validate([

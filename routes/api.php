@@ -99,6 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{id}', [CompanyController::class, 'show']);
             Route::put('/{id}', [CompanyController::class, 'update']);
             Route::delete('/{id}', [CompanyController::class, 'destroy']);
+            Route::get('/{id}/routes', [RouteController::class, 'companyRoutes']);
         });
 
         Route::post('/add-company-staff', [UserController::class, 'store']);
@@ -110,6 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{id}', [RouteController::class, 'show']);
             Route::put('/{id}', [RouteController::class, 'update']);
             Route::delete('/{id}', [RouteController::class, 'destroy']);
+            Route::get('/drop-route/{id}', [RouteController::class, 'dropRoute']);
         });
 
         Route::get('/deliveries', [RouteJobController::class, 'deliveries']);
