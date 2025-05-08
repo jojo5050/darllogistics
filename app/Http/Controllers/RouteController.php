@@ -257,7 +257,7 @@ class RouteController extends Controller
 
     public function UploadBol(Request $request)
     {
-        try{
+        try {
             $validated = $request->validate([
                 'company_id' => 'required|integer|exists:companies,id',
                 'route_id' => 'required|integer|exists:routes,id',
@@ -265,20 +265,27 @@ class RouteController extends Controller
                 'image.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
+            if (!$request->hasFile('image')) {
+                return response()->json(['message' => 'No files uploaded', 'status' => 'failed', 'data' => []], 201);
+            }
+
             $paths = [];
 
             foreach ($request->file('image') as $file) {
                 $path = $file->store('bol/images', 'public');
                 $paths[] = $path;
+
                 $bol = new Bol();
                 $bol->bol = $path;
-                $bol->company_id = $request->company_d;
+                $bol->company_id = $request->company_id;
                 $bol->user_id = $request->driver_id;
                 $bol->route_id = $request->route_id;
                 $bol->save();
             }
 
-            $data = Bol::where('route_id', $request->route_id)->get()->load(['route', 'user', 'company']);
+            $data = Bol::where('route_id', $request->route_id)
+                ->with(['route', 'user', 'company'])
+                ->get();
 
             return response()->json([
                 'message' => 'BOL file(s) uploaded successfully',
@@ -286,14 +293,13 @@ class RouteController extends Controller
                 'files' => $paths,
                 'status' => 'success'
             ], 201);
-        }catch(Exception $e){
-            return response()->json([
-                'message' => 'BOL file(s) upload failed. Error: '.$e->getMessage(),
-                'status' => 'failed',
-                'code' => 0,
-            ], 201);
-        }
 
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'BOL upload failed: ' . $e->getMessage(),
+                'status' => 'failed'
+            ], 500);
+        }
     }
 
     public function update(Request $request, Route $route)
