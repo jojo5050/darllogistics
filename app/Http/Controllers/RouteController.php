@@ -287,7 +287,7 @@ class RouteController extends Controller
                 $bol_ids[] = $bol->id;
             }
 
-            $data = Bol::whereIn('route_id', $bol_ids)
+            $data = Bol::whereIn('id', $bol_ids)
                 ->with(['route', 'user', 'company'])
                 ->get();
 
