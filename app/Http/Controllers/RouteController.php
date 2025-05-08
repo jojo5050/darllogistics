@@ -270,6 +270,7 @@ class RouteController extends Controller
             }
 
             $paths = [];
+            $bol_ids = [];
 
             foreach ($request->file('image') as $file) {
                 $path = $file->store('bol/images', 'public');
@@ -282,9 +283,11 @@ class RouteController extends Controller
                 $bol->user_id = $request->driver_id;
                 $bol->route_id = $request->route_id;
                 $bol->save();
+
+                $bol_ids[] = $bol->id;
             }
 
-            $data = Bol::where('route_id', $request->route_id)
+            $data = Bol::whereIn('route_id', $bol_ids)
                 ->with(['route', 'user', 'company'])
                 ->get();
 
