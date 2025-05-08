@@ -103,12 +103,19 @@ class UserController extends Controller
     public function update(Request $request)
     {
         try{
-            $user = User::find($request->id);
+            $user = $request->user();
             $data = $request->validate([
                 'name' => 'string|max:255',
                 'email' => 'email|unique:users,email,' . $user->id,
+                'phone' => 'required|unique:users,phone,' . $user->id,
                 'password' => 'nullable|string|min:8',
                 'role' => 'nullable|string',
+                'company_type' => 'nullable|string',
+                'company_id' => 'required|exists:companies,id',
+                'country_id' => 'required|string',
+                'state_id' => 'required|string',
+                'city_id' => 'required|string',
+                'percentage' => 'required|numeric',
             ]);
 
             if (isset($data['password'])) {
@@ -116,7 +123,18 @@ class UserController extends Controller
             }
 
             $user->update($data);
-            return response()->json(['data' => $user, 'message' => 'User updated successfully', 'code' => 1, 'status' => 'success'], 201);
+
+            $profile = Profile::where('user_id', $user->id);
+            $profile->company_type = $data['company_type'];
+            $profile->company_id = $data['company_id'];
+            $profile->country_id = $data['country_id'];
+            $profile->state_id = $data['state_id'];
+            $profile->city_id = $data['city_id'];
+            $profile->percentage = $data['percentage'];
+
+            $profile->save();
+
+            return response()->json(['data' => $user->load('profile', 'company'), 'message' => 'User updated successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch (Exception $e) {
             return response()->json(['data' => [], 'message' => 'Failed to update user. Error: '.$e->getMessage(), 'code' => 0, 'status' => 'failed'], 500);
         }
