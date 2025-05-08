@@ -99,7 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{id}', [CompanyController::class, 'show']);
             Route::put('/{id}', [CompanyController::class, 'update']);
             Route::delete('/{id}', [CompanyController::class, 'destroy']);
-            Route::get('/{id}/routes', [RouteController::class, 'companyRoutes']);
+            Route::get('/routes/{id}', [RouteController::class, 'companyRoutes']);
         });
 
         Route::post('/add-company-staff', [UserController::class, 'store']);
