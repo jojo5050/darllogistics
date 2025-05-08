@@ -29,6 +29,42 @@ class RouteController extends Controller
         }
     }
 
+    public function deliveredRoutes(Request $request)
+    {
+        try{
+            $data = Route::where('status', 'delivered')->with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Delivered routes fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function pendingRoutes(Request $request)
+    {
+        try{
+            $data = Route::where('status', 'pending')->with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Pending routes fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
     public function driverRoutes(Request $request)
     {
         try{
@@ -147,6 +183,42 @@ class RouteController extends Controller
     {
         try{
             $route = Route::where('company_id', $request->id)->paginate(30);
+            if ($route->isEmpty()) {
+                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+            }
+            $data = $route->load(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees']);
+            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function companyDeliveredRoutes(Request $request)
+    {
+        try{
+            $route = Route::where('company_id', $request->id)->where('status', 'delivered')->paginate(30);
+            if ($route->isEmpty()) {
+                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+            }
+            $data = $route->load(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees']);
+            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function companyPendingRoutes(Request $request)
+    {
+        try{
+            $route = Route::where('company_id', $request->id)->where('status', 'pending')->paginate(30);
             if ($route->isEmpty()) {
                 return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
             }

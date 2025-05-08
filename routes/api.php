@@ -100,6 +100,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{id}', [CompanyController::class, 'update']);
             Route::delete('/{id}', [CompanyController::class, 'destroy']);
             Route::get('/routes/{id}', [RouteController::class, 'companyRoutes']);
+            Route::get('/delivered-routes/{id}', [RouteController::class, 'companyDeliveredRoutes']);
+            Route::get('/pending-routes/{id}', [RouteController::class, 'companyPendingRoutes']);
         });
 
         Route::post('/add-company-staff', [UserController::class, 'store']);
@@ -112,6 +114,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{id}', [RouteController::class, 'update']);
             Route::delete('/{id}', [RouteController::class, 'destroy']);
             Route::get('/drop-route/{id}', [RouteController::class, 'dropRoute']);
+            Route::get('/delivered-routes', [RouteController::class, 'deliveredRoutes']);
+            Route::get('/pending-routes', [RouteController::class, 'pendingRoutes']);
         });
 
         Route::get('/deliveries', [RouteJobController::class, 'deliveries']);
