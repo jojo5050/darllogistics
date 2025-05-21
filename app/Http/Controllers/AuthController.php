@@ -81,6 +81,61 @@ class AuthController extends Controller
         }
     }
 
+    public function registerWithGoogle(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'userEmail' => 'required|string|email|max:65|unique:users,email',
+                'idToken' => 'nullable|string',
+                'accessToken' => 'nullable|string',
+            ]);
+
+            $name = substr(0,strpos('@', $request->userEmail),$request->userEmail);
+
+            // Create the user
+            $user = User::create([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'password' => Hash::make(ucfirst(uniqid())),
+                'role' => 'google user',
+            ]);
+
+            // Create the profile
+            Profile::create([
+                'user_id' => $user->id,
+                'country_id' => $validatedData['country_id'] ?? null,
+                'state_id' => $validatedData['state_id'] ?? null,
+                'city_id' => $validatedData['city_id'] ?? null,
+                'address1' => $validatedData['address1'] ?? null,
+                'address2' => $validatedData['address2'] ?? null,
+                'gender' => $validatedData['gender'] ?? null,
+                'dot_number' => $validatedData['dot_number'] ?? null,
+                'mc_number' => $validatedData['mc_number'] ?? null,
+                'zip_code' => $validatedData['zip_code'] ?? null,
+                'payment_method' => $validatedData['payment_method'] ?? null,
+                'currency' => $validatedData['currency'] ?? null,
+                'image_path' => $validatedData['image_path'] ?? null,
+            ]);
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'code' => 1,
+                'message' => 'User registered successfully!',
+                'user' => $user->load('profile'),
+                'token' => $token,
+            ], 201);
+
+        }catch (\Exception $e) {
+
+            return response()->json([
+                'code' => 0,
+                'message' => 'Registration failed. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function registerCompanyStaff(Request $request)
     {
         try {

@@ -101,6 +101,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{id}', [CompanyController::class, 'destroy']);
             Route::get('/routes/{id}', [RouteController::class, 'companyRoutes']);
             Route::get('/delivered-routes/{id}', [RouteController::class, 'companyDeliveredRoutes']);
+            Route::get('/pickedup-routes/{id}', [RouteController::class, 'companyPickedUpRoutes']);
             Route::get('/pending-routes/{id}', [RouteController::class, 'companyPendingRoutes']);
         });
 
@@ -114,7 +115,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{id}', [RouteController::class, 'update']);
             Route::delete('/{id}', [RouteController::class, 'destroy']);
             Route::get('/drop-route/{id}', [RouteController::class, 'dropRoute']);
+            Route::get('/pickup-route/{id}', [RouteController::class, 'pickupRoute']);
             Route::get('/delivered-routes', [RouteController::class, 'deliveredRoutes']);
+            Route::get('/pickedup-routes', [RouteController::class, 'pickedupRoutes']);
             Route::get('/pending-routes', [RouteController::class, 'pendingRoutes']);
         });
 

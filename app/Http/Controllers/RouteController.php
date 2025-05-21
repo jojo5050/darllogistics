@@ -48,6 +48,24 @@ class RouteController extends Controller
         }
     }
 
+    public function pickedupRoutes(Request $request)
+    {
+        try{
+            $data = Route::where('status', 'picked')->with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Picked up routes fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
     public function pendingRoutes(Request $request)
     {
         try{
@@ -216,6 +234,24 @@ class RouteController extends Controller
         }
     }
 
+    public function companyPickedUpRoutes(Request $request)
+    {
+        try{
+            $route = Route::where('company_id', $request->id)->where('status', 'picked')->paginate(30);
+            if ($route->isEmpty()) {
+                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+            }
+            $data = $route->load(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees']);
+            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
     public function companyPendingRoutes(Request $request)
     {
         try{
@@ -253,6 +289,26 @@ class RouteController extends Controller
             ], 201);
         }
 
+    }
+
+    public function pickupRoute(Request $request)
+    {
+        try{
+            $route = Route::find($request->id);
+            if($route)
+            {
+                $route->status = 'picked';
+                $route->save();
+
+                return response()->json(['data' => $route, 'message' => 'Route updated successfully', 'status' => 'success'], 201);
+            }
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
     }
 
     public function UploadBol(Request $request)
