@@ -63,7 +63,9 @@ class UserController extends Controller
                 'country_id' => 'required|string',
                 'state_id' => 'required|string',
                 'city_id' => 'required|string',
-                'percentage' => 'required|numeric',
+                'percentage' => 'nullable|numeric',
+                'dot_number' => 'nullable|string',
+                'mc_number' => 'nullable|string',
             ]);
 
             $password = ucfirst(uniqid());
@@ -78,7 +80,7 @@ class UserController extends Controller
             $profile->country_id = $data['country_id'];
             $profile->state_id = $data['state_id'];
             $profile->city_id = $data['city_id'];
-            $profile->percentage = $data['percentage'];
+            $profile->percentage = $data['percentage'] ?? 0.00;
 
             $profile->save();
 
