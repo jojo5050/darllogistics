@@ -84,6 +84,60 @@ class RouteController extends Controller
         }
     }
 
+    public function driverDeliveredRoutes(Request $request)
+    {
+        try{
+            $data = Route::where('status', 'delivered')->where('driver_id', $request->driver_id)->with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Driver delivered routes fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function driverPendingRoutes(Request $request)
+    {
+        try{
+            $data = Route::where('status', 'pending')->where('driver_id', $request->driver_id)->with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Driver pending routes fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function driverPickedRoutes(Request $request)
+    {
+        try{
+            $data = Route::where('status', 'picked')->where('driver_id', $request->driver_id)->with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Driver picked routes fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
     public function driverRoutes(Request $request)
     {
         try{

@@ -182,6 +182,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [UserController::class, 'drivers']);
             Route::get('/routes/{driver_id}', [RouteController::class, 'driverRoutes']);
             Route::post('/upload-bol', [RouteController::class, 'UploadBol']);
+            Route::get('/delivered-routes/{driver_id}', [RouteController::class, 'driverDeliveredRoutes']);
+            Route::get('/pending-routes/{driver_id}', [RouteController::class, 'driverPendingRoutes']);
+            Route::get('/pickup-routes/{driver_id}', [RouteController::class, 'driverPickedRoutes']);
         });
 
         // Dispatchers
