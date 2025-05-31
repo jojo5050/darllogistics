@@ -82,6 +82,11 @@ class UserController extends Controller
             $profile->city_id = $data['city_id'];
             $profile->percentage = $data['percentage'] ?? 0.00;
 
+            if($data['role'] == 'driver'){
+                $profile->dot_number = $data['dot_number'];
+                $profile->mc_number = $data['mc_number'];
+            }
+
             $profile->save();
 
             $company = Company::where('id', $data['company_id'])->first();
