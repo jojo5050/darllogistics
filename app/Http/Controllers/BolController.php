@@ -12,7 +12,38 @@ class BolController extends Controller
      */
     public function index()
     {
-        //
+        try{
+            $data = BOL::with(['user', 'company'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'BOLs fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function driverBols(Request $request)
+    {
+        try{
+            $data = BOL::where('user_id', $request->driver_id)->with(['user', 'company'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'BOLs fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
     }
 
     /**
@@ -36,7 +67,20 @@ class BolController extends Controller
      */
     public function show(Bol $bol)
     {
-        //
+        try{
+            $data = $bol->load(['user', 'company']);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'BOL fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
     }
 
     /**
@@ -60,6 +104,19 @@ class BolController extends Controller
      */
     public function destroy(Bol $bol)
     {
-        //
+        try{
+            $bol->delete();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'BOL deleted successfully.',
+                'data' => [],
+            ], 201);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
     }
 }

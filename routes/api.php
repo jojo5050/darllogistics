@@ -3,6 +3,7 @@
 use App\Http\Controllers\AssignedLoadController;
 use App\Http\Controllers\AssignedVehicleController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BolController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DropController;
 use App\Http\Controllers\LoadController;
@@ -190,6 +191,15 @@ Route::middleware('auth:sanctum')->group(function () {
         // Dispatchers
         Route::prefix('dispatchers')->group(function () {
             Route::get('/', [UserController::class, 'dispatchers']);
+        });
+
+        // BOL
+        Route::prefix('bol')->group(function () {
+            Route::get('/', [BolController::class, 'index']);
+            Route::get('/{bol}', [BolController::class, 'show']);
+            Route::put('/{bol}', [BolController::class, 'update']);
+            Route::delete('/{bol}', [BolController::class, 'destroy']);
+            Route::get('/driver-bols/{driver_id}', [BolController::class, 'driverBols']);
         });
     });
 });
