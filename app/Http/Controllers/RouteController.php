@@ -199,9 +199,9 @@ class RouteController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
 
-            'vehicle_id' => 'required|exists:vehicles,id',
+            'vehicle_id' => 'nullable|exists:vehicles,id',
             'company_id' => 'required|exists:companies,id',
-            'driver_id' => 'required|exists:users,id',
+            'driver_id' => 'nullable|exists:users,id',
             'dispatcher_id' => 'required|exists:users,id',
 
             'load_name' => 'required|string',
