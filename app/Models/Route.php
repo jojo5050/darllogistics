@@ -37,4 +37,9 @@ class Route extends Model
     {
         return $this->hasMany(ExtraFee::class);
     }
+
+    public function bol()
+    {
+        return $this->hasOne(Bol::class);
+    }
 }
