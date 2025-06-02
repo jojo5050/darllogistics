@@ -455,13 +455,15 @@ class RouteController extends Controller
             $data->status = 'rejected';
             $data->save();
 
-            $user_name = $data->user ? $data->user->name : 'n/a';
-            $driver_name = $data->driver ? $data->driver->name : 'n/a';
+            $route = Route::where('id', $route_id)->first();
+
+            $user_name = $route->user ? $route->user->name : 'n/a';
+            $driver_name = $route->driver ? $route->driver->name : 'n/a';
 
             $message = '<p>Dear '.$user_name.'</p>';
-            $message .= '<p>This is to inform you that load number '.$data->load_number.' was rejected by driver '.$driver_name.'.</p>';
+            $message .= '<p>This is to inform you that load number '.$route->load_number.' was rejected by driver '.$driver_name.'.</p>';
 
-            Mail::to($data->user->email)->send(new NotificationMailer($message));
+            Mail::to($route->user->email)->send(new NotificationMailer($message));
 
             return response()->json([
                 'status' => 'success',
@@ -486,13 +488,15 @@ class RouteController extends Controller
             $data->status = 'accepted';
             $data->save();
 
-            $user_name = $data->user ? $data->user->name : 'n/a';
-            $driver_name = $data->driver ? $data->driver->name : 'n/a';
+            $route = Route::where('id', $route_id)->first();
+
+            $user_name = $route->user ? $route->user->name : 'n/a';
+            $driver_name = $route->driver ? $route->driver->name : 'n/a';
 
             $message = '<p>Dear '.$user_name.'</p>';
             $message .= '<p>This is to inform you that load number '.$data->load_number.' was accepted by driver: '.$driver_name.'.</p>';
 
-            Mail::to($data->user->email)->send(new NotificationMailer($message));
+            Mail::to($route->user->email)->send(new NotificationMailer($message));
 
             return response()->json([
                 'status' => 'success',
