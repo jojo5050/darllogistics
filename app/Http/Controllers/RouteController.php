@@ -600,14 +600,22 @@ class RouteController extends Controller
 
     public function update(Request $request, Route $route)
     {
-        $validated = $request->validate([
-            'vehicle_id' => 'sometimes|string',
-            'driver_id' => 'sometimes|string',
-        ]);
+        try{
 
-        $route->update($validated);
+            $validated = $request->validate([
+                'vehicle_id' => 'sometimes|string',
+                'driver_id' => 'sometimes|string',
+            ]);
 
-        return response()->json($route);
+            $route->update($validated);
+            return response()->json(['message' => 'Route updated ', 'status' => 'success', 'data' => $route->load(['user', 'bol', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'BOL upload failed: ' . $e->getMessage(),
+                'status' => 'failed'
+            ], 500);
+        }
     }
 
     public function destroy(Request $request)
