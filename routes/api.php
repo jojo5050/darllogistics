@@ -104,6 +104,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/delivered-routes/{id}', [RouteController::class, 'companyDeliveredRoutes']);
             Route::get('/pickedup-routes/{id}', [RouteController::class, 'companyPickedUpRoutes']);
             Route::get('/pending-routes/{id}', [RouteController::class, 'companyPendingRoutes']);
+            Route::get('/accepted-routes/{id}', [RouteController::class, 'companyAcceptedRoutes']);
+            Route::get('/rejected-routes/{id}', [RouteController::class, 'companyRejectedRoutes']);
         });
 
         Route::post('/add-company-staff', [UserController::class, 'store']);
@@ -120,6 +122,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/delivered-routes', [RouteController::class, 'deliveredRoutes']);
             Route::get('/pickedup-routes', [RouteController::class, 'pickedupRoutes']);
             Route::get('/pending-routes', [RouteController::class, 'pendingRoutes']);
+            Route::get('/rejected-routes', [RouteController::class, 'rejectedRoutes']);
+            Route::get('/accepted-routes', [RouteController::class, 'acceptedRoutes']);
         });
 
         Route::get('/deliveries', [RouteJobController::class, 'deliveries']);
@@ -186,6 +190,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/delivered-routes/{driver_id}', [RouteController::class, 'driverDeliveredRoutes']);
             Route::get('/pending-routes/{driver_id}', [RouteController::class, 'driverPendingRoutes']);
             Route::get('/pickup-routes/{driver_id}', [RouteController::class, 'driverPickedRoutes']);
+            Route::get('/assign-route', [RouteController::class, 'assignRoute']);
+            Route::get('/reject-route', [RouteController::class, 'rejectRoute']);
+            Route::get('/accept-route', [RouteController::class, 'acceptRoute']);
+
+            Route::get('/rejected-routes', [RouteController::class, 'driverRejectRoute']);
+            Route::get('/accepted-routes', [RouteController::class, 'driverAcceptRoute']);
         });
 
         // Dispatchers

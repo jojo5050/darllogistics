@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotificationMailer;
 use App\Models\Bol;
 use App\Models\ExtraFee;
 use App\Models\Route;
@@ -9,6 +10,7 @@ use App\Models\RouteJob;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class RouteController extends Controller
 {
@@ -138,6 +140,42 @@ class RouteController extends Controller
         }
     }
 
+    public function driverAcceptedRoutes(Request $request)
+    {
+        try{
+            $data = Route::where('status', 'accepted')->where('driver_id', $request->driver_id)->with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Driver accepted routes fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function driverRejectedRoutes(Request $request)
+    {
+        try{
+            $data = Route::where('status', 'rejected')->where('driver_id', $request->driver_id)->with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Driver rejected routes fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
     public function driverRoutes(Request $request)
     {
         try{
@@ -160,10 +198,12 @@ class RouteController extends Controller
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
+
             'vehicle_id' => 'required|exists:vehicles,id',
             'company_id' => 'required|exists:companies,id',
             'driver_id' => 'required|exists:users,id',
             'dispatcher_id' => 'required|exists:users,id',
+
             'load_name' => 'required|string',
             'load_number' => 'required|string',
             'broker_name' => 'required|string',
@@ -324,6 +364,42 @@ class RouteController extends Controller
         }
     }
 
+    public function companyAcceptedRoutes(Request $request)
+    {
+        try{
+            $route = Route::where('company_id', $request->id)->where('status', 'accepted')->paginate(30);
+            if ($route->isEmpty()) {
+                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+            }
+            $data = $route->load(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees']);
+            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function companyRejectedRoutes(Request $request)
+    {
+        try{
+            $route = Route::where('company_id', $request->id)->where('status', 'rejected')->paginate(30);
+            if ($route->isEmpty()) {
+                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+            }
+            $data = $route->load(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees']);
+            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
     public function dropRoute(Request $request)
     {
         try{
@@ -356,6 +432,103 @@ class RouteController extends Controller
 
                 return response()->json(['data' => $route, 'message' => 'Route updated successfully', 'status' => 'success'], 201);
             }
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function assignRoute(Request $request)
+    {
+
+    }
+
+    public function rejectRoute(Request $request)
+    {
+        $route_id = $request->query('route_id');
+        $driver_id = $request->query('driver_id');
+        try{
+            $data = Route::where('driver_id', $driver_id)->where('id', $route_id)->first();
+            $data->status = 'rejected';
+            $data->save();
+
+            $message = '<p>Dear '.$data->user->name.'</p>';
+            $message .= '<p>This is to inform you that load number '.$data->load_number.' was rejected by driver '.$data->driver->name.'.</p>';
+
+            Mail::to($data->user->email)->send(new NotificationMailer($message));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Route rejected.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function acceptRoute(Request $request)
+    {
+        $route_id = $request->query('route_id');
+        $driver_id = $request->query('driver_id');
+        try{
+            $data = Route::where('driver_id', $driver_id)->where('id', $route_id)->first();
+            $data->status = 'accepted';
+            $data->save();
+
+            $message = '<p>Dear '.$data->user->name.'</p>';
+            $message .= '<p>This is to inform you that load number '.$data->load_number.' was accepted by driver: '.$data->driver->name.'.</p>';
+
+            Mail::to($data->user->email)->send(new NotificationMailer($message));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Route accepted.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function rejectedRoutes(Request $request)
+    {
+        try{
+            $data = Route::where('status', 'rejected')->with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Rejected routes fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    public function acceptedRoutes(Request $request)
+    {
+        try{
+            $data = Route::where('status', 'accepted')->with(['user', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Accepted routes fecthed successfully.',
+                'data' => $data,
+            ], 201);
         }catch(Exception $e){
             return response()->json([
                 'status' => 'failed',
