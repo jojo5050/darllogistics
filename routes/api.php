@@ -194,8 +194,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/reject-route', [RouteController::class, 'rejectRoute']);
             Route::get('/accept-route', [RouteController::class, 'acceptRoute']);
 
-            Route::get('/rejected-routes/{driver_id}', [RouteController::class, 'driverRejectRoute']);
-            Route::get('/accepted-routes/{driver_id}', [RouteController::class, 'driverAcceptRoute']);
+            Route::get('/rejected-routes/{driver_id}', [RouteController::class, 'driverRejectedRoute']);
+            Route::get('/accepted-routes/{driver_id}', [RouteController::class, 'driverAcceptedRoute']);
         });
 
         // Dispatchers
