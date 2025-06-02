@@ -455,8 +455,11 @@ class RouteController extends Controller
             $data->status = 'rejected';
             $data->save();
 
-            $message = '<p>Dear '.$data->user->name.'</p>';
-            $message .= '<p>This is to inform you that load number '.$data->load_number.' was rejected by driver '.$data->driver->name.'.</p>';
+            $user_name = $data->user ? $data->user->name : 'n/a';
+            $driver_name = $data->driver ? $data->driver->name : 'n/a';
+
+            $message = '<p>Dear '.$user_name.'</p>';
+            $message .= '<p>This is to inform you that load number '.$data->load_number.' was rejected by driver '.$driver_name.'.</p>';
 
             Mail::to($data->user->email)->send(new NotificationMailer($message));
 
@@ -483,8 +486,11 @@ class RouteController extends Controller
             $data->status = 'accepted';
             $data->save();
 
-            $message = '<p>Dear '.$data->user->name.'</p>';
-            $message .= '<p>This is to inform you that load number '.$data->load_number.' was accepted by driver: '.$data->driver->name.'.</p>';
+            $user_name = $data->user ? $data->user->name : 'n/a';
+            $driver_name = $data->driver ? $data->driver->name : 'n/a';
+
+            $message = '<p>Dear '.$user_name.'</p>';
+            $message .= '<p>This is to inform you that load number '.$data->load_number.' was accepted by driver: '.$driver_name.'.</p>';
 
             Mail::to($data->user->email)->send(new NotificationMailer($message));
 
