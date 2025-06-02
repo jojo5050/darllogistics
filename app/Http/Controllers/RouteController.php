@@ -603,8 +603,8 @@ class RouteController extends Controller
         try{
 
             $validated = $request->validate([
-                'vehicle_id' => 'sometimes|string',
-                'driver_id' => 'sometimes|string',
+                'vehicle_id' => 'required|exists:vehicles,id',
+                'driver_id' => 'required|exists:users,id',
             ]);
 
             $route->update($validated);
@@ -612,7 +612,7 @@ class RouteController extends Controller
 
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'BOL upload failed: ' . $e->getMessage(),
+                'message' => 'Failed to update route. Error: ' . $e->getMessage(),
                 'status' => 'failed'
             ], 500);
         }
