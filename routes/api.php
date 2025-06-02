@@ -115,7 +115,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [RouteController::class, 'index']);
             Route::post('/', [RouteController::class, 'store']);
             Route::get('/{id}', [RouteController::class, 'show']);
-            Route::put('/{id}', [RouteController::class, 'update']);
+            Route::put('/{route}', [RouteController::class, 'update']);
             Route::delete('/{id}', [RouteController::class, 'destroy']);
             Route::get('/drop-route/{id}', [RouteController::class, 'dropRoute']);
             Route::get('/pickup-route/{id}', [RouteController::class, 'pickupRoute']);
