@@ -262,7 +262,7 @@ class RouteController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Route and jobs created successfully',
-                'data' => $route->load(['user', 'bol', 'dispatcher', 'driver', 'jobs', 'extraFees'])
+                'data' => $route->load(['user', 'bol', 'dispatcher', 'driver', 'jobs', 'extraFees', 'company'])
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -611,7 +611,7 @@ class RouteController extends Controller
             ]);
 
             $route->update($validated);
-            return response()->json(['message' => 'Route updated ', 'status' => 'success', 'data' => $route->load(['user', 'bol', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees'])], 201);
+            return response()->json(['message' => 'Route updated ', 'status' => 'success', 'data' => $route->load(['user', 'bol', 'dispatcher', 'driver', 'jobs', 'extraFees', 'company'])], 201);
 
         } catch (\Exception $e) {
             return response()->json([
