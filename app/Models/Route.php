@@ -6,7 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Route extends Model
 {
-    protected $fillable = ['user_id', 'rate', 'vehicle_id', 'driver_id', 'company_id', 'dispatcher_id', 'load_name', 'load_number', 'broker_name', 'broker_email', 'status'];
+    protected $fillable = [
+        'user_id',
+        'rate',
+        'vehicle_id',
+        'driver_id',
+        'company_id',
+        'dispatcher_id',
+        'load_name',
+        'load_number',
+        'broker_name',
+        'broker_email',
+        'status',
+        'flat_rate',
+        'mc_type',
+        'dispatcher_fee'
+    ];
 
     public function user()
     {
