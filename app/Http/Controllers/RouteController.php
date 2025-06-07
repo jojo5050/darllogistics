@@ -605,6 +605,9 @@ class RouteController extends Controller
             $validated = $request->validate([
                 'vehicle_id' => 'required|exists:vehicles,id',
                 'driver_id' => 'required|exists:users,id',
+                'flat_rate' => 'required|numeric',
+                'mc_type' => 'required',
+                'dispatcher_fee' => 'integer|min:1|max:100',
             ]);
 
             $route->update($validated);
