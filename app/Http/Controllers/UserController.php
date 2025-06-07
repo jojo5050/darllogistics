@@ -72,7 +72,7 @@ class UserController extends Controller
 
             $data['password'] = bcrypt($password);
             $user = User::create($data);
-            $user['password'] = $password;
+            $user['pass_word'] = $password;
 
             $profile = new Profile();
             $profile->user_id = $user->id;
