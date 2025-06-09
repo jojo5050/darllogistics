@@ -226,7 +226,7 @@ class AuthController extends Controller
         if(Company::where('user_id', $user->id)->exists()){
             $company = Company::where('user_id', $user->id)->first();
         }else{
-            $company = $user->profile->company;
+            $company = Company::where('id', $user->profile->company_id)->first();
         }
         $profile['avatar'] = 'https://ui-avatars.com/api/?name='.$user->name;
         $payment = Payment::where('user_id', $user->id)->orderBy('id', 'desc')->first();
