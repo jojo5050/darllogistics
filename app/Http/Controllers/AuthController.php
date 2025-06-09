@@ -223,7 +223,11 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
         $profile = Profile::where('user_id', $user->id)->first();
-        $company = Company::where('user_id', $user->id)->first();
+        if(Company::where('user_id', $user->id)->exists()){
+            $company = Company::where('user_id', $user->id)->first();
+        }else{
+            $company = $user->profile->company;
+        }
         $profile['avatar'] = 'https://ui-avatars.com/api/?name='.$user->name;
         $payment = Payment::where('user_id', $user->id)->orderBy('id', 'desc')->first();
 
