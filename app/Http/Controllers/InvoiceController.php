@@ -123,6 +123,24 @@ class InvoiceController extends Controller
         }
     }
 
+    public function userInvoices(Request $request)
+    {
+        $invoices = Invoice::where('user_id', $request->user_id)->with('route')->paginate(30);
+        try{
+            if (!$invoices) {
+                return response()->json(['status' => 'failed', 'message' => 'Invoice not found'], 404);
+            }
+            $data = $invoices;
+            return response()->json(['data' => $data, 'message' => 'User invoices fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
