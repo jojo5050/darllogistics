@@ -202,7 +202,7 @@ class RouteController extends Controller
             'vehicle_id' => 'nullable|exists:vehicles,id',
             'company_id' => 'required|exists:companies,id',
             'driver_id' => 'nullable|exists:users,id',
-            'dispatcher_id' => 'required|exists:users,id',
+            'dispatcher_id' => 'nullable|exists:users,id',
 
             'load_name' => 'required|string',
             'load_number' => 'required|string',
@@ -605,6 +605,7 @@ class RouteController extends Controller
             $validated = $request->validate([
                 'vehicle_id' => 'required|exists:vehicles,id',
                 'driver_id' => 'required|exists:users,id',
+                'dispatcher_id' => 'nullable|exists:users,id',
                 'flat_rate' => 'required|numeric',
                 'mc_type' => 'required',
                 'dispatcher_fee' => 'integer|min:1|max:100',

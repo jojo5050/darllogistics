@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('broker_name')->nullable();
             $table->string('broker_email')->nullable();
             $table->decimal('rate', 11, 2)->default(0);
-            $table->foreignId('dispatcher_id')->constrained('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('dispatcher_id')->nullable()->constrained('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
