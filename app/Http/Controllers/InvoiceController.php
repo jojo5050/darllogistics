@@ -73,7 +73,7 @@ class InvoiceController extends Controller
                     $driverEarning = round($route->rate * (100/100), 2);
                 }else{
                     $driverEarning = round($route->rate * (90 / 100), 2);
-                    $dispatcherEarning = round($route->rate * ($route->dispatcher_fee / 100), 2);
+                    $dispatcherEarning = round($route->rate * ($dispatcher_percentage / 100), 2);
                 }
             }
 
