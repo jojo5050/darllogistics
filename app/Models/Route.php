@@ -57,4 +57,9 @@ class Route extends Model
     {
         return $this->hasOne(Bol::class);
     }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
+    }
 }

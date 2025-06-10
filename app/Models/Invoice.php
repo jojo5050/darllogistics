@@ -7,21 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 class Invoice extends Model
 {
     protected $fillable = [
-        'customer_id',
-        'shipment_id',
-        'amount',
-        'invoice_date',
-        'due_date',
-        'status',
+        'route_id',
+        'user_id',
+        'total_earning',
+        'vat',
+        'discount',
+        'driver_earning',
+        'dispatcher_earning',
     ];
 
-    public function customer()
+    public function user()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function shipment()
+    public function route()
     {
-        return $this->belongsTo(Shipment::class);
+        return $this->belongsTo(Route::class);
     }
 }

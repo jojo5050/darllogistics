@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BolController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DropController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PickupController;
@@ -124,6 +125,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/pending-routes', [RouteController::class, 'pendingRoutes']);
             Route::get('/rejected-routes', [RouteController::class, 'rejectedRoutes']);
             Route::get('/accepted-routes', [RouteController::class, 'acceptedRoutes']);
+            Route::get('/invoice/{route}', [RouteController::class, 'invoice']);
         });
 
         Route::get('/deliveries', [RouteJobController::class, 'deliveries']);
@@ -210,6 +212,15 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{bol}', [BolController::class, 'update']);
             Route::delete('/{bol}', [BolController::class, 'destroy']);
             Route::get('/driver-bols/{driver_id}', [BolController::class, 'driverBols']);
+        });
+
+        // Invoices
+        Route::prefix('invoices')->group(function () {
+            Route::controller(InvoiceController::class)->group(function () {
+                Route::get('/', 'index');
+                Route::post('/', 'store');
+                Route::get('/{invoice}', 'show');
+            });
         });
     });
 });

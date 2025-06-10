@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\NotificationMailer;
 use App\Models\Bol;
 use App\Models\ExtraFee;
+use App\Models\Invoice;
 use App\Models\Route;
 use App\Models\RouteJob;
 use Exception;
@@ -627,5 +628,23 @@ class RouteController extends Controller
         $route = Route::where('id', $request->id)->first();
         $route->delete();
         return response()->json(['status' => 'success', 'message' => 'Route not found or no deliveries'], 204);
+    }
+
+    public function invoice(Request $request, Route $route)
+    {
+        try{
+            $invoice = Invoice::where('route_id', $route->id)->first();
+            if($invoice)
+            {
+                return response()->json(['data' => $invoice->load(['user', 'route']), 'message' => 'Route invoice fetched successfully', 'status' => 'success'], 201);
+            }
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+
     }
 }

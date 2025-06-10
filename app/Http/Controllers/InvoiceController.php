@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
+use App\Models\Route;
+use Exception;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
@@ -12,7 +14,20 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        //
+        try{
+            $data = Invoice::with(['user', 'route'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'All invoices fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
     }
 
     /**
@@ -28,7 +43,64 @@ class InvoiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try{
+            $validated = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'route_id' => 'required|exists:routes,id',
+                'vat' => 'nullable|numeric',
+                'discount' => 'nullable|numeric',
+                'comment' => 'nullable|string',
+            ]);
+
+            $total = $request->input('total_earning');
+            $discount = $request->input('discount', 0);
+            $vat = $request->input('vat', 0);
+
+            $route = Route::find($request->route_id);
+
+            $netTotal = ($total - $discount) + $vat;
+
+            $driver_percentage = $route->driver->percentage;
+            $dispatcher_percentage = $route->dispatcher_fee;
+
+            if($driver_percentage == null)
+            {
+                $driverEarning = $route->flat_rate;
+                $dispatcherEarning = 0.00;
+            }else{
+                if($route->mc_type == 'internal_mc')
+                {
+                    $driverEarning = round($route->rate * (100/100), 2);
+                }else{
+                    $driverEarning = round($route->rate * (90 / 100), 2);
+                    $dispatcherEarning = round($route->rate * ($route->dispatcher_fee / 100), 2);
+                }
+            }
+
+            $invoice = Invoice::updateOrCreate(
+                [
+                    'route_id' => $request->route_id,
+                    'user_id' => $request->user_id,
+                ],
+                [
+                    'total_earning' => $netTotal,
+                    'vat' => $vat,
+                    'discount' => $discount,
+                    'driver_earning' => $driverEarning,
+                    'dispatcher_earning' => $dispatcherEarning,
+                ]
+            );
+
+            $data = $invoice->load(['user', 'route']);
+            return response()->json(['data' => $data, 'message' => 'Invoice computed successfully', 'status' => 'success'], 201);
+
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
     }
 
     /**
@@ -36,7 +108,19 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice)
     {
-        //
+        try{
+            if (!$invoice) {
+                return response()->json(['status' => 'failed', 'message' => 'Invoice not found'], 404);
+            }
+            $data = $invoice->load(['user', 'route']);
+            return response()->json(['data' => $data, 'message' => 'Invoice fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
     }
 
     /**
