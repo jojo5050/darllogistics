@@ -52,11 +52,11 @@ class InvoiceController extends Controller
                 'comment' => 'nullable|string',
             ]);
 
-            $total = $request->input('total_earning');
+            $route = Route::find($request->route_id);
+
+            $total = $route->rate;
             $discount = $request->input('discount', 0);
             $vat = $request->input('vat', 0);
-
-            $route = Route::find($request->route_id);
 
             $netTotal = ($total - $discount) + $vat;
 
