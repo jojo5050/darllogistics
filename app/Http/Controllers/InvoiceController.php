@@ -63,17 +63,20 @@ class InvoiceController extends Controller
             $driver_percentage = $route->driver ? $route->driver->percentage : null;
             $dispatcher_percentage = $route->dispatcher_fee;
 
-            if($driver_percentage == null)
+            if($route->flat_rate != null || $route->flat_rate > 0)
             {
                 $driverEarning = $route->flat_rate;
-                $dispatcherEarning = 0.00;
+                $dispatcherEarning = round($route->rate * ($dispatcher_percentage / 100), 2);
             }else{
                 if($route->mc_type == 'internal_mc')
                 {
                     $driverEarning = round($route->rate * (100/100), 2);
+                    $dispatcherEarning = round($driverEarning * ($dispatcher_percentage / 100), 2);
+                    $driverEarning = $driverEarning - $dispatcherEarning;
                 }else{
                     $driverEarning = round($route->rate * (90 / 100), 2);
-                    $dispatcherEarning = round($route->rate * ($dispatcher_percentage / 100), 2);
+                    $dispatcherEarning = round($driverEarning * ($dispatcher_percentage / 100), 2);
+                    $driverEarning = $driverEarning - $dispatcherEarning;
                 }
             }
 
