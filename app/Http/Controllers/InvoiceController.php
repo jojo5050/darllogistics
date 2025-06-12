@@ -71,11 +71,11 @@ class InvoiceController extends Controller
             }else{
                 if($route->mc_type == 'internal_mc')
                 {
-                    $driverEarning = round($route->rate * (100/100), 2);
+                    $driverEarning = round($netTotal * (100/100), 2);
                     $dispatcherEarning = round($driverEarning * ($dispatcher_percentage / 100), 2);
                     $driverEarning = $driverEarning - $dispatcherEarning;
                 }else{
-                    $driverEarning = round($route->rate * (90 / 100), 2);
+                    $driverEarning = round($netTotal * (90 / 100), 2);
                     $dispatcherEarning = round($driverEarning * ($dispatcher_percentage / 100), 2);
                     $driverEarning = $driverEarning - $dispatcherEarning;
                 }
