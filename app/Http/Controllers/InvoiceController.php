@@ -58,7 +58,7 @@ class InvoiceController extends Controller
             $discount = $request->input('discount', 0);
             $vat = $request->input('vat', 0);
 
-            $netTotal = ($total - $discount) + $vat;
+            $netTotal = ($total - $discount) - $vat;
 
             $driver_percentage = $route->driver ? $route->driver->percentage : null;
             $dispatcher_percentage = $route->dispatcher_fee;
