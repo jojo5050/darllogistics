@@ -224,7 +224,7 @@ class RouteController extends Controller
             'route.*.goodsDescription' => 'nullable|string',
             'route.*.quantity' => 'nullable|integer|min:1',
             'route.*.weightType' => 'nullable|string|max:50',
-            'extra_fee' => 'array',
+            'extra_fee' => 'nullable|array',
             'extra_fee.*.feeType' => 'nullable|string',
             'extra_fee.*.amount' => 'nullable|numeric|min:0',
         ]);
