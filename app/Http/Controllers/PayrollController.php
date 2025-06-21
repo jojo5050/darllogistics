@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Invoice;
 use App\Models\Payroll;
 use App\Models\Route;
 use Exception;
@@ -33,29 +34,59 @@ class PayrollController extends Controller
         try{
             $validated = $request->validate([
                 'user_id' => 'required|exists:users,id',
-                'route_ids' => 'required|array',
-                'route_ids.*' => 'required|exists:routes,id',
+                'invoice_ids' => 'required|array',
+                'invoice_ids.*' => 'required|exists:invoices,id',
                 'vat' => 'nullable|numeric',
                 'discount' => 'nullable|numeric',
                 'comment' => 'nullable|string',
             ]);
 
-            foreach($validated['route_ids'] as $route_id){
+            $gross_amount = 0.00;
+            $net_amount = 0.00;
+            $total_vat = 0.00;
+            $total_discount = 0.00;
 
-                $route = Route::find($route_id);
+            $payroll_number = strtoupper(uniqid());
 
-                $total = $route->rate;
-                $discount = $request->input('discount', 0);
-                $vat = $request->input('vat', 0);
+            foreach($validated['invoice_ids'] as $invoice_id){
 
-                $discount_amount = ($discount/100) * $total;
-                $netTotal = ($total - $discount_amount) - $vat;
+                $invoice = Invoice::find($invoice_id);
+
+                $total_amount = $invoice->total_earning;
+                $gross_amount = $total_amount;
+
+                $total_discount = $invoice->discount;
+                $total_vat = $invoice->vat;
+
+                $net_amount = $invoice->total_earning - $invoice->discount - $invoice->vat - $invoice->dispatcher_earning - $invoice->driver_earning;
+
+                $gross_amount_sum = round($gross_amount, 2);
+                $net_amount_sum = round($net_amount, 2);
+                $total_deductions = round(($total_discount + $total_vat), 2);
+
+                $payroll = Payroll::updateOrCreate(
+                    [
+                        'invoice_id' => $invoice->id,
+                        'user_id' => $request->user_id,
+                    ],
+                    [
+                        'total_earning' => $gross_amount_sum,
+                        'driver_earning' => $invoice->driver_earning,
+                        'payroll_number' => $payroll_number,
+                        'gross' => $gross_amount,
+                        'deductions' => $total_deductions,
+                        'net' => $net_amount_sum,
+                        'reimbursement' => 0.00,
+                        'grand_total' => $total_amount,
+                        'comment' => $request->comment,
+                    ]
+                );
 
             }
 
-            $data = [];
+            $data = Payroll::where('payroll_number', $payroll_number)->with(['user', 'invoice'])->get();
 
-            return response()->json(['data' => $data, 'message' => 'Invoice computed successfully', 'status' => 'success'], 201);
+            return response()->json(['data' => $data, 'message' => 'Payroll computed successfully', 'status' => 'success'], 201);
 
         }catch(Exception $e){
             return response()->json([
@@ -66,9 +97,23 @@ class PayrollController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
+    public function fetchPayroll(Request $request)
+    {
+        try{
+
+            $data = Payroll::where('payroll_number', $request->payroll_number)->with(['user', 'invoice'])->get();
+
+            return response()->json(['data' => $data, 'message' => 'Payroll fetched successfully', 'status' => 'success'], 201);
+
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
     public function show(Payroll $payroll)
     {
         //
