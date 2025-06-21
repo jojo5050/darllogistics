@@ -36,8 +36,6 @@ class PayrollController extends Controller
                 'user_id' => 'required|exists:users,id',
                 'invoice_ids' => 'required|array',
                 'invoice_ids.*' => 'required|exists:invoices,id',
-                'vat' => 'nullable|numeric',
-                'discount' => 'nullable|numeric',
                 'comment' => 'nullable|string',
             ]);
 
