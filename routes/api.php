@@ -220,6 +220,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('/', 'index');
                 Route::post('/', 'store');
                 Route::get('/{invoice}', 'show');
+                Route::get('/filter-invoices/{driver_id}', 'filterInvoiceByDate');
             });
         });
     });

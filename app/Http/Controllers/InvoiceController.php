@@ -145,9 +145,48 @@ class InvoiceController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    public function filterInvoiceByDate(Request $request)
+    {
+        $validated = $request->validate([
+            'driver_id' => 'required|exists:users,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+        ]);
+
+        try {
+            $start_date = $request->start_date . ' 00:00:00';
+            $end_date = $request->end_date . ' 23:59:59';
+            $driver_id = $request->driver_id;
+
+            $route_ids = Route::where('driver_id', $driver_id)->pluck('id');
+
+            if ($route_ids->isEmpty()) {
+                return response()->json([
+                    'status' => 'failed',
+                    'message' => 'No routes found for the selected driver.',
+                    'data' => [],
+                ], 404);
+            }
+
+            $invoices = Invoice::whereBetween('created_at', [$start_date, $end_date])
+                ->whereIn('route_id', $route_ids)
+                ->with(['user', 'route'])
+                ->get();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Invoices within selected range fetched successfully.',
+                'data' => $invoices,
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: ' . $e->getMessage(),
+                'data' => [],
+            ], 500);
+        }
+    }
+
     public function edit(Invoice $invoice)
     {
         //
