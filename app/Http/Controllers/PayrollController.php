@@ -68,11 +68,12 @@ class PayrollController extends Controller
                 $total_discount = $invoice->discount;
                 $total_vat = $invoice->vat;
 
-                $net_amount = $invoice->total_earning - $invoice->discount - $invoice->vat - $invoice->dispatcher_earning - $invoice->driver_earning;
+                // $net_amount = $invoice->total_earning - $invoice->discount - $invoice->vat - $invoice->dispatcher_earning - $invoice->driver_earning;
 
                 $gross_amount_sum = round($gross_amount, 2);
                 $net_amount_sum = round($net_amount, 2);
                 $total_deductions = round(($total_discount + $total_vat), 2);
+                $net_amount = round(($gross_amount - $total_deductions), 2);
 
                 $payroll = Payroll::updateOrCreate(
                     [
