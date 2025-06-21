@@ -9,6 +9,7 @@ use App\Http\Controllers\DropController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LoadController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\PickupController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
@@ -161,12 +162,10 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
         // Staff Salaries Routes
-        Route::prefix('staff-salaries')->group(function () {
-            Route::get('/', [StaffSalaryController::class, 'index']);
-            Route::post('/', [StaffSalaryController::class, 'store']);
-            Route::get('/{id}', [StaffSalaryController::class, 'show']);
-            Route::put('/{id}', [StaffSalaryController::class, 'update']);
-            Route::delete('/{id}', [StaffSalaryController::class, 'destroy']);
+        Route::prefix('payrolls')->group(function () {
+            Route::get('/', [PayrollController::class, 'index']);
+            Route::post('/', [PayrollController::class, 'store']);
+            Route::get('/{id}', [PayrollController::class, 'show']);
         });
 
         // Plan routes
