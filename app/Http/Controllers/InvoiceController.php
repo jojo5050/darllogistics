@@ -154,8 +154,8 @@ class InvoiceController extends Controller
         ]);
 
         try {
-            $start_date = $request->start_date . ' 00:00:00';
-            $end_date = $request->end_date . ' 23:59:59';
+            $start_date = $request->query('start_date'). ' 00:00:00';
+            $end_date = $request->query('end_date') . ' 23:59:59';
             $driver_id = $request->driver_id;
 
             $route_ids = Route::where('driver_id', $driver_id)->pluck('id');
