@@ -15,7 +15,19 @@ class PayrollController extends Controller
      */
     public function index()
     {
-        //
+        try{
+
+            $data = Payroll::with(['user', 'invoice'])->get();
+
+            return response()->json(['data' => $data, 'message' => 'Payrolls fetched successfully', 'status' => 'success'], 201);
+
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
     }
 
     /**
