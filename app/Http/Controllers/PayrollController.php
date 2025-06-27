@@ -17,7 +17,7 @@ class PayrollController extends Controller
     {
         try{
 
-            $data = Payroll::with(['user', 'invoice'])->get();
+            $data = Payroll::with(['user', 'invoice.route'])->get();
 
             return response()->json(['data' => $data, 'message' => 'Payrolls fetched successfully', 'status' => 'success'], 201);
 
@@ -95,7 +95,7 @@ class PayrollController extends Controller
 
             }
 
-            $data = Payroll::where('payroll_number', $payroll_number)->with(['user', 'invoice'])->get();
+            $data = Payroll::where('payroll_number', $payroll_number)->with(['user', 'invoice.route'])->get();
 
             return response()->json(['data' => $data, 'message' => 'Payroll computed successfully', 'status' => 'success'], 201);
 
@@ -112,7 +112,7 @@ class PayrollController extends Controller
     {
         try{
 
-            $data = Payroll::where('payroll_number', $request->payroll_number)->with(['user', 'invoice'])->get();
+            $data = Payroll::where('payroll_number', $request->payroll_number)->with(['user', 'invoice.route'])->get();
 
             return response()->json(['data' => $data, 'message' => 'Payroll fetched successfully', 'status' => 'success'], 201);
 

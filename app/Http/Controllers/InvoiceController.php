@@ -149,8 +149,8 @@ class InvoiceController extends Controller
     {
         $validated = $request->validate([
             'driver_id' => 'required|exists:users,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
         ]);
 
         try {
@@ -168,10 +168,16 @@ class InvoiceController extends Controller
                 ], 404);
             }
 
-            $invoices = Invoice::whereBetween('created_at', [$start_date, $end_date])
-                ->whereIn('route_id', $route_ids)
-                ->with(['user', 'route'])
-                ->get();
+            if(!$start_date || !$end_date) {
+                $invoices = Invoice::whereIn('route_id', $route_ids)
+                    ->with(['user', 'route'])
+                    ->paginate(30);
+            }else{
+                $invoices = Invoice::whereBetween('created_at', [$start_date, $end_date])
+                    ->whereIn('route_id', $route_ids)
+                    ->with(['user', 'route'])
+                    ->get();
+            }
 
             return response()->json([
                 'status' => 'success',
