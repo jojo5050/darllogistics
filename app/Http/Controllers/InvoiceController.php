@@ -168,7 +168,7 @@ class InvoiceController extends Controller
                 ], 404);
             }
 
-            if(!$start_date || !$end_date) {
+            if($request->start_date == null || $request->end_date == null) {
                 $invoices = Invoice::whereIn('route_id', $route_ids)
                     ->with(['user', 'route'])
                     ->paginate(30);
