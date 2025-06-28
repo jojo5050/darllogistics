@@ -181,7 +181,7 @@ class InvoiceController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Invoices within selected range fetched successfully.',
+                'message' => 'Available invoice(s) fetched successfully.',
                 'data' => $invoices,
             ], 200);
         } catch (Exception $e) {
