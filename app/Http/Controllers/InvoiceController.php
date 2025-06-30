@@ -171,7 +171,7 @@ class InvoiceController extends Controller
             if($request->start_date == null || $request->end_date == null) {
                 $invoices = Invoice::whereIn('route_id', $route_ids)
                     ->with(['user', 'route'])
-                    ->paginate(30);
+                    ->get();
             }else{
                 $invoices = Invoice::whereBetween('created_at', [$start_date, $end_date])
                     ->whereIn('route_id', $route_ids)
