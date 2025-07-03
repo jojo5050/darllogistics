@@ -41,9 +41,11 @@ Route::post('/v2/logout', [AuthController::class, 'logout'])->middleware('auth:s
 Route::post('/v2/subscribers', [SubscriberController::class, 'store']);
 Route::get('/v2/plans', [PlanController::class, 'index']);
 
-Route::prefix('auth')->group(function () {
-    Route::post('/request-otp', [AuthController::class, 'requestOtp']);
-    Route::post('/change-password', [AuthController::class, 'changePassword']);
+Route::prefix('v2')->group(function () {
+    Route::prefix('auth')->group(function () {
+        Route::post('/request-otp', [AuthController::class, 'requestOtp']);
+        Route::post('/change-password', [AuthController::class, 'changePassword']);
+    });
 });
 
 Route::middleware('auth:sanctum')->group(function () {
