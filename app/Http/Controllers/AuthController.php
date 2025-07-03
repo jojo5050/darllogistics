@@ -285,7 +285,9 @@ class AuthController extends Controller
             $user->save();
 
             // Delete the token after successful password change
-            $token->delete();
+            PasswordResetToken::where('email', $user->email)
+                ->where('token', $validatedData['otp'])
+                ->delete();
 
             return response()->json([
                 'code' => 1,
