@@ -54,6 +54,11 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['data' => $data, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         });
 
+        Route::prefix('auth')->group(function () {
+            Route::post('/request-otp', [AuthController::class, 'requestOtp']);
+            Route::post('/change-password', [AuthController::class, 'changePassword']);
+        });
+
         // Vehicles Routes
         Route::prefix('vehicles')->group(function () {
             Route::get('/', [VehicleController::class, 'index']); // List all vehicles

@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NotificationMailer;
 use App\Models\Company;
+use App\Models\PasswordResetToken;
 use App\Models\Payment;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -201,6 +204,97 @@ class AuthController extends Controller
             return response()->json([
                 'code' => 0,
                 'message' => 'Registration failed. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function requestOtp(Request $request)
+    {
+        try{
+
+            $validatedData = $request->validate([
+                'email' => 'required|string|email',
+            ]);
+
+            $user = User::where('email', $validatedData['email'])->first();
+
+            if (!$user) {
+                throw ValidationException::withMessages([
+                    'email' => ['The provided email does not match any user.'],
+                ]);
+            }
+
+            $otp = rand(100000, 999999);
+
+            PasswordResetToken::updateOrCreate(
+                ['email' => $user->email],
+                ['token' => $otp, 'created_at' => now()]
+            );
+
+            $message = '<p>Dear '.$user->name.'</p>';
+            $message .= '<p>Someone has requested a password reset on '.$_ENV['APP_NAME'].'. If it was not you, kindly disregard this message. But if it was you, proceed with the OTP below:</p>';
+            $message .= '<p>OTP: <b>'.$otp.'</b></p>';
+
+            Mail::to($user->email)->send(new NotificationMailer($message));
+
+            return response()->json([
+                'code' => 1,
+                'status' => 'success',
+                'message' => 'OTP sent successfully!',
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to send OTP. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'email' => 'required|string|email',
+                'otp' => 'required|integer',
+                'new_password' => 'required|string|min:8|confirmed',
+                'new_password_confirmation' => 'required|string|min:8',
+            ]);
+
+            $user = User::where('email', $validatedData['email'])->first();
+
+            if (!$user) {
+                throw ValidationException::withMessages([
+                    'email' => ['The provided email does not match any user.'],
+                ]);
+            }
+
+            $token = PasswordResetToken::where('email', $user->email)
+                ->where('token', $validatedData['otp'])
+                ->first();
+
+            if (!$token || now()->diffInMinutes($token->created_at) > 10) {
+                throw ValidationException::withMessages([
+                    'otp' => ['The provided OTP is invalid or has expired.'],
+                ]);
+            }
+
+            $user->password = Hash::make($validatedData['new_password']);
+            $user->save();
+
+            // Delete the token after successful password change
+            $token->delete();
+
+            return response()->json([
+                'code' => 1,
+                'message' => 'Password changed successfully!',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'message' => 'Failed to change password. Please try again.',
                 'error' => $e->getMessage(),
             ], 500);
         }
