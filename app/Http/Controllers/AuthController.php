@@ -291,6 +291,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'code' => 1,
+                'status' => 'success',
                 'message' => 'Password changed successfully!',
             ], 200);
         } catch (\Exception $e) {
