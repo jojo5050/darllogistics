@@ -49,6 +49,8 @@ class CompanyController extends Controller
                 'linkedin' => 'nullable|string|max:255',
                 'facebook' => 'nullable|string|max:255',
                 'website' => 'nullable|url|max:255',
+                'mc_number' => 'nullable|string|max:255|unique:companies,mc_number',
+                'dot_number' => 'nullable|string|max:255|unique:companies,dot_number'
             ]);
 
             $company = Company::create($validatedData);
@@ -100,6 +102,8 @@ class CompanyController extends Controller
                 'linkedin' => 'nullable|string|max:255',
                 'facebook' => 'nullable|string|max:255',
                 'website' => 'nullable|url|max:255',
+                'mc_number' => 'nullable|string|max:255|unique:companies,mc_number,' . $company->id,
+                'dot_number' => 'nullable|string|max:255|unique:companies,dot_number,' . $company->id
             ]);
 
             $company->update($validatedData);

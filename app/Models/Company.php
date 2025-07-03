@@ -27,6 +27,8 @@ class Company extends Model
         'linkedin',
         'facebook',
         'website',
+        'mc_number',
+        'dot_number'
     ];
 
     public function user()
