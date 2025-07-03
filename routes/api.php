@@ -41,6 +41,11 @@ Route::post('/v2/logout', [AuthController::class, 'logout'])->middleware('auth:s
 Route::post('/v2/subscribers', [SubscriberController::class, 'store']);
 Route::get('/v2/plans', [PlanController::class, 'index']);
 
+Route::prefix('auth')->group(function () {
+    Route::post('/request-otp', [AuthController::class, 'requestOtp']);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
+});
+
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('v2')->group(function () {
@@ -52,11 +57,6 @@ Route::middleware('auth:sanctum')->group(function () {
             $data['profile']['avatar'] = 'https://ui-avatars.com/api/?name='.$data->name;
             $data['payment'] = $data->payment;
             return response()->json(['data' => $data, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
-        });
-
-        Route::prefix('auth')->group(function () {
-            Route::post('/request-otp', [AuthController::class, 'requestOtp']);
-            Route::post('/change-password', [AuthController::class, 'changePassword']);
         });
 
         // Vehicles Routes
