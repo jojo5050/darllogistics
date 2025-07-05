@@ -95,7 +95,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{id}', [UserController::class, 'show']);
             Route::get('/{user_id}/invoices', [InvoiceController::class, 'userInvoices']);
             Route::get('/companies/{id}', [UserController::class, 'showCompanies']);
-            Route::put('/{id}', [UserController::class, 'update']);
+            Route::put('/', [UserController::class, 'update']);
             Route::delete('/{id}', [UserController::class, 'destroy']);
 
             Route::get('/profiles', [ProfileController::class, 'index']);
