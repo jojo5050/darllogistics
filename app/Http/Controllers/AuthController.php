@@ -151,7 +151,7 @@ class AuthController extends Controller
 
             $user = User::where('email', $request->email)->first();
 
-            $user->firbase_uid = $request->firebase_uid;
+            $user->firebase_uid = $request->firebase_uid;
 
             $user->save();
 
