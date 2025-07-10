@@ -8,6 +8,8 @@ use App\Models\PasswordResetToken;
 use App\Models\Payment;
 use App\Models\Profile;
 use App\Models\User;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -136,6 +138,26 @@ class AuthController extends Controller
                 'message' => 'Registration failed. Please try again.',
                 'error' => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function storeFirebaseUid(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'email' => 'required|string|email|exists:users,email',
+                'firebase_uid' => 'required|string',
+            ]);
+
+            $user = User::where('email', $request->email)->first();
+
+            $user->firbase_uid = $request->firebase_uid;
+
+            $user->save();
+
+            return response()->json(['status' => 'success', 'code' => 1, 'message' => 'Firebase UID updated for user successfully.']);
+        }catch(Exception $e){
+            return response()->json(['status' => 'failed', 'code' => 0, 'message' => 'Failed to update firebase uid for user. Error: '.$e->getMessage()]);
         }
     }
 
@@ -328,6 +350,28 @@ class AuthController extends Controller
         $profile['avatar'] = 'https://ui-avatars.com/api/?name='.$user->name;
         $payment = Payment::where('user_id', $user->id)->orderBy('id', 'desc')->first();
 
+        if (!$payment) {
+            $registeredAt = Carbon::parse($user->created_at);
+            $daysSinceRegistration = $registeredAt->diffInDays(Carbon::now());
+
+            if ($daysSinceRegistration > 7) {
+                $subscription = [
+                    'subscription_status' => 'expired',
+                    'subscription_message' => 'Free trial has expired.'
+                ];
+            } else {
+                $subscription = [
+                    'subscription_status' => 'active',
+                    'subscription_message' => 'You are still within your free trial period.'
+                ];
+            }
+        } else {
+            $subscription = [
+                'subscription_status' => 'active',
+                'subscription_message' => 'You have an active payment.'
+            ];
+        }
+
         return response()->json([
             'code' => 1,
             'message' => 'Login successful!',
@@ -335,7 +379,8 @@ class AuthController extends Controller
             'user' => $user,
             'profile' => $profile,
             'company' => $company,
-            'payment' => $payment
+            'payment' => $payment,
+            'subscription' => $subscription
         ]);
     }
 
