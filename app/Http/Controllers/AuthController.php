@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
@@ -287,6 +288,8 @@ class AuthController extends Controller
 
             $user = User::where('email', $validatedData['email'])->first();
 
+            $firebase_uid = $user->firebase_uid;
+
             if (!$user) {
                 throw ValidationException::withMessages([
                     'email' => ['The provided email does not match any user.'],
@@ -303,8 +306,23 @@ class AuthController extends Controller
                 ]);
             }
 
-            $user->password = Hash::make($validatedData['new_password']);
-            $user->save();
+            //make a call to firebase api, change user's password
+            $response = Http::post('https://identitytoolkit.googleapis.com/v1/accounts:update?key=' . config('services.firebase.api_key'), [
+                'idToken' => $firebase_uid,
+                'password' => $validatedData['new_password'],
+                'returnSecureToken' => true
+            ]);
+
+            if ($response->successful()) {
+                $user->password = Hash::make($validatedData['new_password']);
+                $user->save();
+            } else {
+                return response()->json([
+                    'code' => 0,
+                    'message' => 'Failed to change password. Please try again.',
+                    'error' => $response->json()
+                ], 500);
+            }
 
             // Delete the token after successful password change
             PasswordResetToken::where('email', $user->email)
