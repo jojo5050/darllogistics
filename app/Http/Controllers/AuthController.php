@@ -251,8 +251,14 @@ class AuthController extends Controller
             $otp = rand(100000, 999999);
 
             $otpRecord = PasswordResetToken::where('email', $user->email)->first();
-            $otpRecord->token = $otp;
-            $otpRecord->created_at = now();
+            if($otpRecord){
+                $otpRecord->token = $otp;
+                $otpRecord->created_at = now();
+            }else{
+                $otpRecord = new PasswordResetToken();
+                $otpRecord->token = $otp;
+                $otpRecord->created_at = now();
+            }
 
             $otpRecord->save();
 
