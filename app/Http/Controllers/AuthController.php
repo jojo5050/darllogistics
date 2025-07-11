@@ -256,6 +256,7 @@ class AuthController extends Controller
                 $otpRecord->created_at = now();
             }else{
                 $otpRecord = new PasswordResetToken();
+                $otpRecord->email = $user->email;
                 $otpRecord->token = $otp;
                 $otpRecord->created_at = now();
             }
