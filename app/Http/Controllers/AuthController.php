@@ -250,10 +250,11 @@ class AuthController extends Controller
 
             $otp = rand(100000, 999999);
 
-            PasswordResetToken::updateOrCreate(
-                ['email' => $user->email],
-                ['token' => $otp, 'created_at' => now()]
-            );
+            $otpRecord = PasswordResetToken::where('email', $user->email)->first();
+            $otpRecord->token = $otp;
+            $otpRecord->created_at = now();
+
+            $otpRecord->save();
 
             $message = '<p>Dear '.$user->name.'</p>';
             $message .= '<p>Someone has requested a password reset on '.$_ENV['APP_NAME'].'. If it was not you, kindly disregard this message. But if it was you, proceed with the OTP below:</p>';
