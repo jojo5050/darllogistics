@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -250,18 +251,13 @@ class AuthController extends Controller
 
             $otp = rand(100000, 999999);
 
-            $otpRecord = PasswordResetToken::where('email', $user->email)->first();
-            if($otpRecord){
-                $otpRecord->token = $otp;
-                $otpRecord->created_at = now();
-            }else{
-                $otpRecord = new PasswordResetToken();
-                $otpRecord->email = $user->email;
-                $otpRecord->token = $otp;
-                $otpRecord->created_at = now();
-            }
-
-            $otpRecord->save();
+            DB::table('password_reset_tokens')->updateOrInsert(
+                ['email' => $user->email],
+                [
+                    'token' => $otp,
+                    'created_at' => now(),
+                ]
+            );
 
             $message = '<p>Dear '.$user->name.'</p>';
             $message .= '<p>Someone has requested a password reset on '.$_ENV['APP_NAME'].'. If it was not you, kindly disregard this message. But if it was you, proceed with the OTP below:</p>';
