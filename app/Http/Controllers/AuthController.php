@@ -284,11 +284,12 @@ class AuthController extends Controller
                 'otp' => 'required|integer',
                 'new_password' => 'required|string|min:8|confirmed',
                 'new_password_confirmation' => 'required|string|min:8',
+                'firebase_uid' => 'required|string',
             ]);
 
             $user = User::where('email', $validatedData['email'])->first();
 
-            $firebase_uid = $user->firebase_uid;
+            $firebase_uid = $request->firebase_uid; //$user->firebase_uid;
 
             if (!$user) {
                 throw ValidationException::withMessages([
