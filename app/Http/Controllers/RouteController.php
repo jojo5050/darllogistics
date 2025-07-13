@@ -253,10 +253,13 @@ class RouteController extends Controller
                 RouteJob::create($jobData);
             }
 
-            // Create extra_fees for this route
-            foreach ($validated['extra_fee'] as $extraFee) {
-                $extraFee['route_id'] = $route->id;
-                ExtraFee::create($extraFee);
+            if(!empty($validated['extra_fee']))
+            {
+                // Create extra_fees for this route
+                foreach ($validated['extra_fee'] as $extraFee) {
+                    $extraFee['route_id'] = $route->id;
+                    ExtraFee::create($extraFee);
+                }
             }
 
             DB::commit();
