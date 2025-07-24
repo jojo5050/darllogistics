@@ -15,7 +15,7 @@ class UserController extends Controller
     public function index()
     {
         try{
-            $data = User::with('profile')->paginate(30);
+            $data = User::with('profile.company', 'company')->paginate(30);
             return response()->json(['data' => $data, 'message' => 'Users fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
             return response()->json([
