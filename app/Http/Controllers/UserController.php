@@ -27,6 +27,27 @@ class UserController extends Controller
         }
     }
 
+    public function companyUsers(Request $request)
+    {
+        $company_id = $request->company_id;
+        $user_ids_1 = Company::where('id', $company_id)->pluck('user_id')->toArray();
+        $user_ids_2 = Profile::where('company_id', $company_id)->pluck('user_id')->toArray();
+
+        $user_ids = array_merge($user_ids_1, $user_ids_2);
+
+        try{
+            $data = User::whereIn('id', $user_ids)->with('profile')->paginate(30);
+            return response()->json(['data' => $data, 'message' => 'Users fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch users. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function show(Request $request)
     {
         $user = User::find($request->id);

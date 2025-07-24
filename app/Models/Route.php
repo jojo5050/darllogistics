@@ -20,7 +20,10 @@ class Route extends Model
         'status',
         'flat_rate',
         'mc_type',
-        'dispatcher_fee'
+        'dispatcher_fee',
+        'temperature',
+        'weight',
+        'weightType'
     ];
 
     public function user()

@@ -107,6 +107,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::prefix('companies')->group(function () {
             Route::get('/', [CompanyController::class, 'index']);
+            Route::get('/users/{company_id}', [UserController::class, 'companyUsers']);
             Route::post('/', [CompanyController::class, 'store']);
             Route::get('/{id}', [CompanyController::class, 'show']);
             Route::put('/{id}', [CompanyController::class, 'update']);

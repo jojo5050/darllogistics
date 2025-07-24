@@ -210,6 +210,11 @@ class RouteController extends Controller
             'broker_name' => 'required|string',
             'broker_email' => 'required|email',
             'rate' => 'nullable|numeric|min:0',
+
+            'temperature' => 'nullable|string',
+            'weight' => 'nullable|string',
+            'weightType' => 'nullable|string',
+
             'route' => 'required|array',
             'route.*.jobType' => 'required|in:pickup,delivery',
             'route.*.address' => 'required|string|max:255',
@@ -245,6 +250,9 @@ class RouteController extends Controller
                 'broker_name' => $validated['broker_name'],
                 'broker_email' => $validated['broker_email'],
                 'rate' => $validated['rate'],
+                'temperature' => $validated['temperature'],
+                'weight' => $validated['weight'],
+                'weightType' => $validated['weightType'],
             ]);
 
             // Create related jobs for this route
