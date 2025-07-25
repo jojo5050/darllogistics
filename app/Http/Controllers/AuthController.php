@@ -371,13 +371,13 @@ class AuthController extends Controller
             $company = Company::where('id', $user->profile->company_id)->first();
         }
         $profile['avatar'] = 'https://ui-avatars.com/api/?name='.$user->name;
-        $payment = Payment::where('user_id', $user->id)->orderBy('id', 'desc')->first();
+        $payment = Payment::where('user_id', $company->id)->orderBy('id', 'desc')->first();
 
         if (!$payment) {
             $registeredAt = Carbon::parse($user->created_at);
             $daysSinceRegistration = $registeredAt->diffInDays(Carbon::now());
 
-            if ($daysSinceRegistration > 7) {
+            if ($daysSinceRegistration > 14) {
                 $subscription = [
                     'subscription_status' => 'expired',
                     'subscription_message' => 'Free trial has expired.'
@@ -389,10 +389,28 @@ class AuthController extends Controller
                 ];
             }
         } else {
-            $subscription = [
-                'subscription_status' => 'active',
-                'subscription_message' => 'You have an active payment.'
-            ];
+            $payment_date = Carbon::parse($payment->updated_at);
+            $daysSincePayment = $payment_date->diffInDays(Carbon::now());
+
+            if ($daysSincePayment > 14) {
+                if($payment->status == 'pending' || $payment->status == 'failed') {
+                    $subscription = [
+                        'subscription_status' => 'expired',
+                        'subscription_message' => 'Free trial expired or last payment unsuccessful.'
+                    ];
+                }else{
+                    $subscription = [
+                        'subscription_status' => 'active',
+                        'subscription_message' => 'You have an active payment.'
+                    ];
+                }
+            }else{
+                $subscription = [
+                    'subscription_status' => 'active',
+                    'subscription_message' => 'You have an active payment.'
+                ];
+            }
+
         }
 
         return response()->json([
