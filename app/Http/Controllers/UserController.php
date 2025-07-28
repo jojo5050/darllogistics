@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Mail\NotificationMailer;
 use App\Models\Company;
+use App\Models\Payment;
 use App\Models\Profile;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
@@ -55,7 +57,56 @@ class UserController extends Controller
             $data = $user;
             $data['profile'] = $data->profile;
             $data['profile']['avatar'] = 'https://ui-avatars.com/api/?name='.$user->name;
-            return response()->json(['data' => $data, 'message' => 'User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+
+            if(Company::where('user_id', $data->id)->exists()){
+                $company = Company::where('user_id', $data->id)->first();
+            }else{
+                $company = Company::where('id', $data->profile->company_id)->first();
+            }
+
+            $payment = Payment::where('user_id', $company->id)->orderBy('id', 'desc')->first();
+
+            if (!$payment) {
+                $registeredAt = Carbon::parse($data->created_at);
+                $daysSinceRegistration = $registeredAt->diffInDays(Carbon::now());
+
+                if ($daysSinceRegistration > 14) {
+                    $subscription = [
+                        'subscription_status' => 'expired',
+                        'subscription_message' => 'Free trial has expired.'
+                    ];
+                } else {
+                    $subscription = [
+                        'subscription_status' => 'active',
+                        'subscription_message' => 'You are still within your free trial period.'
+                    ];
+                }
+            } else {
+                $payment_date = Carbon::parse($payment->updated_at);
+                $daysSincePayment = $payment_date->diffInDays(Carbon::now());
+
+                if ($daysSincePayment > 14) {
+                    if($payment->status == 'pending' || $payment->status == 'failed') {
+                        $subscription = [
+                            'subscription_status' => 'expired',
+                            'subscription_message' => 'Free trial expired or last payment unsuccessful.'
+                        ];
+                    }else{
+                        $subscription = [
+                            'subscription_status' => 'active',
+                            'subscription_message' => 'You have an active payment.'
+                        ];
+                    }
+                }else{
+                    $subscription = [
+                        'subscription_status' => 'active',
+                        'subscription_message' => 'You have an active payment.'
+                    ];
+                }
+
+            }
+
+            return response()->json(['data' => $data, 'payment' => $payment, 'subscription' => $subscription, 'message' => 'User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         }
         return response()->json(['data' => [], 'message' => 'User not found', 'code' => 1, 'status' => 'success'], 201);
     }

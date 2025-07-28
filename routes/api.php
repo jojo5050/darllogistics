@@ -1,26 +1,24 @@
 <?php
 
-use App\Http\Controllers\AssignedLoadController;
 use App\Http\Controllers\AssignedVehicleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BolController;
 use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\DropController;
 use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\LoadController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PayrollController;
-use App\Http\Controllers\PickupController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\RouteJobController;
-use App\Http\Controllers\StaffSalaryController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\WageController;
+use App\Models\Company;
+use App\Models\Payment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -56,10 +54,57 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/user', function (Request $request) {
             $data = $request->user();
             $data['profile'] = $data->profile;
-            $data['company'] = $data->load('company');
             $data['profile']['avatar'] = 'https://ui-avatars.com/api/?name='.$data->name;
-            $data['payment'] = $data->payment;
-            return response()->json(['data' => $data, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+
+            if(Company::where('user_id', $data->id)->exists()){
+                $company = Company::where('user_id', $data->id)->first();
+            }else{
+                $company = Company::where('id', $data->profile->company_id)->first();
+            }
+
+            $payment = Payment::where('user_id', $company->id)->orderBy('id', 'desc')->first();
+
+            if (!$payment) {
+                $registeredAt = Carbon::parse($data->created_at);
+                $daysSinceRegistration = $registeredAt->diffInDays(Carbon::now());
+
+                if ($daysSinceRegistration > 14) {
+                    $subscription = [
+                        'subscription_status' => 'expired',
+                        'subscription_message' => 'Free trial has expired.'
+                    ];
+                } else {
+                    $subscription = [
+                        'subscription_status' => 'active',
+                        'subscription_message' => 'You are still within your free trial period.'
+                    ];
+                }
+            } else {
+                $payment_date = Carbon::parse($payment->updated_at);
+                $daysSincePayment = $payment_date->diffInDays(Carbon::now());
+
+                if ($daysSincePayment > 14) {
+                    if($payment->status == 'pending' || $payment->status == 'failed') {
+                        $subscription = [
+                            'subscription_status' => 'expired',
+                            'subscription_message' => 'Free trial expired or last payment unsuccessful.'
+                        ];
+                    }else{
+                        $subscription = [
+                            'subscription_status' => 'active',
+                            'subscription_message' => 'You have an active payment.'
+                        ];
+                    }
+                }else{
+                    $subscription = [
+                        'subscription_status' => 'active',
+                        'subscription_message' => 'You have an active payment.'
+                    ];
+                }
+
+            }
+
+            return response()->json(['data' => $data, 'payment' => $payment, 'subscription' => $subscription, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         });
 
         // Vehicles Routes
