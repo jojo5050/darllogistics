@@ -1,16 +1,21 @@
 <?php
 
+use App\Http\Controllers\AssignedLoadController;
 use App\Http\Controllers\AssignedVehicleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BolController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\DropController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\LoadController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\PickupController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RouteController;
 use App\Http\Controllers\RouteJobController;
+use App\Http\Controllers\StaffSalaryController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
@@ -18,6 +23,7 @@ use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\WageController;
 use App\Models\Company;
 use App\Models\Payment;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -52,54 +58,65 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('v2')->group(function () {
 
         Route::get('/user', function (Request $request) {
-
-            $user = $request->user();
-
+            $data = $request->user();
+            $user = User::find($data->id);
             if (!$user) {
-                return response()->json(['message' => 'Unauthorized'], 401);
+                return response()->json(['message' => 'User not found', 'code' => 0, 'status' => 'error'], 404);
             }
+            $data['profile'] = $data->profile;
+            $data['company'] = $data->load('company');
+            $data['profile']['avatar'] = 'https://ui-avatars.com/api/?name='.$data->name;
+            $data['payment'] = $data->payment;
 
-            $data = $user->toArray();
-            $data['profile'] = $user->profile ? $user->profile->toArray() : [];
-            $data['profile']['avatar'] = 'https://ui-avatars.com/api/?name=' . urlencode($user->name);
-
-            $company = Company::where('user_id', $user->id)->first()
-                ?? Company::find(optional($user->profile)->company_id);
-
-            if (!$company) {
-                $payment = [];
+            if(Company::where('user_id', $user->id)->exists()){
+                $company = Company::where('user_id', $user->id)->first();
             }else{
-                $payment = Payment::where('user_id', $company->id)->latest()->first();
+                $company = Company::where('id', $user->profile->company_id)->first();
             }
+
+            $payment = Payment::where('user_id', $company->id)->orderBy('id', 'desc')->first();
 
             if (!$payment) {
-                $daysSinceRegistration = Carbon::parse($user->created_at)->diffInDays(now());
+                $registeredAt = Carbon::parse($user->created_at);
+                $daysSinceRegistration = $registeredAt->diffInDays(Carbon::now());
 
-                $subscription = [
-                    'subscription_status' => $daysSinceRegistration > 14 ? 'expired' : 'active',
-                    'subscription_message' => $daysSinceRegistration > 14
-                        ? 'Free trial has expired.'
-                        : 'You are still within your free trial period.'
-                ];
+                if ($daysSinceRegistration > 14) {
+                    $subscription = [
+                        'subscription_status' => 'expired',
+                        'subscription_message' => 'Free trial has expired.'
+                    ];
+                } else {
+                    $subscription = [
+                        'subscription_status' => 'active',
+                        'subscription_message' => 'You are still within your free trial period.'
+                    ];
+                }
             } else {
-                $daysSincePayment = Carbon::parse($payment->updated_at)->diffInDays(now());
+                $payment_date = Carbon::parse($payment->updated_at);
+                $daysSincePayment = $payment_date->diffInDays(Carbon::now());
 
-                $subscription = [
-                    'subscription_status' => ($daysSincePayment > 14 && in_array($payment->status, ['pending', 'failed'])) ? 'expired' : 'active',
-                    'subscription_message' => ($daysSincePayment > 14 && in_array($payment->status, ['pending', 'failed']))
-                        ? 'Free trial expired or last payment unsuccessful.'
-                        : 'You have an active payment.'
-                ];
+                if ($daysSincePayment > 14) {
+                    if($payment->status == 'pending' || $payment->status == 'failed') {
+                        $subscription = [
+                            'subscription_status' => 'expired',
+                            'subscription_message' => 'Free trial expired or last payment unsuccessful.'
+                        ];
+                    }else{
+                        $subscription = [
+                            'subscription_status' => 'active',
+                            'subscription_message' => 'You have an active payment.'
+                        ];
+                    }
+                }else{
+                    $subscription = [
+                        'subscription_status' => 'active',
+                        'subscription_message' => 'You have an active payment.'
+                    ];
+                }
+
             }
 
-            return response()->json([
-                'data' => $data,
-                'payment' => $payment,
-                'subscription' => $subscription,
-                'message' => 'Auth User fetched successfully',
-                'code' => 1,
-                'status' => 'success'
-            ], 201);
+            return response()->json(['data' => $data, 'payment' => $payment, 'subscription' => $subscription, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         });
 
         // Vehicles Routes
