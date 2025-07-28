@@ -66,7 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
             $payment = Payment::where('user_id', $company->id)->orderBy('id', 'desc')->first();
 
             if (!$payment) {
-                $registeredAt = Carbon::parse($data->created_at);
+                $registeredAt = Carbon::parse($user->created_at);
                 $daysSinceRegistration = $registeredAt->diffInDays(Carbon::now());
 
                 if ($daysSinceRegistration > 14) {
