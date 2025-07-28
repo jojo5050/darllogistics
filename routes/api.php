@@ -52,60 +52,54 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('v2')->group(function () {
 
         Route::get('/user', function (Request $request) {
-            $user = $request->user();
-            $data = $request->user();
-            $data['profile'] = $data->profile;
-            $data['profile']['avatar'] = 'https://ui-avatars.com/api/?name='.$data->name;
 
-            if(Company::where('user_id', $user->id)->exists()){
-                $company = Company::where('user_id', $user->id)->first();
-            }else{
-                $company = Company::where('id', $user->profile->company_id)->first();
+            $user = $request->user();
+
+            if (!$user) {
+                return response()->json(['message' => 'Unauthorized'], 401);
             }
 
-            $payment = Payment::where('user_id', $company->id)->orderBy('id', 'desc')->first();
+            $data = $user->toArray();
+            $data['profile'] = $user->profile ? $user->profile->toArray() : [];
+            $data['profile']['avatar'] = 'https://ui-avatars.com/api/?name=' . urlencode($user->name);
+
+            $company = Company::where('user_id', $user->id)->first()
+                ?? Company::find(optional($user->profile)->company_id);
+
+            if (!$company) {
+                $payment = [];
+            }else{
+                $payment = Payment::where('user_id', $company->id)->latest()->first();
+            }
 
             if (!$payment) {
-                $registeredAt = Carbon::parse($user->created_at);
-                $daysSinceRegistration = $registeredAt->diffInDays(Carbon::now());
+                $daysSinceRegistration = Carbon::parse($user->created_at)->diffInDays(now());
 
-                if ($daysSinceRegistration > 14) {
-                    $subscription = [
-                        'subscription_status' => 'expired',
-                        'subscription_message' => 'Free trial has expired.'
-                    ];
-                } else {
-                    $subscription = [
-                        'subscription_status' => 'active',
-                        'subscription_message' => 'You are still within your free trial period.'
-                    ];
-                }
+                $subscription = [
+                    'subscription_status' => $daysSinceRegistration > 14 ? 'expired' : 'active',
+                    'subscription_message' => $daysSinceRegistration > 14
+                        ? 'Free trial has expired.'
+                        : 'You are still within your free trial period.'
+                ];
             } else {
-                $payment_date = Carbon::parse($payment->updated_at);
-                $daysSincePayment = $payment_date->diffInDays(Carbon::now());
+                $daysSincePayment = Carbon::parse($payment->updated_at)->diffInDays(now());
 
-                if ($daysSincePayment > 14) {
-                    if($payment->status == 'pending' || $payment->status == 'failed') {
-                        $subscription = [
-                            'subscription_status' => 'expired',
-                            'subscription_message' => 'Free trial expired or last payment unsuccessful.'
-                        ];
-                    }else{
-                        $subscription = [
-                            'subscription_status' => 'active',
-                            'subscription_message' => 'You have an active payment.'
-                        ];
-                    }
-                }else{
-                    $subscription = [
-                        'subscription_status' => 'active',
-                        'subscription_message' => 'You have an active payment.'
-                    ];
-                }
-
+                $subscription = [
+                    'subscription_status' => ($daysSincePayment > 14 && in_array($payment->status, ['pending', 'failed'])) ? 'expired' : 'active',
+                    'subscription_message' => ($daysSincePayment > 14 && in_array($payment->status, ['pending', 'failed']))
+                        ? 'Free trial expired or last payment unsuccessful.'
+                        : 'You have an active payment.'
+                ];
             }
 
-            return response()->json(['data' => $data, 'payment' => $payment, 'subscription' => $subscription, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+            return response()->json([
+                'data' => $data,
+                'payment' => $payment,
+                'subscription' => $subscription,
+                'message' => 'Auth User fetched successfully',
+                'code' => 1,
+                'status' => 'success'
+            ], 201);
         });
 
         // Vehicles Routes
