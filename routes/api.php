@@ -52,14 +52,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('v2')->group(function () {
 
         Route::get('/user', function (Request $request) {
+            $user = $request->user();
             $data = $request->user();
             $data['profile'] = $data->profile;
             $data['profile']['avatar'] = 'https://ui-avatars.com/api/?name='.$data->name;
 
-            if(Company::where('user_id', $data->id)->exists()){
-                $company = Company::where('user_id', $data->id)->first();
+            if(Company::where('user_id', $user->id)->exists()){
+                $company = Company::where('user_id', $user->id)->first();
             }else{
-                $company = Company::where('id', $data->profile->company_id)->first();
+                $company = Company::where('id', $user->profile->company_id)->first();
             }
 
             $payment = Payment::where('user_id', $company->id)->orderBy('id', 'desc')->first();
