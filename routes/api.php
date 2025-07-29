@@ -116,7 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
             }
 
-            return response()->json(['data' => $data, 'payment' => $payment, 'subscription' => $subscription, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+            return response()->json(['data' => $data, 'subscription' => $subscription, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         });
 
         // Vehicles Routes
