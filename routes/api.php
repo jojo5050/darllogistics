@@ -296,9 +296,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('brokers')->group(function () {
             Route::get('/', [BrokerController::class, 'index']);
             Route::post('/', [BrokerController::class, 'store']);
-            Route::get('/{id}', [BrokerController::class, 'show']);
-            Route::put('/{id}', [BrokerController::class, 'update']);
-            Route::delete('/{id}', [BrokerController::class, 'destroy']);
+            Route::get('/{broker_id}', [BrokerController::class, 'show']);
+            Route::put('/{broker_id}', [BrokerController::class, 'update']);
+            Route::delete('/{broker_id}', [BrokerController::class, 'destroy']);
         });
     });
 });
