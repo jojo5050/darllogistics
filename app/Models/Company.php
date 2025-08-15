@@ -41,4 +41,8 @@ class Company extends Model
         return $this->belongsTo(Profile::class);
     }
 
+    public function broker(){
+        return $this->hasOne(Broker::class);
+    }
+
 }

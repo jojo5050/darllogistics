@@ -30,12 +30,11 @@ class BrokerController extends Controller
     {
         try{
             $company_id = $request->company_id;
-            $data = Broker::where('company_id', $company_id)->get();
-            if($data){
-                $data->load('company');
+            $data = Broker::where('company_id', $company_id)->with('company')->get();
+            if(!$data->empty()){
                 return response()->json(['data' => $data, 'message' => 'Brokers fetched successfully', 'code' => 1, 'status' => 'success'], 201);
             }
-            return response()->json(['data' => [], 'message' => 'Invalid compaby ID.', 'code' => 1, 'status' => 'success'], 201);
+            return response()->json(['data' => [], 'message' => 'Invalid company ID.', 'code' => 1, 'status' => 'success'], 201);
         }catch(Exception $e){
             return response()->json([
                 'code' => 0,
