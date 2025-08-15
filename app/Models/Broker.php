@@ -19,6 +19,10 @@ class Broker extends Model
     ];
 
     public function company(){
-        return $this->belongsTo(company::class);
+        return $this->belongsTo(Company::class);
+    }
+
+    public function route(){
+        return $this->hasOne(Route::class);
     }
 }

@@ -15,8 +15,7 @@ class Route extends Model
         'dispatcher_id',
         'load_name',
         'load_number',
-        'broker_name',
-        'broker_email',
+        'broker_id',
         'status',
         'flat_rate',
         'mc_type',
@@ -64,5 +63,10 @@ class Route extends Model
     public function invoice()
     {
         return $this->hasOne(Invoice::class);
+    }
+
+    public function broker()
+    {
+        return $this->belongsTo(Broker::class);
     }
 }
