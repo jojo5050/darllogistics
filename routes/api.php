@@ -4,6 +4,7 @@ use App\Http\Controllers\AssignedLoadController;
 use App\Http\Controllers\AssignedVehicleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BolController;
+use App\Http\Controllers\BrokerController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DropController;
 use App\Http\Controllers\InvoiceController;
@@ -175,6 +176,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/pending-routes/{id}', [RouteController::class, 'companyPendingRoutes']);
             Route::get('/accepted-routes/{id}', [RouteController::class, 'companyAcceptedRoutes']);
             Route::get('/rejected-routes/{id}', [RouteController::class, 'companyRejectedRoutes']);
+            Route::get('/brokers/{company_id}', [BrokerController::class, 'companyBrokers']);
         });
 
         Route::post('/add-company-staff', [UserController::class, 'store']);
@@ -288,6 +290,15 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('/{invoice}', 'show');
                 Route::post('/filter-invoices', 'filterInvoiceByDate');
             });
+        });
+
+        // Brokers Routes
+        Route::prefix('brokers')->group(function () {
+            Route::get('/', [BrokerController::class, 'index']);
+            Route::post('/', [BrokerController::class, 'store']);
+            Route::get('/{id}', [BrokerController::class, 'show']);
+            Route::put('/{id}', [BrokerController::class, 'update']);
+            Route::delete('/{id}', [BrokerController::class, 'destroy']);
         });
     });
 });
