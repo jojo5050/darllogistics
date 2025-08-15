@@ -29,6 +29,10 @@ class BrokerController extends Controller
     public function companyBrokers(Request $request)
     {
         try{
+            $request->validate([
+                'company_id' => 'required|integer|exists:companies,id'
+            ]);
+
             $company_id = $request->company_id;
             $data = Broker::where('company_id', $company_id)->with('company')->get();
             if(!$data->empty()){
