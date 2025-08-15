@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Broker;
+use App\Models\Company;
 use Exception;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\Catch_;
@@ -26,39 +27,39 @@ class BrokerController extends Controller
         }
     }
 
-    public function companyBrokers($company_id)
-{
-    try {
-        $data = Broker::where('company_id', $company_id)
-            ->with('company')
-            ->get();
+    public function companyBrokers(Request $request)
+    {
+        try {
+            $company_id = $request->comp_id;
+            $data = Broker::where('company_id', $company_id)
+                ->with('company')
+                ->get();
 
-        if ($data->isNotEmpty()) {
+            if ($data->isNotEmpty()) {
+                return response()->json([
+                    'data' => $data,
+                    'message' => 'Brokers fetched successfully',
+                    'code' => 1,
+                    'status' => 'success'
+                ], 201);
+            }
+
             return response()->json([
-                'data' => $data,
-                'message' => 'Brokers fetched successfully',
+                'data' => [],
+                'message' => 'Invalid company ID.',
                 'code' => 1,
                 'status' => 'success'
             ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch brokers. Please try again.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'data' => [],
-            'message' => 'Invalid company ID.',
-            'code' => 1,
-            'status' => 'success'
-        ], 201);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'code' => 0,
-            'status' => 'failed',
-            'message' => 'Failed to fetch brokers. Please try again.',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
-
 
     /**
      * Show the form for creating a new resource.
