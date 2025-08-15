@@ -31,9 +31,7 @@ class BrokerController extends Controller
     {
         try {
             $company_id = $request->comp_id;
-            $data = Broker::where('company_id', $company_id)
-                ->with('company')
-                ->get();
+            $data = Broker::where('company_id', $company_id)->get();
 
             if ($data->isNotEmpty()) {
                 return response()->json([
