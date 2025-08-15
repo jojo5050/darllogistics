@@ -176,7 +176,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/pending-routes/{id}', [RouteController::class, 'companyPendingRoutes']);
             Route::get('/accepted-routes/{id}', [RouteController::class, 'companyAcceptedRoutes']);
             Route::get('/rejected-routes/{id}', [RouteController::class, 'companyRejectedRoutes']);
-            Route::get('/list-brokers/{company_id}', [BrokerController::class, 'companyBrokers']);
+            Route::get('/brokers/{company_id}', [BrokerController::class, 'companyBrokers']);
         });
 
         Route::post('/add-company-staff', [UserController::class, 'store']);
