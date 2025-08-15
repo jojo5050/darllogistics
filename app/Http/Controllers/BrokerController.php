@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Broker;
 use Exception;
 use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\Catch_;
 
 class BrokerController extends Controller
 {
@@ -16,6 +17,23 @@ class BrokerController extends Controller
         try{
             return response()->json(['data' => Broker::with('company')->paginate(30), 'message' => 'Brokers fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'status' => 'failed',
+                'message' => 'Failed to fetch brokers. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function companyBrokers(Request $request)
+    {
+        try{
+            $company_id = $request->company_id;
+            $data = Broker::where('company_id', $company_id)->get();
+            $data->load('company');
+            return response()->json(['data' => $data, 'message' => 'Brokers fetched successfully', 'code' => 1, 'status' => 'success'], 201);
+        }catch(Exception $e){
             return response()->json([
                 'code' => 0,
                 'status' => 'failed',
