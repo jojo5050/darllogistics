@@ -75,9 +75,9 @@ class BrokerController extends Controller
         try{
             $validatedData = $request->validate([
                 'broker_name' => 'required|string|max:100',
-                'broker_phone1' => 'nullable|string|max:20',
+                'broker_phone1' => 'required|string|max:20',
                 'broker_phone2' => 'nullable|string|max:20',
-                'broker_email1' => 'nullable|email',
+                'broker_email1' => 'required|email',
                 'broker_email2' => 'nullable|email',
                 'broker_city' => 'nullable|string|max:100',
                 'broker_state' => 'nullable|string|max:100',
@@ -140,7 +140,7 @@ class BrokerController extends Controller
                 'broker_name' => 'required|string|max:100',
                 'broker_phone1' => 'nullable|string|unique:brokers,phone1,' . $broker->id,
                 'broker_phone2' => 'nullable|string|unique:brokers,phone2,' . $broker->id,
-                'broker_email1' => 'nullable|email|unique:brokers,email1,' . $broker->id,
+                'broker_email1' => 'required|email|unique:brokers,email1,' . $broker->id,
                 'broker_email2' => 'nullable|email|unique:brokers,email2,' . $broker->id,
                 'broker_city' => 'nullable|string|max:100',
                 'broker_state' => 'nullable|string|max:100',
