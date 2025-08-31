@@ -8,4 +8,5 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('about', 'aboutPage')->name('home.about');
     Route::get('contact', 'contactPage')->name('home.contact');
     Route::get('dispatch-services', 'dispatchPage')->name('home.dispatch');
+    Route::get('privacy', 'privacyPage')->name('home.privacy');
 });

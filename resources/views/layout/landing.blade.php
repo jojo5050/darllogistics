@@ -72,7 +72,7 @@
     <footer>
         <div class="container text-center">
             <p>&copy; 2025 Darl Transport & Dispatch. All Rights Reserved.</p>
-            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+            <p><a href="{{ route('home.privacy') }}">Privacy Policy</a></p>
         </div>
     </footer>
 
