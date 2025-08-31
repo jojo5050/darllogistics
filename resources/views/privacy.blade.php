@@ -39,7 +39,7 @@
             </ol>
             <p>{{env('APP_NAME')}} Nigeria Limited will not lease, sell or distribute your personal information to any third parties, unless we have your permission. We might do so if the law forces us. Your personal information will be used when we need to send you promotional materials if you agree to this privacy policy.</p>
 
-            <p>For more information, you can contact us on support{{'@'.env('APP_URL')}}</p>
+            <p>For more information, you can contact us on support@darllogistics.com</p>
 
 
           </div>
