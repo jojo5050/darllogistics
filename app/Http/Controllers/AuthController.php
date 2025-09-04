@@ -348,6 +348,39 @@ class AuthController extends Controller
         }
     }
 
+    public function updatePassword(Request $request)
+    {
+        try {
+            $validatedData = $request->validate([
+                'email' => 'required|string|email',
+                'new_password' => 'required|string|min:8|confirmed',
+            ]);
+
+            $user = User::where('email', $validatedData['email'])->first();
+
+            if (!$user) {
+                throw ValidationException::withMessages([
+                    'email' => ['The provided email does not match any user.'],
+                ]);
+            }
+
+            $user->password = Hash::make($validatedData['new_password']);
+            $user->save();
+
+            return response()->json([
+                'code' => 1,
+                'status' => 'success',
+                'message' => 'Password changed successfully!',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'code' => 0,
+                'message' => 'Failed to change password. Please try again.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function login(Request $request)
     {
         $validatedData = $request->validate([

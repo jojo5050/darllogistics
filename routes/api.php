@@ -51,6 +51,7 @@ Route::prefix('v2')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('/request-otp', [AuthController::class, 'requestOtp']);
         Route::post('/change-password', [AuthController::class, 'changePassword']);
+        Route::post('/update-password', [AuthController::class, 'updatePassword']);
     });
 });
 

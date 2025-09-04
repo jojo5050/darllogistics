@@ -281,7 +281,8 @@ class RouteController extends Controller
             return response()->json([
                 'status' => 'failed',
                 'error' => 'Failed to create route',
-                'details' => $e->getMessage()
+                'details' => $e->getMessage(),
+                'data' => []
             ], 500);
         }
     }
@@ -605,7 +606,8 @@ class RouteController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'BOL upload failed: ' . $e->getMessage(),
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => []
             ], 500);
         }
     }
@@ -629,7 +631,8 @@ class RouteController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to update route. Error: ' . $e->getMessage(),
-                'status' => 'failed'
+                'status' => 'failed',
+                'data' => []
             ], 500);
         }
     }
