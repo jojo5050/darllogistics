@@ -17,9 +17,17 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
+use App\Services\PushNotification;
 
 class AuthController extends Controller
 {
+    protected $firebaseService;
+
+    public function __construct(PushNotification $firebaseService)
+    {
+        $this->firebaseService = $firebaseService;
+    }
+
     public function register(Request $request)
     {
         try {
@@ -395,6 +403,15 @@ class AuthController extends Controller
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
+
+        //test push notification
+        $id_token = $user->firebase_uid;
+        $this->firebaseService->sendToToken(
+            $id_token,
+            'Login notification',
+            'You logged in successfully!'
+        );
+        //end test
 
         $token = $user->createToken('auth_token')->plainTextToken;
         $profile = Profile::where('user_id', $user->id)->first();

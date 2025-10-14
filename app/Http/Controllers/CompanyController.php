@@ -18,6 +18,7 @@ class CompanyController extends Controller
                 'code' => 0,
                 'status' => 'failed',
                 'message' => 'Failed to fetch companies. Please try again.',
+                'data' => [],
                 'error' => $e->getMessage(),
             ], 500);
         }
