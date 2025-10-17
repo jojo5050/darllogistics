@@ -6,7 +6,7 @@ use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 
-class FirebaseNotificationService
+class PushNotification
 {
     protected $messaging;
 

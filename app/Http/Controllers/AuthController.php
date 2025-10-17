@@ -405,12 +405,12 @@ class AuthController extends Controller
         }
 
         //test push notification
-        $id_token = $user->firebase_uid;
-        $this->firebaseService->sendToToken(
-            $id_token,
-            'Login notification',
-            'You logged in successfully!'
-        );
+        // $id_token = $user->firebase_uid;
+        // $this->firebaseService->sendToToken(
+        //     $id_token,
+        //     'Login notification',
+        //     'You logged in successfully!'
+        // );
         //end test
 
         $token = $user->createToken('auth_token')->plainTextToken;
