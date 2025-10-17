@@ -310,7 +310,7 @@ class RouteController extends Controller
         try{
             $route = Route::where('company_id', $request->id)->paginate(30);
             if ($route->isEmpty()) {
-                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+                return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
             }
             $data = $route->load(['user', 'bols', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
@@ -328,7 +328,7 @@ class RouteController extends Controller
         try{
             $route = Route::where('company_id', $request->id)->where('status', 'delivered')->paginate(30);
             if ($route->isEmpty()) {
-                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+                return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
             }
             $data = $route->load(['user', 'bols', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
@@ -346,7 +346,7 @@ class RouteController extends Controller
         try{
             $route = Route::where('company_id', $request->id)->where('status', 'picked')->paginate(30);
             if ($route->isEmpty()) {
-                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+                return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
             }
             $data = $route->load(['user', 'bols', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
@@ -364,7 +364,7 @@ class RouteController extends Controller
         try{
             $route = Route::where('company_id', $request->id)->where('status', 'pending')->paginate(30);
             if ($route->isEmpty()) {
-                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+                return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
             }
             $data = $route->load(['user', 'bols', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
@@ -382,7 +382,7 @@ class RouteController extends Controller
         try{
             $route = Route::where('company_id', $request->id)->where('status', 'accepted')->paginate(30);
             if ($route->isEmpty()) {
-                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+                return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
             }
             $data = $route->load(['user', 'bols', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
@@ -400,7 +400,7 @@ class RouteController extends Controller
         try{
             $route = Route::where('company_id', $request->id)->where('status', 'rejected')->paginate(30);
             if ($route->isEmpty()) {
-                return response()->json(['status' => 'failed', 'message' => 'Routes not found'], 404);
+                return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
             }
             $data = $route->load(['user', 'bols', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
