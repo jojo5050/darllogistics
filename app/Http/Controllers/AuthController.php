@@ -21,12 +21,12 @@ use App\Services\PushNotification;
 
 class AuthController extends Controller
 {
-    protected $firebaseService;
+    // protected $firebaseService;
 
-    public function __construct(PushNotification $firebaseService)
-    {
-        $this->firebaseService = $firebaseService;
-    }
+    // public function __construct(PushNotification $firebaseService)
+    // {
+    //     $this->firebaseService = $firebaseService;
+    // }
 
     public function register(Request $request)
     {
