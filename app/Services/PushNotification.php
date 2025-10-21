@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
-use Kreait\Firebase\Messaging;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
+use Kreait\Firebase\Exception\MessagingException;
 
 class PushNotification
 {
     protected $messaging;
 
-    public function __construct(Messaging $messaging)
+    public function __construct(CloudMessage $messaging)
     {
         $this->messaging = $messaging;
     }
