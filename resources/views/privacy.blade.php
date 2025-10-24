@@ -9,7 +9,7 @@
               <h2 class="text-info">Our Privacy Policy</h2>
             </div>
 
-            <p>Our privacy policy will help you understand how {{env('APP_NAME')}} Nigeria Limited, owners of LGTI App uses and protects the data you provide to us when you visit and use app.</p>
+            <p>Our privacy policy will help you understand how {{env('APP_NAME')}}, uses and protects the data you provide to us when you visit and use app.</p>
             <p>We reserve the right to change this policy at any given time, of which you will be promptly updated. If you want to make sure that you are up to date with the latest changes, we advise you to frequently visit this page.</p>
             <h3>What User Data We Collect</h3>
             <p>When you use our app, we may collect the following data:</p>
