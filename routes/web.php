@@ -10,3 +10,7 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('dispatch-services', 'dispatchPage')->name('home.dispatch');
     Route::get('privacy', 'privacyPage')->name('home.privacy');
 });
+
+Route::get('/ios/signup', function () {
+    return view('auth.register-ios');
+})->name('ios.signup');

@@ -13,6 +13,7 @@
         <li class="nav-item"><a class="nav-link" href="#">Compliance</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Training</a></li>
         <li class="nav-item"><a class="nav-link" href="{{route('home.contact')}}">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{route('ios.signup')}}">Register</a></li>
       </ul>
       <a href="#" class="btn btn-primary ms-lg-3">Get Started</a>
     </div>
