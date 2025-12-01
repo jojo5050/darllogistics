@@ -83,34 +83,48 @@ class AuthController extends Controller
                 'currency' => $validatedData['currency'] ?? null,
                 'image_path' => $validatedData['image_path'] ?? null,
             ]);
-
             try {
+                // 1. Log the configured path (check storage/logs/laravel.log)
+                $credentialsPath = config('firebase.projects.app.credentials');
+                \Illuminate\Support\Facades\Log::info('Firebase Credentials Path Check: ' . $credentialsPath);
+
+                // 2. Test if the file exists and is readable
+                $isReadable = file_exists($credentialsPath) && is_readable($credentialsPath);
+                \Illuminate\Support\Facades\Log::info('Firebase Credentials File Readable: ' . ($isReadable ? 'YES' : 'NO'));
+
+                if (!$isReadable) {
+                    throw new \Exception("Firebase credential file not found or not readable at path: " . $credentialsPath);
+                }
+
+                // 3. Attempt to get the Auth service
                 $auth = app('firebase.auth'); 
                 $firebaseUser = null;
                 
-                // 1. Attempt to create the user in Firebase (This handles your web registration)
+                // 4. Proceed with Firebase creation/linking as before
                 $firebaseUser = $auth->createUserWithEmailAndPassword($validatedData['email'], $request->password, [
                     'displayName' => $validatedData['name'],
-                    // Link: Use the Laravel user ID as the Firebase UID for easy lookup
                     'uid' => (string)$user->id, 
                 ]);
 
             } catch (EmailExists $e) {
-                // 2. CATCH: If EmailExists is thrown, it means the Mobile App already signed them up.
-                // We retrieve the existing Firebase UID instead of throwing an error.
+                // ... (rest of your existing EmailExists catch block)
                 try {
                     $existingUser = $auth->getUserByEmail($validatedData['email']);
                     $firebaseUser = $existingUser;
 
                 } catch (FirebaseException $fetchError) {
-                    // If we can't fetch the existing Firebase user, something is critically wrong.
-                    // Rollback the entire Laravel user registration.
                     $user->delete();
                     throw new \Exception("Firebase connection or user retrieval failed. Cannot complete registration.");
                 }
+                
+            } catch (\Exception $e) {
+                 // Log any generic exception during Firebase initialization
+                 \Illuminate\Support\Facades\Log::error('Firebase Initialization Error: ' . $e->getMessage());
+                 // Re-throw the exception so the global catch block handles the rollback
+                 throw $e; 
             }
             
-            // 3. LINK UID: Update the MySQL user with the Firebase UID (executes for both new creation and retrieval)
+            // 3. LINK UID: Update the MySQL user with the Firebase UID
             if ($firebaseUser) {
                 $user->firebase_uid = $firebaseUser->uid;
                 $user->save();
