@@ -20,6 +20,7 @@ use Illuminate\Validation\ValidationException;
 use App\Services\PushNotification;
 use Kreait\Firebase\Exception\Auth\EmailExists;
 use Kreait\Firebase\Exception\FirebaseException;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -83,22 +84,26 @@ class AuthController extends Controller
                 'currency' => $validatedData['currency'] ?? null,
                 'image_path' => $validatedData['image_path'] ?? null,
             ]);
+
+            $firebaseUser = null;
+            $auth = null;
+
             try {
                 // 1. Log the configured path (check storage/logs/laravel.log)
                 $credentialsPath = config('firebase.projects.app.credentials');
-                \Illuminate\Support\Facades\Log::info('Firebase Credentials Path Check: ' . $credentialsPath);
+                Log::info('Firebase Credentials Path Check (Config): ' . $credentialsPath);
 
                 // 2. Test if the file exists and is readable
-                $isReadable = file_exists($credentialsPath) && is_readable($credentialsPath);
-                \Illuminate\Support\Facades\Log::info('Firebase Credentials File Readable: ' . ($isReadable ? 'YES' : 'NO'));
+                // Note: The path here should be an absolute path or relative to the Laravel root
+                $isReadable = file_exists(base_path($credentialsPath)) && is_readable(base_path($credentialsPath));
+                Log::info('Firebase Credentials File Readable: ' . ($isReadable ? 'YES' : 'NO'));
 
                 if (!$isReadable) {
-                    throw new \Exception("Firebase credential file not found or not readable at path: " . $credentialsPath);
+                    throw new \Exception("Firebase credential file not found or not readable. Path tried: " . base_path($credentialsPath));
                 }
 
-                // 3. Attempt to get the Auth service
+                // 3. Attempt to get the Auth service (This line will throw if the JSON content is invalid)
                 $auth = app('firebase.auth'); 
-                $firebaseUser = null;
                 
                 // 4. Proceed with Firebase creation/linking as before
                 $firebaseUser = $auth->createUserWithEmailAndPassword($validatedData['email'], $request->password, [
@@ -107,19 +112,24 @@ class AuthController extends Controller
                 ]);
 
             } catch (EmailExists $e) {
-                // ... (rest of your existing EmailExists catch block)
+                // User already exists in Firebase (e.g., registered via mobile app)
                 try {
+                    // Ensure $auth is initialized before calling getUserByEmail
+                    if (!$auth) {
+                        $auth = app('firebase.auth');
+                    }
                     $existingUser = $auth->getUserByEmail($validatedData['email']);
                     $firebaseUser = $existingUser;
 
                 } catch (FirebaseException $fetchError) {
+                    // Critical failure to link existing user
                     $user->delete();
                     throw new \Exception("Firebase connection or user retrieval failed. Cannot complete registration.");
                 }
                 
             } catch (\Exception $e) {
-                 // Log any generic exception during Firebase initialization
-                 \Illuminate\Support\Facades\Log::error('Firebase Initialization Error: ' . $e->getMessage());
+                 // Catch configuration, path, or network errors
+                 Log::error('Firebase Initialization/Creation Error: ' . $e->getMessage());
                  // Re-throw the exception so the global catch block handles the rollback
                  throw $e; 
             }
