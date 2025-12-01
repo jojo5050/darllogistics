@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use App\Services\PushNotification;
+use Kreait\Firebase\Exception\Auth\EmailExists;
+use Kreait\Firebase\Exception\FirebaseException;
 
 class AuthController extends Controller
 {
@@ -30,6 +32,9 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+
+        $user = null;
+
         try {
             $validatedData = $request->validate([
                 // User fields
@@ -79,6 +84,38 @@ class AuthController extends Controller
                 'image_path' => $validatedData['image_path'] ?? null,
             ]);
 
+            try {
+                $auth = app('firebase.auth'); 
+                $firebaseUser = null;
+                
+                // 1. Attempt to create the user in Firebase (This handles your web registration)
+                $firebaseUser = $auth->createUserWithEmailAndPassword($validatedData['email'], $request->password, [
+                    'displayName' => $validatedData['name'],
+                    // Link: Use the Laravel user ID as the Firebase UID for easy lookup
+                    'uid' => (string)$user->id, 
+                ]);
+
+            } catch (EmailExists $e) {
+                // 2. CATCH: If EmailExists is thrown, it means the Mobile App already signed them up.
+                // We retrieve the existing Firebase UID instead of throwing an error.
+                try {
+                    $existingUser = $auth->getUserByEmail($validatedData['email']);
+                    $firebaseUser = $existingUser;
+
+                } catch (FirebaseException $fetchError) {
+                    // If we can't fetch the existing Firebase user, something is critically wrong.
+                    // Rollback the entire Laravel user registration.
+                    $user->delete();
+                    throw new \Exception("Firebase connection or user retrieval failed. Cannot complete registration.");
+                }
+            }
+            
+            // 3. LINK UID: Update the MySQL user with the Firebase UID (executes for both new creation and retrieval)
+            if ($firebaseUser) {
+                $user->firebase_uid = $firebaseUser->uid;
+                $user->save();
+            }
+
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
@@ -94,6 +131,7 @@ class AuthController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+
     }
 
     public function registerWithGoogle(Request $request)
