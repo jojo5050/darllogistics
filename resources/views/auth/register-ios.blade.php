@@ -210,7 +210,8 @@
         ? JSON.parse(__firebase_config) 
         : { apiKey: PLACEHOLDER_API_KEY, authDomain: "placeholder.firebaseapp.com", projectId: "placeholder" };
 
-    const isLiveFirebase = firebaseConfig.apiKey !== PLACEHOLDER_API_KEY;
+    // Determine if we are using the real (non-placeholder) configuration
+    const isLiveFirebase = firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== PLACEHOLDER_API_KEY;
 
     let auth = null;
     let db = null;
@@ -219,26 +220,29 @@
     // --- FIREBASE INITIALIZATION ---
     if (firebaseConfig && firebaseConfig.apiKey) {
         setLogLevel('Debug');
-        const app = initializeApp(firebaseConfig);
-        auth = getAuth(app); 
-        db = getFirestore(app);
-
-        // Listener to capture Firebase UID once signed in (e.g., after Step 2)
         if (isLiveFirebase) {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    firebaseUserID = user.uid;
-                    console.log("Firebase Auth State Changed. UID:", firebaseUserID);
-                } else {
-                    firebaseUserID = null;
-                    console.log("Firebase Auth State Changed. User signed out.");
-                }
-            });
-        }
-        
-        // Log a warning if we are using the placeholder
-        if (!isLiveFirebase) {
-             console.warn("WARNING: Using Firebase PLACEHOLDER configuration. Firebase Auth and Firestore operations are SKIPPED. Deploy to live or use the Canvas editor for full functionality.");
+             try {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app); 
+                db = getFirestore(app);
+
+                // Listener to capture Firebase UID once signed in (e.g., after Step 2)
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        firebaseUserID = user.uid;
+                        console.log("Firebase Auth State Changed. UID:", firebaseUserID);
+                    } else {
+                        firebaseUserID = null;
+                        console.log("Firebase Auth State Changed. User signed out.");
+                    }
+                });
+                console.log("SUCCESS: Firebase services initialized with live config.");
+            } catch (initError) {
+                console.error("CRITICAL: Failed to initialize Firebase with provided configuration:", initError.message);
+            }
+        } else {
+             // THIS IS THE WARNING YOU SHOULD SEE ON LOCALHOST:
+             console.warn("WARNING: Using Firebase PLACEHOLDER configuration. Firebase Auth and Firestore operations are SKIPPED. Please deploy to live server (CPanel) to test full functionality.");
         }
     } else {
         console.error("CRITICAL: Firebase config is missing or invalid. Cannot initialize Firebase features.");
@@ -246,11 +250,12 @@
     
     // --- UTILITY FUNCTION: Update Firestore User Document ---
     /**
-     * Updates the user's document in Firestore with the company ID.
+     * Updates/Creates the user's document in Firestore with the company ID and role.
      * @param {string} fbUID The Firebase User ID (UID).
      * @param {string} companyId The company ID from the API response.
+     * @param {string} role The user's role.
      */
-    async function updateFirebaseUser(fbUID, companyId) {
+    async function updateFirebaseUser(fbUID, companyId, role) {
         if (!isLiveFirebase) {
             console.warn('Firestore update skipped: Using placeholder Firebase config.');
             return true; // Pretend it succeeded for local testing flow
@@ -261,35 +266,25 @@
             return false; 
         }
 
-        // We use the same path structure as your previous logic suggested:
-        // /artifacts/{appId}/users/{userId}/user_data/profile 
-        const userDocPath = `artifacts/${appId}/users/${fbUID}/user_data/profile`;
+        // Use setDoc with merge: true to ensure the document exists and is updated atomically.
+        // NOTE: Path must be adjusted based on your security rules. Assuming the standard private path.
+        const userDocPath = `artifacts/${appId}/users/${fbUID}/user_data/profile`; 
         const userDocRef = doc(db, userDocPath);
 
         try {
-            await updateDoc(userDocRef, {
-                company_id: companyId,
+             const userData = {
+                company_id: companyId.toString(),
+                role: role,
                 updated_at: new Date().toISOString()
-            });
-
-            console.log('company_id updated successfully in Firestore:', userDocPath);
+            };
+            
+            await setDoc(userDocRef, userData, { merge: true });
+            
+            console.log('company_id and role updated successfully in Firestore:', userDocPath);
             return true;
         } catch (e) {
-            console.warn('Error updating existing Firestore profile document (could mean it does not exist yet). Attempting to create:', e.message);
-            // If update fails, attempt to create the document
-            try {
-                 const initialUserData = {
-                    company_id: companyId,
-                    created_at: new Date().toISOString(),
-                    role: selectedRole
-                };
-                await setDoc(userDocRef, initialUserData, { merge: true });
-                console.log('User profile created/merged successfully in Firestore on update failure.');
-                return true;
-            } catch (createError) {
-                console.error('CRITICAL: Error creating/merging user profile in Firestore:', createError.message);
-                return false;
-            }
+            console.error('CRITICAL: Error updating/creating user profile in Firestore:', e.message);
+            return false;
         }
     }
 
@@ -338,6 +333,7 @@
     document.head.appendChild(style);
 
     // --- CONFIGURATION ---
+    // NOTE: This URL must be correct on your live server.
     const BASE_API_URL = 'https://www.darllogistics.com/api/v2'; 
     const USER_REGISTER_ENDPOINT = '/register'; 
     const COMPANY_REGISTER_ENDPOINT = '/companies'; 
@@ -348,9 +344,10 @@
     let currentStep = 1; 
     let selectedRole = null; 
     let apiUserId = null;    // The ID assigned by your API/Backend
-    let authToken = null;    // The custom auth token from your API
+    let authToken = null;    // The token received from your API
+    let userEmail = null;    // Store email for Firebase retry
 
-    // DOM Elements
+    // DOM Elements (same as before)
     const stepTitle = document.getElementById('step-title');
     const step1Content = document.getElementById('step-1-content');
     const step2Form = document.getElementById('step-2-form');
@@ -360,7 +357,7 @@
     const roleNoticeBox = document.getElementById('role-notice-box');
     const step1NextBtn = document.getElementById('step-1-btn');
     
-    // Indicators and Bars
+    // Indicators and Bars (same as before)
     const stepIndicators = [
         document.getElementById('step-1-indicator'),
         document.getElementById('step-2-indicator'),
@@ -373,7 +370,7 @@
         document.getElementById('progress-bar-3'),
     ];
 
-
+    // Helper functions (same as before)
     function showMessage(message, type = 'danger') {
         messageBox.innerHTML = message;
         messageBox.classList.remove('d-none', 'alert-danger', 'alert-success', 'alert-info', 'alert-warning');
@@ -463,7 +460,7 @@
         updateProgressIndicator();
     }
 
-    // --- Step 1: Role Selection Logic ---
+    // --- Step 1: Role Selection Logic (same as before) ---
     document.querySelectorAll('.role-btn').forEach(button => {
         button.addEventListener('click', () => {
             const role = button.getAttribute('data-role');
@@ -509,7 +506,7 @@
             return;
         }
         
-        const email = document.getElementById('email').value;
+        userEmail = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const password_confirmation = document.getElementById('password_confirmation').value;
         
@@ -528,7 +525,7 @@
             name: document.getElementById('name').value,
             phone: document.getElementById('phone').value,
             role: document.getElementById('user_role').value, // Dynamic Role from Step 1
-            email: email,
+            email: userEmail,
             password: password,
             password_confirmation: password_confirmation
         };
@@ -565,13 +562,13 @@
 
             if (isLiveFirebase) {
                 if (!auth) {
-                    showMessage("CRITICAL: Firebase services were not initialized despite having a configuration. Cannot proceed securely.", 'error');
+                    showMessage("CRITICAL: Firebase Auth object is missing. Please check console for initialization errors.", 'error');
                     return;
                 }
                 
                 try {
                     // Attempt to create user with email/password
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const userCredential = await createUserWithEmailAndPassword(auth, userEmail, password);
                     firebaseUserID = userCredential.user.uid;
                     firebaseAuthSuccess = true;
                     console.log("Firebase Auth: User created successfully with email/password.");
@@ -579,32 +576,34 @@
                 } catch (authError) {
                     // If creation fails (e.g., email already exists in Firebase), sign in instead
                     if (authError.code === 'auth/email-already-in-use') {
-                        showMessage("Email already linked in Firebase. Attempting sign-in...", 'warning');
+                        showMessage("Email already linked in Firebase. Attempting sign-in to sync accounts...", 'warning');
                         console.warn("Firebase Auth: Email already in use. Attempting sign-in.", authError);
                         
                         try {
-                            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                            // Use the credentials entered in the form
+                            const userCredential = await signInWithEmailAndPassword(auth, userEmail, password);
                             firebaseUserID = userCredential.user.uid;
                             firebaseAuthSuccess = true;
                             console.log("Firebase Auth: User signed in successfully.");
                             
                         } catch (signInError) {
+                            // This means the password was wrong for the existing Firebase user
                             showMessage("Firebase sign-in failed. Please check credentials or contact support.", 'error');
                             console.error("Firebase Auth: Sign-in failed after email-already-in-use error.", signInError);
-                            // Re-throw the original error, as the user cannot proceed securely.
-                            throw new Error("Firebase Authentication failed. Please refresh and try again.");
+                            // Re-throw to halt the process
+                            throw new Error("Firebase Authentication failed.");
                         }
                     } else {
                         // Handle other Firebase errors (e.g., weak password, invalid email format)
                         showMessage(`Firebase Auth Error: ${authError.message}`, 'error');
-                        console.error("Firebase Auth: Critical error during user creation.", authError);
+                        console.error("Firebase Auth: Critical error during user creation/linking.", authError);
                         throw new Error("Firebase Authentication failed.");
                     }
                 }
 
-                // 3. Final Sign-in/Session Establishment
+                // 3. Final Sign-in/Session Establishment using the API token
                 if (firebaseAuthSuccess && authToken) {
-                    // We use the custom token to establish the session with the token provided by your API.
+                    console.log("Attempting Firebase custom sign-in using API token to establish secure session.");
                     await signInWithCustomToken(auth, authToken); 
                 }
             } else {
@@ -652,6 +651,12 @@
             goToStep(2);
             return;
         }
+
+        if (!authToken) {
+            showMessage("Error: API Authorization Token is missing. Please go back to Step 2.", 'error');
+            goToStep(2);
+            return;
+        }
         
         const button = document.getElementById('step-3-submit-btn');
         const originalText = button.textContent;
@@ -673,10 +678,14 @@
         };
 
         try {
+            showMessage("1/2: Sending company registration request to API...", 'info');
+
+            // CRUCIAL FIX: Include the Authorization header with the token
             const response = await fetch(BASE_API_URL + COMPANY_REGISTER_ENDPOINT, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}` // FIX: Include JWT token
                 },
                 body: JSON.stringify(companyPayload)
             });
@@ -684,31 +693,41 @@
             const data = await response.json();
 
             if (response.ok) {
-                const companyId = data.company?.id; // Assuming API returns company data with ID
+                // --- FIX: Add multiple checks for Company ID ---
+                const companyId = data.company?.id 
+                                || data.id 
+                                || data.company_id // Common Laravel response structure
+                                || data.user?.company_id; // Check if it's nested under the user object
                 
                 if (companyId) {
-                    showMessage("Company registered. Linking user in Firestore...", 'info');
+                    showMessage("2/2: Company registered. Linking user in Firestore...", 'info');
                     
                     // --- STEP 3.1: FIRESTORE UPDATE ---
-                    // Only attempt to update if we have a valid firebaseUserID (which is only set if isLiveFirebase is true)
-                    const firebaseSuccess = firebaseUserID ? await updateFirebaseUser(firebaseUserID, companyId.toString()) : true; 
+                    // Only attempt to update if we have a valid firebaseUserID and we are in a live environment
+                    const firebaseSuccess = (firebaseUserID && isLiveFirebase) 
+                        ? await updateFirebaseUser(firebaseUserID, companyId.toString(), selectedRole) 
+                        : true; 
 
                     if (firebaseSuccess) {
                         showMessage("Company registered and user linked. Redirecting to payment.", 'success');
                         goToStep(4);
                     } else {
-                        // Proceed to payment even if Firestore update failed, but alert the user/dev
+                        // Log a warning but still proceed to payment (non-critical failure)
                         showMessage("Company registered, but failed to link company ID in Firestore. Proceeding to payment.", 'warning');
                         goToStep(4);
                     }
                     // ----------------------------------
                 } else {
-                    showMessage("Company registration succeeded, but API response is missing company ID.", 'error');
+                    // This is the error message from the screenshot. It now indicates the API structure issue.
+                    showMessage("Company registration succeeded, but API response is missing the Company ID in the expected fields (company.id, id, company_id). Please check your API response structure.", 'error');
+                    console.error("CRITICAL: API Company Response is Missing ID. Full Response:", data);
                 }
 
             } else {
-                const errorMsg = data.message || (data.errors ? Object.values(data.errors).flat().join('<br>') : "Company registration failed.");
+                // If API returns an error status (e.g., 401 Unauthorized, 422 Validation)
+                const errorMsg = data.message || (data.errors ? Object.values(data.errors).flat().join('<br>') : `Company registration failed with status code ${response.status}.`);
                 showMessage(errorMsg, 'error');
+                console.error("API Company Registration Error Response:", data);
             }
         } catch (error) {
             showMessage("A network error occurred during company registration or Firestore update.", 'error');
