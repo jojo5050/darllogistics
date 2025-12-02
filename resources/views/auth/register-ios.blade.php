@@ -195,6 +195,17 @@
 @endsection
 
 @push('scripts')
+<script>
+    window.__firebase_config = @json([
+        'apiKey' => env('FIREBASE_API_KEY'),
+        'authDomain' => 'darl-dispatch.firebaseapp.com',
+        'projectId' => 'darl-dispatch',
+        'storageBucket' => 'darl-dispatch.appspot.com',
+        'messagingSenderId' => '276224518042',
+        'appId' => '1:276224518042:web:7a0abf25db2a3019737c23',
+    ]);
+</script>
+
 <script type="module">
     // --- FIREBASE IMPORTS ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -337,7 +348,7 @@
 
     // --- CONFIGURATION ---
     const BASE_API_URL = 'https://www.darllogistics.com/api/v2'; 
-    const USER_REGISTER_ENDPOINT = '/register'; 
+    const USER_REGISTER_ENDPOINT = '/register-web'; 
     const COMPANY_REGISTER_ENDPOINT = '/companies'; 
     const PAYSTACK_REDIRECT_URL = 'https://paystack.com/pay/your-plan'; 
     const ALLOWED_ROLE = 'Dispatch_company';

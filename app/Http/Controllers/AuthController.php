@@ -21,6 +21,9 @@ use App\Services\PushNotification;
 use Kreait\Firebase\Exception\Auth\EmailExists;
 use Kreait\Firebase\Exception\FirebaseException;
 use Illuminate\Support\Facades\Log;
+use Kreait\Firebase\Auth as FirebaseAuth;
+use Kreait\Firebase\Firestore;
+
 
 class AuthController extends Controller
 {
@@ -33,8 +36,6 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-
-        $user = null;
 
         try {
             $validatedData = $request->validate([
@@ -85,60 +86,7 @@ class AuthController extends Controller
                 'image_path' => $validatedData['image_path'] ?? null,
             ]);
 
-            $firebaseUser = null;
-            $auth = null;
-
-            try {
-                // 1. Log the configured path (check storage/logs/laravel.log)
-                $credentialsPath = config('firebase.projects.app.credentials');
-                Log::info('Firebase Credentials Path Check (Config): ' . $credentialsPath);
-
-                // 2. Test if the file exists and is readable
-                // Note: The path here should be an absolute path or relative to the Laravel root
-                $isReadable = file_exists(base_path($credentialsPath)) && is_readable(base_path($credentialsPath));
-                Log::info('Firebase Credentials File Readable: ' . ($isReadable ? 'YES' : 'NO'));
-
-                if (!$isReadable) {
-                    throw new \Exception("Firebase credential file not found or not readable. Path tried: " . base_path($credentialsPath));
-                }
-
-                // 3. Attempt to get the Auth service (This line will throw if the JSON content is invalid)
-                $auth = app('firebase.auth'); 
-                
-                // 4. Proceed with Firebase creation/linking as before
-                $firebaseUser = $auth->createUserWithEmailAndPassword($validatedData['email'], $request->password, [
-                    'displayName' => $validatedData['name'],
-                    'uid' => (string)$user->id, 
-                ]);
-
-            } catch (EmailExists $e) {
-                // User already exists in Firebase (e.g., registered via mobile app)
-                try {
-                    // Ensure $auth is initialized before calling getUserByEmail
-                    if (!$auth) {
-                        $auth = app('firebase.auth');
-                    }
-                    $existingUser = $auth->getUserByEmail($validatedData['email']);
-                    $firebaseUser = $existingUser;
-
-                } catch (FirebaseException $fetchError) {
-                    // Critical failure to link existing user
-                    $user->delete();
-                    throw new \Exception("Firebase connection or user retrieval failed. Cannot complete registration.");
-                }
-                
-            } catch (\Exception $e) {
-                 // Catch configuration, path, or network errors
-                 Log::error('Firebase Initialization/Creation Error: ' . $e->getMessage());
-                 // Re-throw the exception so the global catch block handles the rollback
-                 throw $e; 
-            }
-            
-            // 3. LINK UID: Update the MySQL user with the Firebase UID
-            if ($firebaseUser) {
-                $user->firebase_uid = $firebaseUser->uid;
-                $user->save();
-            }
+        
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -156,41 +104,6 @@ class AuthController extends Controller
             ], 500);
         }
 
-    }
-
-    public function testFirebaseConnection()
-    {
-        try {
-            $auth = app('firebase.auth');
-            
-            // This attempts a real connection to Firebase to list users.
-            // If the key is wrong or the path is wrong, it will fail here.
-            $users = $auth->listUsers(1); 
-            
-            // If we reach here, the connection is good.
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Firebase Admin SDK connected successfully.',
-                'user_count_check' => iterator_count($users) . ' user(s) retrieved.',
-            ], 200);
-
-        } catch (ServiceException $e) {
-            // This catches issues like invalid credentials, project ID mismatch, or network/API errors.
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Firebase Service Connection FAILED.',
-                'error_type' => 'ServiceException (Credentials/Network)',
-                'details' => $e->getMessage(),
-            ], 500);
-        } catch (\Exception $e) {
-            // This catches generic errors, like the JSON file being unreadable/non-existent.
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Firebase Initialization FAILED.',
-                'error_type' => 'General Exception (Configuration/Path)',
-                'details' => $e->getMessage(),
-            ], 500);
-        }
     }
 
     public function registerWithGoogle(Request $request)
@@ -337,6 +250,8 @@ class AuthController extends Controller
             ], 500);
         }
     }
+
+    
 
     public function requestOtp(Request $request)
     {
@@ -581,4 +496,117 @@ class AuthController extends Controller
             'code' => 1
         ]);
     }
+
+
+    public function __construct(FirebaseAuth $firebaseAuth, Firestore $firestore)
+{
+    $this->firebaseAuth = $firebaseAuth;
+    $this->firestore = $firestore;
 }
+
+public function registerWeb(Request $request)
+{
+    try {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:65|unique:users,email',
+            'phone' => 'required|string|max:22|unique:users,phone',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|string',
+
+            'country_id' => 'nullable|string',
+            'state_id' => 'nullable|string',
+            'city_id' => 'nullable|string',
+            'address1' => 'nullable|string',
+            'address2' => 'nullable|string',
+            'gender' => 'nullable|string|max:10',
+            'dot_number' => 'nullable|string',
+            'mc_number' => 'nullable|string',
+            'zip_code' => 'nullable|string',
+            'payment_method' => 'nullable|string',
+            'currency' => 'nullable|string',
+        ]);
+
+        // ------------------------------------
+        // 1. Create MySQL user
+        // ------------------------------------
+        $user = User::create([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'phone' => $validatedData['phone'],
+            'password' => Hash::make($validatedData['password']),
+            'role' => $validatedData['role'],
+        ]);
+
+        // ------------------------------------
+        // 2. Create MySQL profile
+        // ------------------------------------
+        Profile::create([
+            'user_id' => $user->id,
+            'country_id' => $validatedData['country_id'],
+            'state_id' => $validatedData['state_id'],
+            'city_id' => $validatedData['city_id'],
+            'address1' => $validatedData['address1'],
+            'address2' => $validatedData['address2'],
+            'gender' => $validatedData['gender'],
+            'dot_number' => $validatedData['dot_number'],
+            'mc_number' => $validatedData['mc_number'],
+            'zip_code' => $validatedData['zip_code'],
+            'payment_method' => $validatedData['payment_method'],
+            'currency' => $validatedData['currency'],
+        ]);
+
+        // ------------------------------------
+        // 3. Create Firebase Auth user
+        // ------------------------------------
+        $firebaseUser = $this->firebaseAuth->createUser([
+            'email' => $user->email,
+            'password' => $request->password,
+            'displayName' => $user->name,
+        ]);
+
+        $firebaseUid = $firebaseUser->uid;
+
+        // Store firebase uid in mysql
+        $user->firebase_uid = $firebaseUid;
+        $user->save();
+
+        // ------------------------------------
+        // 4. Create Firestore user document
+        // ------------------------------------
+        $firestore = $this->firestore->database();
+        $firestore->collection('users')->document($firebaseUid)->set([
+            "id" => $firebaseUid,
+            "name" => $user->name,
+            "email" => $user->email,
+            "phone" => $user->phone,
+            "role" => $user->role,
+            "created_at" => now(),
+        ]);
+
+        // ------------------------------------
+        // 5. Create token and return response
+        // ------------------------------------
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'code' => 1,
+            'message' => 'User registered successfully (Web)!',
+            'user' => $user->load('profile'),
+            'token' => $token,
+        ], 201);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'code' => 0,
+            'message' => 'Registration failed.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+}
+
+
+
+
+
