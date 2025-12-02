@@ -158,6 +158,41 @@ class AuthController extends Controller
 
     }
 
+    public function testFirebaseConnection()
+    {
+        try {
+            $auth = app('firebase.auth');
+            
+            // This attempts a real connection to Firebase to list users.
+            // If the key is wrong or the path is wrong, it will fail here.
+            $users = $auth->listUsers(1); 
+            
+            // If we reach here, the connection is good.
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Firebase Admin SDK connected successfully.',
+                'user_count_check' => iterator_count($users) . ' user(s) retrieved.',
+            ], 200);
+
+        } catch (ServiceException $e) {
+            // This catches issues like invalid credentials, project ID mismatch, or network/API errors.
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Firebase Service Connection FAILED.',
+                'error_type' => 'ServiceException (Credentials/Network)',
+                'details' => $e->getMessage(),
+            ], 500);
+        } catch (\Exception $e) {
+            // This catches generic errors, like the JSON file being unreadable/non-existent.
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Firebase Initialization FAILED.',
+                'error_type' => 'General Exception (Configuration/Path)',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function registerWithGoogle(Request $request)
     {
         try {
