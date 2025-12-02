@@ -1,7 +1,6 @@
 @extends('layout.landing') 
 @section('title', 'Home | '.env('APP_NAME'))
 
-
 @section('content')
 <div class="container my-5">
     <div class="row justify-content-center">
@@ -13,49 +12,38 @@
                     <!-- Status/Message Area -->
                     <div id="message-box" class="alert d-none" role="alert"></div>
 
-                    <!-- Progress Indicator (Bootstrap Style - 4 Steps) -->
+                    <!-- Progress Indicator -->
                     <div class="d-flex justify-content-between align-items-center mb-5">
-                        <!-- Step 1 Indicator -->
                         <div id="step-1-indicator" class="text-center w-25 text-success">
                             <div class="progress-circle bg-success text-white mx-auto mb-1 fw-bold">1</div>
                             <small class="fw-semibold">Role</small>
                         </div>
-                        <!-- Bar 1 -->
                         <div class="progress flex-grow-1 mx-2" style="height: 4px;">
-                            <div id="progress-bar-1" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div id="progress-bar-1" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
                         </div>
-                        
-                        <!-- Step 2 Indicator -->
                         <div id="step-2-indicator" class="text-center w-25 text-muted">
                             <div class="progress-circle bg-light border border-secondary text-secondary mx-auto mb-1 fw-bold">2</div>
                             <small>User Info</small>
                         </div>
-                         <!-- Bar 2 -->
                         <div class="progress flex-grow-1 mx-2" style="height: 4px;">
-                            <div id="progress-bar-2" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div id="progress-bar-2" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
                         </div>
-
-                        <!-- Step 3 Indicator -->
                         <div id="step-3-indicator" class="text-center w-25 text-muted">
                             <div class="progress-circle bg-light border border-secondary text-secondary mx-auto mb-1 fw-bold">3</div>
                             <small>Company</small>
                         </div>
-                        <!-- Bar 3 -->
                         <div class="progress flex-grow-1 mx-2" style="height: 4px;">
-                            <div id="progress-bar-3" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div id="progress-bar-3" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
                         </div>
-
-                        <!-- Step 4 Indicator -->
                         <div id="step-4-indicator" class="text-center w-25 text-muted">
                             <div class="progress-circle bg-light border border-secondary text-secondary mx-auto mb-1 fw-bold">4</div>
                             <small>Payment</small>
                         </div>
                     </div>
-                    
+
                     <!-- ====================== STEP 1: CHOOSE ROLE ====================== -->
                     <div id="step-1-content">
                         <p class="text-muted text-center mb-4">Please select the type of company you are registering.</p>
-                        
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <button type="button" class="role-btn w-100 btn btn-outline-success p-4 d-flex flex-column align-items-center" data-role="Dispatch_company">
@@ -84,107 +72,47 @@
                         </button>
                     </div>
 
-                    <!-- ====================== STEP 2: USER INFO (FORM) ====================== -->
+                    <!-- ====================== STEP 2: USER INFO ====================== -->
                     <form id="step-2-form" class="needs-validation d-none" novalidate>
-                        <input type="hidden" id="user_role"> <!-- Will hold the selected role -->
-
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Full Name</label>
-                            <input type="text" id="name" class="form-control form-control-lg" placeholder="Full Name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input type="tel" id="phone" class="form-control form-control-lg" placeholder="Phone Number (e.g., +15551234567)" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" id="email" class="form-control form-control-lg" placeholder="Email Address" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" id="password" class="form-control form-control-lg" placeholder="Password" required>
-                        </div>
-                        <div class="mb-4">
-                            <label for="password_confirmation" class="form-label">Confirm Password</label>
-                            <input type="password" id="password_confirmation" class="form-control form-control-lg" placeholder="Confirm Password" required>
-                        </div>
-                        
+                        <input type="hidden" id="user_role">
+                        <div class="mb-3"><label for="name" class="form-label">Full Name</label><input type="text" id="name" class="form-control form-control-lg" required></div>
+                        <div class="mb-3"><label for="phone" class="form-label">Phone Number</label><input type="tel" id="phone" class="form-control form-control-lg" required></div>
+                        <div class="mb-3"><label for="email" class="form-label">Email Address</label><input type="email" id="email" class="form-control form-control-lg" required></div>
+                        <div class="mb-3"><label for="password" class="form-label">Password</label><input type="password" id="password" class="form-control form-control-lg" required></div>
+                        <div class="mb-4"><label for="password_confirmation" class="form-label">Confirm Password</label><input type="password" id="password_confirmation" class="form-control form-control-lg" required></div>
                         <button type="button" onclick="goToStep(1)" class="btn btn-secondary btn-md w-100 mb-2">Back</button>
-                        <button type="submit" id="step-2-submit-btn" class="btn btn-success btn-lg w-100 fw-semibold shadow-sm">
-                            Next: Company Info
-                        </button>
+                        <button type="submit" id="step-2-submit-btn" class="btn btn-success btn-lg w-100 fw-semibold shadow-sm">Next: Company Info</button>
                     </form>
 
-                    <!-- ====================== STEP 3: COMPANY INFO (FORM) ====================== -->
+                    <!-- ====================== STEP 3: COMPANY INFO ====================== -->
                     <form id="step-3-form" class="needs-validation d-none" novalidate>
-                        <div class="mb-3">
-                            <label for="company_name" class="form-label">Company Name</label>
-                            <input type="text" id="company_name" class="form-control form-control-lg" placeholder="Company Name" required>
+                        <div class="mb-3"><label for="company_name" class="form-label">Company Name</label><input type="text" id="company_name" class="form-control form-control-lg" required></div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3"><label for="dot_number" class="form-label">DOT Number (Optional)</label><input type="text" id="dot_number" class="form-control form-control-lg"></div>
+                            <div class="col-md-6 mb-3"><label for="mc_number" class="form-label">MC Number (Optional)</label><input type="text" id="mc_number" class="form-control form-control-lg"></div>
+                        </div>
+                        <div class="mb-3"><label for="company_email" class="form-label">Company Email</label><input type="email" id="company_email" class="form-control form-control-lg" required></div>
+                        <div class="mb-3"><label for="address1" class="form-label">Address Line 1</label><input type="text" id="address1" class="form-control form-control-lg" required></div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3"><label for="city" class="form-label">City</label><input type="text" id="city" class="form-control form-control-lg" required></div>
+                            <div class="col-md-6 mb-3"><label for="state" class="form-label">State/Province</label><input type="text" id="state" class="form-control form-control-lg" required></div>
                         </div>
                         <div class="row">
-                             <div class="col-md-6 mb-3">
-                                <label for="dot_number" class="form-label">DOT Number (Optional)</label>
-                                <input type="text" id="dot_number" class="form-control form-control-lg" placeholder="DOT Number">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="mc_number" class="form-label">MC Number (Optional)</label>
-                                <input type="text" id="mc_number" class="form-control form-control-lg" placeholder="MC Number">
-                            </div>
+                            <div class="col-md-6 mb-3"><label for="zip_code" class="form-label">Zip Code</label><input type="text" id="zip_code" class="form-control form-control-lg" required></div>
+                            <div class="col-md-6 mb-3"><label for="country" class="form-label">Country</label><input type="text" id="country" class="form-control form-control-lg" required></div>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="company_email" class="form-label">Company Email</label>
-                            <input type="email" id="company_email" class="form-control form-control-lg" placeholder="Company Email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="address1" class="form-label">Address Line 1</label>
-                            <input type="text" id="address1" class="form-control form-control-lg" placeholder="Address Line 1" required>
-                        </div>
-                        
-                        <!-- Location Fields -->
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="city" class="form-label">City</label>
-                                <input type="text" id="city" class="form-control form-control-lg" placeholder="City" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="state" class="form-label">State/Province</label>
-                                <input type="text" id="state" class="form-control form-control-lg" placeholder="State/Province" required>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="zip_code" class="form-label">Zip Code</label>
-                                <input type="text" id="zip_code" class="form-control form-control-lg" placeholder="Zip Code" required>
-                            </div>
-                             <div class="col-md-6 mb-3">
-                                <label for="country" class="form-label">Country</label>
-                                <input type="text" id="country" class="form-control form-control-lg" placeholder="Country" required>
-                            </div>
-                        </div>
-                        
                         <button type="button" onclick="goToStep(2)" class="btn btn-secondary btn-md w-100 mb-2">Back</button>
-                        <button type="submit" id="step-3-submit-btn" class="btn btn-success btn-lg w-100 fw-semibold shadow-sm">
-                            Next: Choose Plan & Pay
-                        </button>
+                        <button type="submit" id="step-3-submit-btn" class="btn btn-success btn-lg w-100 fw-semibold shadow-sm">Next: Choose Plan & Pay</button>
                     </form>
-                    
-                    <!-- ====================== STEP 4: PAYMENT REDIRECT ====================== -->
+
+                    <!-- ====================== STEP 4: PAYMENT ====================== -->
                     <div id="step-4-content" class="text-center d-none">
                         <svg class="mb-4 text-success" width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.38a.733.733 0 0 1 1.06-1.05l2.494 2.495 4.436-4.444z"/>
                         </svg>
                         <h2 class="h4 fw-bold mb-3 text-dark">Registration Complete!</h2>
-                        <p class="text-muted mb-4">Your company has been successfully registered. You will now be redirected to the payment portal to finalize your subscription.</p>
-                        
-                        <button id="paystack-redirect-btn" class="btn btn-success btn-lg w-100 fw-semibold shadow-sm">
-                            Go to Payment Portal
-                        </button>
-                        
-                        <p class="mt-3 small text-secondary">Once payment is complete, return to the Darllogistics app and log in.</p>
+                        <p class="text-muted mb-4">Your company has been successfully registered. You will now be redirected to the payment portal.</p>
+                        <button id="paystack-redirect-btn" class="btn btn-success btn-lg w-100 fw-semibold shadow-sm">Go to Payment Portal</button>
                     </div>
 
                 </div>
@@ -196,576 +124,145 @@
 
 @push('scripts')
 <script>
-    window.__firebase_config = @json([
-        'apiKey' => env('FIREBASE_API_KEY'),
-        'authDomain' => 'darl-dispatch.firebaseapp.com',
-        'projectId' => 'darl-dispatch',
-        'storageBucket' => 'darl-dispatch.appspot.com',
-        'messagingSenderId' => '276224518042',
-        'appId' => '1:276224518042:web:7a0abf25db2a3019737c23',
-    ]);
+window.__firebase_config = @json([
+    'apiKey' => env('FIREBASE_API_KEY'),
+    'authDomain' => 'darl-dispatch.firebaseapp.com',
+    'projectId' => 'darl-dispatch',
+    'storageBucket' => 'darl-dispatch.appspot.com',
+    'messagingSenderId' => '276224518042',
+    'appId' => '1:276224518042:web:7a0abf25db2a3019737c23',
+]);
 </script>
 
 <script type="module">
-    // --- FIREBASE IMPORTS ---
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, getRedirectResult } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // --- FIREBASE GLOBAL VARIABLES ---
-    const PLACEHOLDER_API_KEY = "PLACEHOLDER";
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    
-    // Check if the real config is available; otherwise, use a placeholder.
-    const firebaseConfig = typeof __firebase_config !== 'undefined' 
-        ? JSON.parse(__firebase_config) 
-        : { apiKey: PLACEHOLDER_API_KEY, authDomain: "placeholder.firebaseapp.com", projectId: "placeholder" };
+// --- FIREBASE CONFIG ---
+const firebaseConfig = JSON.parse(JSON.stringify(window.__firebase_config || {}));
+const isLiveFirebase = firebaseConfig && firebaseConfig.apiKey;
 
-    // Determine if we are using the real (non-placeholder) configuration
-    const isLiveFirebase = firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== PLACEHOLDER_API_KEY;
+let auth = null, db = null, firebaseUserID = null;
 
-    let auth = null;
-    let db = null;
-    let firebaseUserID = null; // The UID assigned by Firebase Auth
+if (isLiveFirebase) {
+    setLogLevel('Debug');
+    const app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    onAuthStateChanged(auth, user => {
+        firebaseUserID = user ? user.uid : null;
+    });
+}
 
-    // --- FIREBASE INITIALIZATION ---
-    if (firebaseConfig && firebaseConfig.apiKey) {
-        setLogLevel('Debug');
-        try {
-            const app = initializeApp(firebaseConfig);
-            auth = getAuth(app); 
-            db = getFirestore(app);
+// --- API CONFIG ---
+const BASE_API_URL = 'https://www.darllogistics.com/api/v2'; 
+const USER_REGISTER_ENDPOINT = '/register'; 
+const COMPANY_REGISTER_ENDPOINT = '/companies'; 
+const PAYSTACK_REDIRECT_URL = 'https://paystack.com/pay/your-plan'; 
+const ALLOWED_ROLE = 'Dispatch_company';
 
-            // Listener to capture Firebase UID for persistence
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    firebaseUserID = user.uid;
-                    console.log("Firebase Auth State Changed. UID:", firebaseUserID);
-                } else {
-                    firebaseUserID = null;
-                    console.log("Firebase Auth State Changed. User signed out.");
-                }
-            });
-            if (isLiveFirebase) {
-                 console.log("SUCCESS: Firebase services initialized with live config.");
-            } else {
-                 console.warn("WARNING: Using Firebase PLACEHOLDER configuration. Firebase Auth and Firestore operations are SKIPPED. Please deploy to live server (CPanel) to test full functionality.");
-            }
-           
-        } catch (initError) {
-            console.error("CRITICAL: Failed to initialize Firebase with provided configuration:", initError.message);
-        }
-    } else {
-        console.error("CRITICAL: Firebase config is missing or invalid. Cannot initialize Firebase features.");
+let currentStep = 1, selectedRole = null, apiUserId = null, authToken = null;
+
+// Step 1: Role selection
+document.querySelectorAll('.role-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        selectedRole = btn.dataset.role;
+        document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const step1Btn = document.getElementById('step-1-btn');
+        if(selectedRole===ALLOWED_ROLE){
+            step1Btn.disabled = false; document.getElementById('role-notice-box').classList.add('d-none');
+        }else{step1Btn.disabled=true; const box=document.getElementById('role-notice-box'); box.classList.remove('d-none'); box.className='alert alert-info'; box.innerHTML=`Only ${ALLOWED_ROLE} allowed.`;}
+    });
+});
+
+document.getElementById('step-1-btn').addEventListener('click', ()=>goToStep(2));
+
+function goToStep(step){
+    currentStep=step;
+    ['step-1-content','step-2-form','step-3-form','step-4-content'].forEach(id=>document.getElementById(id).classList.add('d-none'));
+    switch(step){
+        case 1: document.getElementById('step-1-content').classList.remove('d-none'); break;
+        case 2: document.getElementById('step-2-form').classList.remove('d-none'); document.getElementById('user_role').value=selectedRole; break;
+        case 3: document.getElementById('step-3-form').classList.remove('d-none'); break;
+        case 4: document.getElementById('step-4-content').classList.remove('d-none'); break;
     }
-    
-    // --- UTILITY FUNCTION: Update Firestore User Document (Used in Step 2 and Step 3) ---
-    /**
-     * Creates or Updates the user's document in Firestore with profile data.
-     * @param {string} fbUID The Firebase User ID (UID).
-     * @param {string} role The user's role.
-     * @param {string | null} companyId The company ID from the API response (optional for initial creation).
-     */
-    async function updateFirebaseUser(fbUID, role, companyId = null) {
-        if (!isLiveFirebase) {
-            console.warn('Firestore update skipped: Using placeholder Firebase config.');
-            return true; 
-        }
+}
 
-        if (!db || !fbUID) {
-            console.error('Firestore or required UID is missing for update. Skipping Firestore update.');
-            return false; 
-        }
+// --- Step 2: User registration (Firebase + MySQL) ---
+document.getElementById('step-2-form').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const password_confirmation = document.getElementById('password_confirmation').value;
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
 
-        const userDocPath = `artifacts/${appId}/users/${fbUID}/user_data/profile`; 
-        const userDocRef = doc(db, userDocPath);
+    if(password!==password_confirmation){alert("Passwords do not match."); return;}
 
-        try {
-             const userData = {
-                role: role,
-                updated_at: new Date().toISOString()
-            };
-            
-            // Only add company_id if it's provided (used in Step 3)
-            if (companyId) {
-                userData.company_id = companyId.toString();
-            }
-            
-            // setDoc with merge: true ensures we don't overwrite the whole document
-            await setDoc(userDocRef, userData, { merge: true });
-            
-            console.log('Firebase Profile updated successfully:', userDocPath, userData);
-            return true;
-        } catch (e) {
-            console.error('CRITICAL: Error updating/creating user profile in Firestore:', e.message);
-            return false;
+    // --- Firebase signup ---
+    let firebase_uid = null;
+    if(isLiveFirebase){
+        try{
+            const fbUser = await createUserWithEmailAndPassword(auth,email,password);
+            firebase_uid = fbUser.user.uid;
+            firebaseUserID = firebase_uid;
+        }catch(err){
+            if(err.code==='auth/email-already-in-use'){
+                const fbUser = await signInWithEmailAndPassword(auth,email,password);
+                firebase_uid = fbUser.user.uid;
+                firebaseUserID = firebase_uid;
+            }else{alert("Firebase signup error: "+err.message); return;}
         }
     }
 
-    // --- CSS for Progress Circles and Role Buttons (No change) ---
-    const style = document.createElement('style');
-    style.textContent = `
-        .progress-circle {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        .w-25 {
-            width: 25%;
-        }
-        .role-btn {
-            border-width: 2px !important;
-            transition: all 0.2s ease;
-            height: 120px;
-        }
-        .role-btn:hover {
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .role-btn.active {
-            background-color: var(--bs-success);
-            color: white !important;
-            border-color: var(--bs-success) !important;
-        }
-        /* Ensure active success button keeps white text */
-        .btn-outline-success.active, .btn-outline-success:active {
-            color: #fff !important; 
-            background-color: var(--bs-success) !important;
-        }
-        .btn-outline-secondary.active, .btn-outline-secondary:active {
-            background-color: var(--bs-secondary) !important;
-            color: #fff !important; 
-        }
-        label.form-label {
-            font-weight: 500;
-            color: #495057;
-        }
-    `;
-    document.head.appendChild(style);
-
-    // --- CONFIGURATION ---
-    const BASE_API_URL = 'https://www.darllogistics.com/api/v2'; 
-    const USER_REGISTER_ENDPOINT = '/register-web'; 
-    const COMPANY_REGISTER_ENDPOINT = '/companies'; 
-    const PAYSTACK_REDIRECT_URL = 'https://paystack.com/pay/your-plan'; 
-    const ALLOWED_ROLE = 'Dispatch_company';
-    // --- END CONFIGURATION ---
-
-    let currentStep = 1; 
-    let selectedRole = null; 
-    let apiUserId = null;    // The ID assigned by your API/Backend (e.g., 121)
-    let authToken = null;    // The token received from your API
-    let userEmail = null;    // Store email for Firebase retry
-
-    // DOM Elements (same as before)
-    const stepTitle = document.getElementById('step-title');
-    const step1Content = document.getElementById('step-1-content');
-    const step2Form = document.getElementById('step-2-form');
-    const step3Form = document.getElementById('step-3-form');
-    const step4Content = document.getElementById('step-4-content');
-    const messageBox = document.getElementById('message-box');
-    const roleNoticeBox = document.getElementById('role-notice-box');
-    const step1NextBtn = document.getElementById('step-1-btn');
-    
-    // Indicators and Bars (same as before)
-    const stepIndicators = [
-        document.getElementById('step-1-indicator'),
-        document.getElementById('step-2-indicator'),
-        document.getElementById('step-3-indicator'),
-        document.getElementById('step-4-indicator'),
-    ];
-    const progressBars = [
-        document.getElementById('progress-bar-1'),
-        document.getElementById('progress-bar-2'),
-        document.getElementById('progress-bar-3'),
-    ];
-
-    // Helper functions (same as before)
-    function showMessage(message, type = 'danger') {
-        messageBox.innerHTML = message;
-        messageBox.classList.remove('d-none', 'alert-danger', 'alert-success', 'alert-info', 'alert-warning');
-        messageBox.className = 'alert';
-        if (type === 'error') {
-            messageBox.classList.add('alert-danger');
-        } else if (type === 'success') {
-            messageBox.classList.add('alert-success');
-        } else if (type === 'warning') {
-            messageBox.classList.add('alert-warning');
-        } else {
-            messageBox.classList.add('alert-info');
-        }
-    }
-
-    function hideMessage() {
-        messageBox.classList.add('d-none');
-    }
-
-    function updateProgressIndicator() {
-        const updateIndicator = (el, isActive, isComplete) => {
-            const circle = el.querySelector('.progress-circle');
-            const text = el.querySelector('small');
-            
-            circle.classList.remove('bg-success', 'bg-light', 'text-white', 'text-secondary', 'border');
-            text.classList.remove('text-success', 'text-muted', 'fw-semibold');
-
-            if (isComplete) {
-                circle.classList.add('bg-success', 'text-white');
-                text.classList.add('text-success', 'fw-semibold');
-            } else if (isActive) {
-                circle.classList.add('bg-success', 'text-white');
-                text.classList.add('text-success', 'fw-semibold');
-            } else {
-                circle.classList.add('bg-light', 'border', 'border-secondary', 'text-secondary');
-                text.classList.add('text-muted');
-            }
-        };
-
-        // Update indicators
-        stepIndicators.forEach((el, index) => {
-            const stepNum = index + 1;
-            updateIndicator(el, currentStep === stepNum, currentStep > stepNum);
+    // --- MySQL registration ---
+    const payload={name, phone, role:selectedRole, email, password, password_confirmation, firebase_uid};
+    try{
+        const res = await fetch(BASE_API_URL+USER_REGISTER_ENDPOINT,{
+            method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
         });
+        const data = await res.json();
+        if(!res.ok){alert(data.message||"Registration failed"); return;}
+        apiUserId = data.user.id.toString(); authToken = data.token;
+        goToStep(3);
+    }catch(err){console.error(err); alert("Network error during registration");}
+});
 
-        // Update progress bars (connecting bar N connects step N and step N+1)
-        progressBars.forEach((bar, index) => {
-            const stepNum = index + 1;
-            bar.style.width = currentStep > stepNum ? '100%' : '0%';
+// --- Step 3: Company registration ---
+document.getElementById('step-3-form').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const companyPayload = {
+        user_id: apiUserId,
+        name: document.getElementById('company_name').value,
+        dot_number: document.getElementById('dot_number').value,
+        mc_number: document.getElementById('mc_number').value,
+        address1: document.getElementById('address1').value,
+        country: document.getElementById('country').value,
+        state: document.getElementById('state').value,
+        city: document.getElementById('city').value,
+        zip_code: document.getElementById('zip_code').value,
+        email: document.getElementById('company_email').value
+    };
+    try{
+        const res = await fetch(BASE_API_URL+COMPANY_REGISTER_ENDPOINT,{
+            method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${authToken}`}, body:JSON.stringify(companyPayload)
         });
-    }
-
-    function goToStep(step) {
-        currentStep = step;
-        hideMessage();
-
-        // Hide all step content
-        step1Content.classList.add('d-none');
-        step2Form.classList.add('d-none');
-        step3Form.classList.add('d-none');
-        step4Content.classList.add('d-none');
-        
-        // Show content for the new step and set title
-        switch(step) {
-            case 1:
-                stepTitle.textContent = "Step 1: Choose Your Company Type";
-                step1Content.classList.remove('d-none');
-                // Re-enable button based on current role selection state
-                step1NextBtn.disabled = selectedRole !== ALLOWED_ROLE;
-                break;
-            case 2:
-                if (!selectedRole) { goToStep(1); return; } // Prevent skipping role selection
-                stepTitle.textContent = "Step 2: Personal Information";
-                step2Form.classList.remove('d-none');
-                // Ensure the hidden role field is set
-                document.getElementById('user_role').value = selectedRole; 
-                break;
-            case 3:
-                // Require successful Step 2 completion (Firebase Auth)
-                if (isLiveFirebase && !firebaseUserID) {
-                    showMessage("Authentication failed. Please check your user information and try again.", 'error');
-                    goToStep(2);
-                    return;
-                }
-                stepTitle.textContent = "Step 3: Company Registration";
-                step3Form.classList.remove('d-none');
-                break;
-            case 4:
-                stepTitle.textContent = "Step 4: Payment";
-                step4Content.classList.remove('d-none');
-                break;
+        const data = await res.json();
+        if(!res.ok){alert(data.message||"Company registration failed"); return;}
+        // Optionally update Firestore with company ID
+        if(isLiveFirebase && firebaseUserID && data.id){
+            const userDocRef = doc(db, `artifacts/default-app-id/users/${firebaseUserID}/user_data/profile`);
+            await setDoc(userDocRef,{company_id:data.id.toString()},{merge:true});
         }
-        updateProgressIndicator();
-    }
+        goToStep(4);
+    }catch(err){console.error(err); alert("Network error during company registration");}
+});
 
-    // --- Step 1: Role Selection Logic (same as before) ---
-    document.querySelectorAll('.role-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const role = button.getAttribute('data-role');
-            selectedRole = role;
-            
-            // Toggle active state for all buttons
-            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
+// Step 4: Payment redirect
+document.getElementById('paystack-redirect-btn').addEventListener('click',()=>window.location.href=PAYSTACK_REDIRECT_URL);
 
-            // Handle role restriction logic
-            if (role === ALLOWED_ROLE) {
-                roleNoticeBox.classList.add('d-none');
-                step1NextBtn.disabled = false;
-                step1NextBtn.textContent = 'Next: Personal Info';
-            } else {
-                roleNoticeBox.classList.remove('d-none', 'alert-danger', 'alert-success');
-                roleNoticeBox.className = 'alert alert-info';
-                roleNoticeBox.innerHTML = `We are currently focusing on **${ALLOWED_ROLE.replace('_', ' ')}** registrations. Please select this option to continue. Other roles will be available soon.`;
-                step1NextBtn.disabled = true;
-                step1NextBtn.textContent = 'Next: Personal Info (Disabled)';
-            }
-        });
-    });
-
-    step1NextBtn.addEventListener('click', () => {
-        if (selectedRole === ALLOWED_ROLE) {
-            goToStep(2);
-        }
-    });
-
-    // Initialize the form on load
-    document.addEventListener('DOMContentLoaded', () => {
-        goToStep(1);
-    });
-
-    // --- Step 2: User Registration, Firebase Auth Creation, and Firestore Init ---
-    step2Form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        if (!step2Form.checkValidity()) {
-            step2Form.classList.add('was-validated');
-            showMessage("Please fill in all required fields correctly.", 'error');
-            return;
-        }
-        
-        userEmail = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const password_confirmation = document.getElementById('password_confirmation').value;
-        const name = document.getElementById('name').value;
-        const phone = document.getElementById('phone').value;
-
-        if (password !== password_confirmation) {
-            showMessage("Passwords do not match.", 'error');
-            return;
-        }
-        
-        const button = document.getElementById('step-2-submit-btn');
-        const originalText = button.textContent;
-        button.disabled = true;
-        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating User...';
-        hideMessage();
-        
-        const payload = {
-            name: name,
-            phone: phone,
-            role: document.getElementById('user_role').value, 
-            email: userEmail,
-            password: password,
-            password_confirmation: password_confirmation
-        };
-
-        try {
-            // 1. Register user on your custom backend (MySQL)
-            showMessage("1/2: Registering user on logistics platform (MySQL)...", 'info');
-            const apiResponse = await fetch(BASE_API_URL + USER_REGISTER_ENDPOINT, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const apiData = await apiResponse.json();
-
-            if (!apiResponse.ok) {
-                const errorMsg = apiData.message || (apiData.errors ? Object.values(apiData.errors).flat().join('<br>') : "Logistics registration failed.");
-                showMessage(errorMsg, 'error');
-                return;
-            }
-
-            // CRITICAL CHECK: Extract User ID and Token
-            if (!apiData.user || !apiData.user.id || !apiData.token) {
-                 showMessage("Logistics registration succeeded, but API response is missing user ID or token. Cannot proceed.", 'error');
-                 return;
-            }
-            
-            apiUserId = apiData.user.id.toString(); 
-            authToken = apiData.token; 
-            
-            // 2. Register user on Firebase Auth and create initial Firestore document
-            showMessage("2/2: Linking user to Firebase Authentication and creating profile...", 'info');
-            
-            let firebaseAuthSuccess = false;
-
-            if (isLiveFirebase) {
-                if (!auth) {
-                    showMessage("CRITICAL: Firebase Auth object is not initialized. Check console for init errors.", 'error');
-                    return;
-                }
-                
-                try {
-                    // Attempt to create user with email/password
-                    const userCredential = await createUserWithEmailAndPassword(auth, userEmail, password);
-                    firebaseUserID = userCredential.user.uid;
-                    firebaseAuthSuccess = true;
-                    console.log("Firebase Auth: User created successfully with email/password. UID:", firebaseUserID);
-
-                    // Create initial Firestore document right away (NO company ID yet)
-                    await updateFirebaseUser(firebaseUserID, selectedRole);
-                    
-                } catch (authError) {
-                    // Handle 'auth/email-already-in-use' error by signing the user in
-                    if (authError.code === 'auth/email-already-in-use') {
-                        showMessage("Email already linked in Firebase. Attempting sign-in to sync accounts...", 'warning');
-                        console.warn("Firebase Auth: Email already in use. Attempting sign-in.", authError);
-                        
-                        try {
-                            const userCredential = await signInWithEmailAndPassword(auth, userEmail, password);
-                            firebaseUserID = userCredential.user.uid;
-                            firebaseAuthSuccess = true;
-                            console.log("Firebase Auth: User signed in successfully. UID:", firebaseUserID);
-                            
-                            // Create initial Firestore document if it doesn't exist
-                            await updateFirebaseUser(firebaseUserID, selectedRole);
-
-                        } catch (signInError) {
-                            // Password was wrong for the existing Firebase user
-                            showMessage("Firebase sign-in failed. Password mismatch for existing account. Please check credentials.", 'error');
-                            console.error("Firebase Auth: Sign-in failed.", signInError);
-                            throw new Error("Firebase Authentication failed.");
-                        }
-                    } else {
-                        // Handle other Firebase errors (e.g., network, weak password)
-                        showMessage(`Firebase Auth Error: ${authError.code || 'unknown'}: ${authError.message}`, 'error');
-                        console.error("Firebase Auth: Critical error during user creation/linking.", authError);
-                        throw new Error("Firebase Authentication failed.");
-                    }
-                }
-            } else {
-                // Placeholder/Local Testing Mode
-                firebaseUserID = 'placeholder-' + crypto.randomUUID(); // Mock a UID
-                firebaseAuthSuccess = true;
-                showMessage("2/2: Firebase step SKIPPED (Local testing mode). Proceeding to company info.", 'warning');
-                console.warn("Firebase Auth SKIPPED: Using placeholder config. User registration is ONLY on the logistics API.");
-            }
-            
-            if (firebaseAuthSuccess) {
-                 showMessage("User details registered (MySQL) and authenticated (Firebase). Proceeding to company info.", 'success');
-                 goToStep(3); 
-                 step2Form.classList.remove('was-validated');
-            }
-            
-        } catch (error) {
-            // Generic catch block for network errors or errors thrown from the internal try/catch
-            if (error.message.startsWith("Firebase Authentication failed")) {
-                 // Message already displayed to user
-                 console.error(error.message);
-            } else {
-                showMessage("A network error occurred during user registration. Please check your console for details.", 'error');
-                console.error('Step 2 Critical Error:', error);
-            }
-        } finally {
-            button.disabled = false;
-            button.textContent = originalText;
-        }
-    }, false);
-
-
-    // --- Step 3: Company Registration and Firebase Firestore Update ---
-    step3Form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        if (!step3Form.checkValidity()) {
-            step3Form.classList.add('was-validated');
-            showMessage("Please fill in all company fields.", 'error');
-            return;
-        }
-
-        if (!apiUserId) {
-            showMessage("Error: User registration incomplete. Please go back to Step 2.", 'error');
-            goToStep(2);
-            return;
-        }
-
-        if (!authToken) {
-            showMessage("Error: API Authorization Token is missing. Please go back to Step 2.", 'error');
-            goToStep(2);
-            return;
-        }
-
-        if (isLiveFirebase && !firebaseUserID) {
-             showMessage("Error: Firebase user ID is missing. Please ensure Step 2 completed successfully.", 'error');
-             goToStep(2);
-             return;
-        }
-        
-        const button = document.getElementById('step-3-submit-btn');
-        const originalText = button.textContent;
-        button.disabled = true;
-        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Registering Company...';
-        hideMessage();
-
-        const companyPayload = { 
-            user_id: apiUserId, 
-            name: document.getElementById('company_name').value, 
-            dot_number: document.getElementById('dot_number').value, 
-            mc_number: document.getElementById('mc_number').value, 
-            address1: document.getElementById('address1').value, 
-            country: document.getElementById('country').value, 
-            state: document.getElementById('state').value, 
-            city: document.getElementById('city').value, 
-            zip_code: document.getElementById('zip_code').value, 
-            email: document.getElementById('company_email').value 
-        };
-
-        try {
-            showMessage("1/2: Sending company registration request to API (MySQL)...", 'info');
-
-            // 1. Register company on your custom backend (MySQL)
-            const response = await fetch(BASE_API_URL + COMPANY_REGISTER_ENDPOINT, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}` 
-                },
-                body: JSON.stringify(companyPayload)
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                // --- CRITICAL FIX: Robust check for Company ID based on provided JSON ---
-                const companyId = data.data?.id // Explicitly check for data.data.id (confirmed structure)
-                                || data.company?.id 
-                                || data.id 
-                                || data.company_id 
-                                || data.user?.company_id; 
-                
-                if (companyId) {
-                    showMessage("2/2: Company registered in MySQL. Updating Firebase profile...", 'info');
-                    
-                    // --- STEP 3.1: FIRESTORE UPDATE ---
-                    // Use the confirmed companyId to update the user's Firestore document
-                    const firebaseSuccess = await updateFirebaseUser(firebaseUserID, selectedRole, companyId.toString()); 
-                        
-                    if (firebaseSuccess) {
-                        showMessage("Company registered and user profile successfully linked in Firebase. Redirecting to payment.", 'success');
-                        goToStep(4);
-                    } else {
-                        // Log a warning but still proceed (payment is higher priority than Firestore link)
-                        showMessage("Company registered, but failed to link company ID in Firebase/Firestore. Proceeding to payment.", 'warning');
-                        goToStep(4);
-                    }
-                    // ----------------------------------
-                } else {
-                    // This is the error message from the screenshot. It means the API response needs to be fixed.
-                    showMessage("Company registration succeeded, but the API response is MISSING the Company ID. Please urgently check your API response structure on the server.", 'error');
-                    console.error("CRITICAL: API Company Response is Missing ID. Full Response:", data);
-                }
-
-            } else {
-                // API returned an error status (e.g., 401 Unauthorized, 422 Validation)
-                const errorMsg = data.message || (data.errors ? Object.values(data.errors).flat().join('<br>') : `Company registration failed with status code ${response.status}.`);
-                showMessage(errorMsg, 'error');
-                console.error("API Company Registration Error Response:", data);
-            }
-        } catch (error) {
-            showMessage("A network error occurred during company registration or Firebase update.", 'error');
-            console.error('Step 3 Error:', error);
-        } finally {
-            button.disabled = false;
-            button.textContent = originalText;
-        }
-    }, false);
-    
-    // Step 4: Payment Redirection
-    document.getElementById('paystack-redirect-btn').addEventListener('click', () => {
-        window.location.href = PAYSTACK_REDIRECT_URL;
-    });
+goToStep(1);
 </script>
 @endpush
