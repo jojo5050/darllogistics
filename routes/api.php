@@ -39,6 +39,7 @@ Route::get('/', function () {
     ]);
 });
  
+Route::get('/v2/test-firebase', [AuthController::class, 'testFirebaseConnection']);
 Route::post('/v2/register', [AuthController::class, 'register']);
 Route::post('/v2/login', [AuthController::class, 'login']);
 Route::post('/v2/store-firebase-uid', [AuthController::class, 'storeFirebaseUid']);
@@ -56,9 +57,6 @@ Route::prefix('v2')->group(function () {
     });
 });
 
-Route::group(['prefix' => 'v2'], function () {
-    Route::get('/test-firebase', [AuthController::class, 'testFirebaseConnection']); 
-});
 
 Route::middleware('auth:sanctum')->group(function () {
 
