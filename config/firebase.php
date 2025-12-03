@@ -9,6 +9,8 @@ return [
      * ------------------------------------------------------------------------
      */
 
+     'client_api_key' => env('FIREBASE_API_KEY'),
+
     'default' => env('FIREBASE_PROJECT', 'app'),
 
     /*
@@ -51,7 +53,7 @@ return [
              */
 
              'credentials' => [
-                'file' => storage_path('storage/app/firebase_admin_sdk.json'),
+                'file' => storage_path('app/firebase_admin_sdk.json'),
              ],
 
             /*
