@@ -12,5 +12,5 @@ Route::controller(HomeController::class)->group(function () {
 });
 
 Route::get('/ios/signup', function () {
-    return view('auth.register-ios');
+    return view('test-firebase');
 })->name('ios.signup');
