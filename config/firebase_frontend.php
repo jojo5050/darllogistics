@@ -1,15 +1,10 @@
-<?php
 
-if (!function_exists('firebase_frontend_config')) {
-    function firebase_frontend_config()
-    {
-        return [
-            "apiKey"            => env("FIREBASE_API_KEY"),
-            "authDomain"        => "darl-dispatch.firebaseapp.com",
-            "projectId"         => "darl-dispatch",
-            "storageBucket"     => "darl-dispatch.appspot.com",
-            "messagingSenderId" => "276224518042",
-            "appId"             => "1:276224518042:web:7a0abf25db2a3019737c23",
-        ];
-    }
-}
+<?php
+return [
+  'apiKey' => env('FIREBASE_API_KEY', ''),
+  'authDomain' => env('FIREBASE_AUTH_DOMAIN', 'your-app.firebaseapp.com'),
+  'projectId' => env('FIREBASE_PROJECT_ID', 'your-app-id'),
+  'storageBucket' => env('FIREBASE_STORAGE_BUCKET', 'your-app.appspot.com'),
+  'messagingSenderId' => env('FIREBASE_MESSAGING_SENDER_ID', ''),
+  'appId' => env('FIREBASE_APP_ID', ''),
+];
