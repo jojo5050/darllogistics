@@ -183,6 +183,30 @@
     console.log("Frontend Firebase config:", window.__firebase_config);
 </script>
 
+<!-- ===================== FIREBASE INITIALIZATION ===================== -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } 
+        from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+    const cfg = window.__firebase_config ?? {};
+
+    let auth = null;
+
+    if (!cfg.apiKey) {
+        console.error("FIREBASE CONFIG IS MISSING — Firebase will be skipped.");
+    } else {
+        try {
+            const app = initializeApp(cfg);
+            auth = getAuth(app);
+            window.__auth = auth;
+            console.log("Firebase initialized OK");
+        } catch (e) {
+            console.error("Firebase init error:", e);
+        }
+    }
+</script>
+
 @verbatim
 
 <script>
@@ -342,7 +366,7 @@ document.getElementById('step-2-form').addEventListener('submit', async (e) => {
         // create Firestore doc
         if (window._firebaseDbObj && window._firebaseFns && window._firebaseFns.setDoc && window._firebaseFns.doc) {
           const db = window._firebaseDbObj;
-          const docRef = window._firebaseFns.doc(db, "users", firebaseUID);
+          const docRef = window._firebaseFns.doc(db, "Users", firebaseUID);
           await window._firebaseFns.setDoc(docRef, {
             mysql_id: registeredUserId,
             name, email, phone, role,
