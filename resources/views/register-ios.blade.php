@@ -185,24 +185,42 @@
 
 <!-- ===================== FIREBASE INITIALIZATION ===================== -->
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } 
-        from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+
+    import {  getAuth,  createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+    import { getFirestore, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Load config from backend
     const cfg = window.__firebase_config ?? {};
 
-    let auth = null;
-
     if (!cfg.apiKey) {
-        console.error("FIREBASE CONFIG IS MISSING — Firebase will be skipped.");
-    } else {
+        console.error("❌ FIREBASE CONFIG MISSING → skipping Firebase.");
+        window._firebaseReady = false;
+    } 
+    else {
         try {
+            // Initialize Firebase app
             const app = initializeApp(cfg);
-            auth = getAuth(app);
-            window.__auth = auth;
-            console.log("Firebase initialized OK");
-        } catch (e) {
-            console.error("Firebase init error:", e);
+
+            // ---- AUTH ----
+            const auth = getAuth(app);
+            window._firebaseAuthObj = auth;
+            window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+
+            // ---- FIRESTORE ----
+            const db = getFirestore(app);
+            window._firebaseDbObj = db;
+            window._firebaseFns = { doc, setDoc, updateDoc };
+
+            window._firebaseReady = true;
+
+            console.log("🔥 Firebase fully initialized.");
+        } 
+        catch (err) {
+            console.error("❌ Firebase setup failed:", err);
+            window._firebaseReady = false;
         }
     }
 </script>
