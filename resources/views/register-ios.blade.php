@@ -179,6 +179,12 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 @verbatim
+
+<script>
+    window.__firebase_config = @json(config('firebase_frontend'), JSON_FORCE_OBJECT);
+    console.log("Frontend Firebase config:", window.__firebase_config);
+</script>
+
 <script>
 /* ========= CONFIG ========= */
 const API_BASE = "/api/v2"; // <- correct API base per your backend
