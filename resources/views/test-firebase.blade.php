@@ -27,7 +27,9 @@
 </div>
 @endsection
 
+
 @push('scripts')
+@verbatim
 <script>
   // expose JSON object safely from config (forces object)
   window.__firebase_config = @json(config('firebase_frontend'), JSON_FORCE_OBJECT);
@@ -109,4 +111,5 @@
     }
   });
 </script>
+@endverbatim
 @endpush
