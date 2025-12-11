@@ -117,4 +117,13 @@ class PlanController extends Controller
             ], 500);
         }
     }
+
+    public function showPlans(Request $request)
+{
+    return view('payment.select-plan', [
+        'userEmail' => session('user_email'),
+        'userId' => session('user_id'),
+    ]);
+}
+
 }

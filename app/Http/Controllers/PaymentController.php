@@ -47,9 +47,104 @@ class PaymentController extends Controller
         ], 201);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+  
+    public function showPaymentPage(Request $request)
+{
+    $plan_id = $request->plan_id;
+    $amount = $request->amount;
+
+    $user = auth()->user(); // might be null
+
+    return view('payment.pay', [
+        'plan_id'   => $plan_id,
+        'amount'    => $amount,
+        'userEmail' => $user?->email ?? "",        
+        'apiToken'  => $user?->createToken('api')->plainTextToken ?? "",  
+    ]);
+}
+
+
+public function store(Request $request)
+{
+    try{
+        $validated = $request->validate([
+            'plan_id' => 'required|exists:plans,id',
+            'transaction_reference' => 'required|string',
+            'amount' => 'required|numeric|min:0.00',
+            'currency' => 'required|string',
+            'payment_method' => 'required|string',
+            'status' => 'required|string|in:success,pending,failed',
+            'gateway_response' => 'nullable|array',
+        ]);
+
+        $gatewayResponse = $request->gateway_response;
+        if (is_array($gatewayResponse)) $gatewayResponse = json_encode($gatewayResponse);
+
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        $plan = Plan::findOrFail($validated['plan_id']);
+
+        $existingPayment = Payment::where('transaction_reference', $validated['transaction_reference'])->first();
+
+        if ($existingPayment) {
+            if ($existingPayment->status != 'success') {
+                $existingPayment->update([
+                    'status' => $validated['status'],
+                    'gateway_response' => $gatewayResponse,
+                ]);
+
+                // if status updated to success => activate subscription
+                if ($validated['status'] === 'success') {
+                    $this->activateSubscriptionForUser($user->id, $plan);
+                }
+
+                return response()->json(['message' => 'Payment updated successfully.', 'status' => 'success', 'code' => 1]);
+            }
+
+            return response()->json(['message' => 'Payment already confirmed.', 'status' => 'success', 'code' => 1]);
+        }
+
+        $payment = Payment::create([
+            'user_id' => $user->id,
+            'plan_id' => $validated['plan_id'],
+            'amount' => $validated['amount'],
+            'currency' => $validated['currency'],
+            'transaction_reference' => $validated['transaction_reference'],
+            'payment_method' => $validated['payment_method'],
+            'status' => $validated['status'],
+            'gateway_response' => $gatewayResponse,
+        ]);
+
+        // If payment is successful, activate subscription
+        if ($validated['status'] === 'success') {
+            $this->activateSubscriptionForUser($user->id, $plan);
+        } else {
+            // pending or failed - do nothing (or schedule verification)
+        }
+
+        return response()->json([
+            'message' => 'Payment details saved successfully.',
+            'data' => $payment,
+            'status' => 'success',
+            'code' => 1,
+        ]);
+    }catch(\Exception $e){
+        return response()->json([
+            'message' => 'The server is unable to handle your request at this time. Try again! '.$e->getMessage(),
+            'data' => [],
+            'status' => 'failed',
+            'code' => 0,
+        ]);
+    }
+}
+
+
+
+
+
     public function create()
     {
         //
@@ -58,72 +153,91 @@ class PaymentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        try{
-            $validated = $request->validate([
-                'plan_id' => 'required|exists:plans,id',
-                'transaction_reference' => 'required|string',
-                'amount' => 'required|numeric|min:0.00',
-                'currency' => 'required|string',
-                'payment_method' => 'required|string',
-                'status' => 'required|string|in:success,pending,failed',
-                'gateway_response' => 'nullable|array',
-            ]);
+   // public function store(Request $request)
+    // {
+    //     try{
+    //         $validated = $request->validate([
+    //             'plan_id' => 'required|exists:plans,id',
+    //             'transaction_reference' => 'required|string',
+    //             'amount' => 'required|numeric|min:0.00',
+    //             'currency' => 'required|string',
+    //             'payment_method' => 'required|string',
+    //             'status' => 'required|string|in:success,pending,failed',
+    //             'gateway_response' => 'nullable|array',
+    //         ]);
 
-            $gatewayResponse = $request->gateway_response;
-            if (is_array($gatewayResponse)) {
-                $gatewayResponse = json_encode($gatewayResponse);
-            }
+    //         $gatewayResponse = $request->gateway_response;
+    //         if (is_array($gatewayResponse)) {
+    //             $gatewayResponse = json_encode($gatewayResponse);
+    //         }
 
-            $user = $request->user();
-            if (!$user) {
-                return response()->json(['message' => 'Unauthorized'], 401);
-            }
+    //         $user = $request->user();
+    //         if (!$user) {
+    //             return response()->json(['message' => 'Unauthorized'], 401);
+    //         }
 
-            $plan = Plan::findOrFail($validated['plan_id']);
+    //         $plan = Plan::findOrFail($validated['plan_id']);
 
-            $existingPayment = Payment::where('transaction_reference', $validated['transaction_reference'])->first();
+    //         $existingPayment = Payment::where('transaction_reference', $validated['transaction_reference'])->first();
 
-            if ($existingPayment) {
-                if ($existingPayment->status != 'success') {
-                    $existingPayment->update([
-                        'status' => $validated['status'],
-                        'gateway_response' => $gatewayResponse,
-                    ]);
+    //         if ($existingPayment) {
+    //             if ($existingPayment->status != 'success') {
+    //                 $existingPayment->update([
+    //                     'status' => $validated['status'],
+    //                     'gateway_response' => $gatewayResponse,
+    //                 ]);
 
-                    return response()->json(['message' => 'Payment updated successfully.', 'status' => 'success', 'code' => 1]);
-                }
+    //                 return response()->json(['message' => 'Payment updated successfully.', 'status' => 'success', 'code' => 1]);
+    //             }
 
-                return response()->json(['message' => 'Payment already confirmed.', 'status' => 'success', 'code' => 1]);
-            }
+    //             return response()->json(['message' => 'Payment already confirmed.', 'status' => 'success', 'code' => 1]);
+    //         }
 
-            $payment = Payment::create([
-                'user_id' => $user->id,
-                'plan_id' => $validated['plan_id'],
-                'amount' => $validated['amount'],
-                'currency' => $validated['currency'],
-                'transaction_reference' => $validated['transaction_reference'],
-                'payment_method' => $validated['payment_method'],
-                'status' => $validated['status'],
-                'gateway_response' => $gatewayResponse,
-            ]);
+    //         $payment = Payment::create([
+    //             'user_id' => $user->id,
+    //             'plan_id' => $validated['plan_id'],
+    //             'amount' => $validated['amount'],
+    //             'currency' => $validated['currency'],
+    //             'transaction_reference' => $validated['transaction_reference'],
+    //             'payment_method' => $validated['payment_method'],
+    //             'status' => $validated['status'],
+    //             'gateway_response' => $gatewayResponse,
+    //         ]);
 
-            return response()->json([
-                'message' => 'Payment details saved successfully.',
-                'data' => $payment,
-                'status' => 'success',
-                'code' => 1,
-            ]);
-        }catch(\Exception $e){
-            return response()->json([
-                'message' => 'The server is unable to handle your request at this time. Try again! '.$e->getMessage(),
-                'data' => [],
-                'status' => 'failed',
-                'code' => 0,
-            ]);
-        }
+    //         return response()->json([
+    //             'message' => 'Payment details saved successfully.',
+    //             'data' => $payment,
+    //             'status' => 'success',
+    //             'code' => 1,
+    //         ]);
+    //     }catch(\Exception $e){
+    //         return response()->json([
+    //             'message' => 'The server is unable to handle your request at this time. Try again! '.$e->getMessage(),
+    //             'data' => [],
+    //             'status' => 'failed',
+    //             'code' => 0,
+    //         ]);
+    //     }
+    // }
+
+
+
+
+// activate subcsribers.
+protected function activateSubscriptionForUser(int $userId, Plan $plan)
+{
+    // Trial plan id is 3 (14 days)
+    $trialPlanId = 3;
+    if ($plan->id == $trialPlanId) {
+        // 14-day trial
+        \App\Services\SubscriptionService::activateForUser($userId, $plan->id, 14);
+    } else {
+        // paid plan - 30 days
+        \App\Services\SubscriptionService::activateForUser($userId, $plan->id, 30);
     }
+}
+
+
 
     /**
      * Display the specified resource.

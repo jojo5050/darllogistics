@@ -93,6 +93,11 @@ class AuthController extends Controller
                 'user' => $user->load('profile'),
                 'token' => $token,
             ], 201);
+            session([
+                'user_email' => $registeredUser->email,
+                'user_id' => $registeredUser->id,
+            ]);
+            
         } catch (\Exception $e) {
             return response()->json([
                 'code' => 0,

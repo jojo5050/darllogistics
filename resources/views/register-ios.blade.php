@@ -156,14 +156,13 @@
                         <button type="submit" class="btn btn-success btn-lg w-100">Next: Payment</button>
                     </form>
 
-                    <!-- STEP 4 -->
+                     <!-- STEP 4: REDIRECTION MESSAGE -->
                     <div id="step-4-content" class="text-center d-none">
-                        <h2 class="h4 fw-bold text-dark mb-3">Registration Complete!</h2>
-                        <p class="text-muted">You will now be redirected to Paystack.</p>
-
-                        <button id="paystack-redirect-btn" class="btn btn-success btn-lg w-100">
-                            Go to Payment Portal
-                        </button>
+                           <h2 class="h4 fw-bold text-dark mb-3">Registration Complete!</h2>
+                           <p class="text-muted">Company details saved successfully. Redirecting you to the payment plan selection...</p>
+                        <div class="spinner-border text-success mt-4" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
                     </div>
 
                 </div>
@@ -180,7 +179,9 @@
 
 <script>
     window.__firebase_config = @json(config('firebase_frontend'), JSON_FORCE_OBJECT);
-    console.log("Frontend Firebase config:", window.__firebase_config);
+
+    const PAYMENT_REDIRECT_URL = "{{ route('select.plan') }}";
+   
 </script>
 
 <!-- ===================== FIREBASE INITIALIZATION ===================== -->
@@ -196,7 +197,7 @@
     const cfg = window.__firebase_config ?? {};
 
     if (!cfg.apiKey) {
-        console.error("❌ FIREBASE CONFIG MISSING → skipping Firebase.");
+      
         window._firebaseReady = false;
     } 
     else {
@@ -216,10 +217,10 @@
 
             window._firebaseReady = true;
 
-            console.log("🔥 Firebase fully initialized.");
+            console.log("Firebase fully initialized.");
         } 
         catch (err) {
-            console.error("❌ Firebase setup failed:", err);
+            console.error("Firebase setup failed:", err);
             window._firebaseReady = false;
         }
     }
@@ -229,10 +230,10 @@
 
 <script>
 /* ========= CONFIG ========= */
-const API_BASE = "/api/v2"; // <- correct API base per your backend
+const API_BASE = "/api/v2"; 
 const REGISTER_ENDPOINT = API_BASE + "/register";
 const COMPANY_ENDPOINT  = API_BASE + "/companies";
-const PAYSTACK_REDIRECT = "https://paystack.com/pay/your-plan"; // replace if you have a real url
+const PAYSTACK_REDIRECT = "https://paystack.com/pay/your-plan"; 
 
 /* ========= UI HELPERS ========= */
 function showMessage(text, type = "info") {
@@ -250,9 +251,9 @@ function hideMessage(){ document.getElementById("message-box").classList.add("d-
 
 /* ========= STATE ========= */
 let selectedRole = null;
-let registeredUserId = null;   // MySQL user id (string)
-let authToken = null;          // auth token from MySQL response
-let firebaseUID = null;        // Firebase uid after creation
+let registeredUserId = null;   
+let authToken = null;          
+let firebaseUID = null;       
 
 /* ========= UTILITY - set button active class visually ========= */
 function markRoleButton(activeBtn) {
@@ -467,6 +468,9 @@ document.getElementById('step-3-form').addEventListener('submit', async (e) => {
       return;
     }
 
+    sessionStorage.setItem("registered_user_email", res.data.user_id);
+    sessionStorage.setItem("registered_user_id", res.data.email);
+
     showMessage("Company created successfully.", "success");
 
     // update firestore with company info if firebase linked
@@ -481,8 +485,13 @@ document.getElementById('step-3-form').addEventListener('submit', async (e) => {
         console.error("Firestore company update error:", fbUpErr);
       }
     }
+  
+      setTimeout(() => {
+         window.location.href = PAYMENT_REDIRECT_URL;
+        }, 1000); 
 
     goToStep(4);
+
   } catch (err) {
     console.error("Company creation error:", err);
     showMessage("Company creation failed: " + (err.response?.data?.message || err.message), "error");
@@ -494,25 +503,14 @@ document.getElementById('step-3-form').addEventListener('submit', async (e) => {
 /* ========= STEP 4: PAYMENT ========= */
 document.getElementById('paystack-redirect-btn').addEventListener('click', () => {
   if (!registeredUserId) { showMessage("No user to pay for.", "error"); return; }
-  // redirect - you should replace PAYSTACK_REDIRECT with your real payment url
   window.location.href = PAYSTACK_REDIRECT;
 });
 
 /* ========= START ========= */
 goToStep(1);
 
-/* ========== NOTES =========
-  * The Firebase init script MUST attach helper objects to window:
-      - window._firebaseAuthObj  => firebase auth instance
-      - window._firebaseDbObj    => firestore instance
-      - window._firebaseFns      => object containing { doc, setDoc, updateDoc, collection, ... } functions
-      - window.createUserWithEmailAndPassword => reference to function
-      - window._firebaseFns.setDoc => setDoc fn
-
-  I purposely used references from window so the firebase init code is separate and testable.
-  If you're initializing Firebase elsewhere in page, ensure it sets the above.
-============= */
 </script>
+
 @endverbatim
 
 
