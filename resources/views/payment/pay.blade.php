@@ -18,6 +18,25 @@
     </div>
 </div>
 
+<!-- SUCCESS MODAL -->
+<div class="modal fade" id="successModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center p-4">
+
+      <div class="modal-body">
+        <div class="mb-3 fs-1" id="successIcon">✅</div>
+        <h4 id="successTitle"></h4>
+        <p class="text-muted" id="successMessage"></p>
+
+        <button id="successOkBtn" class="btn btn-success w-100 mt-3">
+          OK
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
 <script>
@@ -39,7 +58,11 @@ document.getElementById('payBtn').addEventListener('click', function () {
     // FREE TRIAL
     if (amount == 0) {
         sendToServer("free-trial-" + Date.now(), "success", {});
-        alert("Free trial activated. You can now login on the app to continue.");
+
+        showSuccessModal(
+        "Free Trial Activated 🎉",
+        "You can now log in on the mobile app to continue."
+        );
         return;
     }
 
@@ -47,7 +70,7 @@ document.getElementById('payBtn').addEventListener('click', function () {
     let handler = PaystackPop.setup({
         key: "{{ env('PAYSTACK_PUBLIC_KEY') }}",
         email: userEmail,
-        amount: amount * 100,
+        amount: amount * 10,
         currency: "NGN",
         ref: 'darl_' + Date.now(),
 
@@ -91,6 +114,20 @@ function sendToServer(reference, status, gatewayResponse) {
         window.location.href = "/";
     })
     .catch(err => console.error("API error:", err));
+}
+</script>
+
+<script>
+function showSuccessModal(title, message) {
+  document.getElementById('successTitle').innerText = title;
+  document.getElementById('successMessage').innerText = message;
+
+  const modal = new bootstrap.Modal(document.getElementById('successModal'));
+  modal.show();
+
+  document.getElementById('successOkBtn').onclick = () => {
+    window.location.href = "{{ route('home.index') }}";
+  };
 }
 </script>
 

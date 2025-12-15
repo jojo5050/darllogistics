@@ -14,7 +14,7 @@
                 <div class="card-body text-center">
                     <h4>Basic Plan</h4>
                     <p>Basic features for small operations.</p>
-                    <h3 class="text-primary">NGN1000 / month</h3>
+                    <h3 class="text-primary">NGN100 / month</h3>
 
                     <form action="{{ route('payment.page') }}" method="GET">
                         <input type="hidden" name="plan_id" value="1">
@@ -31,7 +31,7 @@
                 <div class="card-body text-center">
                     <h4>Premium Plan</h4>
                     <p>Advanced features for growing companies.</p>
-                    <h3 class="text-primary">NGN2000 / month</h3>
+                    <h3 class="text-primary">NGN200 / month</h3>
 
                     <form action="{{ route('payment.page') }}" method="GET">
                         <input type="hidden" name="plan_id" value="2">

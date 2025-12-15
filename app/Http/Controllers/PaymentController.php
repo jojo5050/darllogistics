@@ -48,20 +48,43 @@ class PaymentController extends Controller
     }
 
   
+
     public function showPaymentPage(Request $request)
-{
-    $plan_id = $request->plan_id;
-    $amount = $request->amount;
+    {
+        $plan_id = $request->plan_id;
+        $amount = $request->amount;
+    
+        // Logged-in user OR from session
+        $email = auth()->check()
+            ? auth()->user()->email
+            : session('user_email');
+    
+        $userId = auth()->check()
+            ? auth()->id()
+            : session('user_id');
+    
+        if (!$email || !$userId) {
+            return back()->with('error', 'Email missing — user is not logged in.');
+        }
+    
+        // GENERATE a token if user is logged in
+        if (auth()->check()) {
+            $apiToken = auth()->user()->createToken('api')->plainTextToken;
+        } else {
+            // Use the session token you saved after registration
+            $apiToken = session('api_token');
+        }
+    
+        return view('payment.pay', [
+            'plan_id'   => $plan_id,
+            'amount'    => $amount,
+            'userEmail' => $email,
+            'apiToken'  => $apiToken,
+            'userId'    => $userId,
+        ]);
+    }
+    
 
-    $user = auth()->user(); // might be null
-
-    return view('payment.pay', [
-        'plan_id'   => $plan_id,
-        'amount'    => $amount,
-        'userEmail' => $user?->email ?? "",        
-        'apiToken'  => $user?->createToken('api')->plainTextToken ?? "",  
-    ]);
-}
 
 
 public function store(Request $request)
