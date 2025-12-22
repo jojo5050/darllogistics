@@ -105,10 +105,16 @@
             await confirmPasswordReset(auth, actionCode, newPass);
 
             // STEP 2: Update MySQL 
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
         
             const response = await fetch('/api/user/sync-password-reset', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 
+                    'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
                 body: JSON.stringify({
                     email: userEmail,
                     new_password: newPass,
@@ -118,15 +124,23 @@
             });
 
             const result = await response.json();
-            if (!result.success) throw new Error(result.message);
+            if (response.ok && result.success) {
+                    showStatus("Password updated successfully in both systems! You can now log in.");
+                    form.reset();
+                } else {
+                    throw new Error(result.message || "Failed to sync with local database.");
+                }
 
             showMsg('✅ Success! Your password has been updated. You can now log in.', 'success');
             setTimeout(() => window.location.href = '/login', 3000);
 
         } catch (error) {
-            showMsg(error.message, 'error');
-            submitBtn.disabled = false;
-        }
+                console.error(error);
+                showStatus(error.message, true);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Update Password";
+            }
     });
 
     function showMsg(text, type) {
