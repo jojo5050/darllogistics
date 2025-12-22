@@ -63,12 +63,13 @@ document.getElementById('payBtn').addEventListener('click', function () {
         "Free Trial Activated 🎉",
         "You can now log in on the mobile app to continue."
         );
+        window.location.href = "{{ route('home.index') }}";
         return;
     }
 
     // PAID PLAN
     let handler = PaystackPop.setup({
-        key: "{{ env('PAYSTACK_PUBLIC_KEY') }}",
+        key: "{{ env('PAYSTACK_PUBLIC_KEY') }}", 
         email: userEmail,
         amount: amount * 10,
         currency: "NGN",
@@ -125,7 +126,15 @@ function showSuccessModal(title, message) {
   const modal = new bootstrap.Modal(document.getElementById('successModal'));
   modal.show();
 
-  document.getElementById('successOkBtn').onclick = () => {
+  document.getElementById('successOkBtn').onclick = async () => {
+    try {
+      if (window._firebaseAuthObj) {
+        await window._firebaseAuthObj.signOut();
+        console.log("Firebase signed out");
+      }
+    } catch (e) {
+      console.warn("Firebase logout skipped:", e.message);
+    }
     window.location.href = "{{ route('home.index') }}";
   };
 }

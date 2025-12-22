@@ -18,7 +18,7 @@
 
                     <form action="{{ route('payment.page') }}" method="GET">
                         <input type="hidden" name="plan_id" value="1">
-                        <input type="hidden" name="amount" value="1000">
+                        <input type="hidden" name="amount" value="100">
                         <button class="btn btn-primary w-100 mt-3">Choose Basic</button>
                     </form>
                 </div>
@@ -35,7 +35,7 @@
 
                     <form action="{{ route('payment.page') }}" method="GET">
                         <input type="hidden" name="plan_id" value="2">
-                        <input type="hidden" name="amount" value="2000">
+                        <input type="hidden" name="amount" value="200">
                         <button class="btn btn-success w-100 mt-3">Choose Premium</button>
                     </form>
                 </div>
