@@ -39,4 +39,8 @@ return [
         'api_key' => env('FIREBASE_API_KEY'),
     ],
 
+    'apple' => [
+        'shared_secret' => env('APPLE_SHARED_SECRET'),
+    ],
+
 ];

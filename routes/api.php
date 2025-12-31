@@ -62,6 +62,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('v2')->group(function () {
 
+        
+
         Route::get('/user', function (Request $request) {
             $data = $request->user();
             $user = User::find($data->id);
@@ -123,6 +125,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
             return response()->json(['data' => $data, 'subscription' => $subscription, 'message' => 'Auth User fetched successfully', 'code' => 1, 'status' => 'success'], 201);
         });
+
+        // Apple IAP Confirmation
+        Route::post('/payments/verify-apple', [AppleIAPController::class, 'verifyPurchase']);
 
         // Vehicles Routes
         Route::prefix('vehicles')->group(function () {
