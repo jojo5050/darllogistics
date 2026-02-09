@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-md-6 mb-2">
             <h2>International Logistics Company</h2>
-            <p>At Darl Transportation and Dispatch, we provide everything you need to keep your trucking business running smoothly and profitably. From compliance and paperwork to accounting solutions and 24/7 dispatch support, we're here to help you focus on the road while we handle the rest. we are here for you.</p>
+            <p>At Darl Transportation and Dispatch, we provide everything you need to keep your trucking business running smoothly. From compliance and paperwork to accounting solutions and 24/7 dispatch support, we're here to help you focus on the road while we handle the rest. we are here for you.</p>
             <p>At Darl Transportation & Dispatch, we are more than a dispatch service—we are your growth partner. We understand that in today's fast-paced logistics industry, every minute, mile, and load counts. That's why we deliver comprehensive support tailored to owner-operators and small fleets striving for efficiency, profitability, and peace of mind.</p>
         </div>
         <div class="col-md-6 mb-2 text-center">
