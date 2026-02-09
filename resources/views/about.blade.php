@@ -4,7 +4,7 @@
 <!-- About Section -->
 <section class="services py-5">
   <div class="container">
-    <h2>About Us</h2>
+    <h2>About</h2>
     <div class="row">
         <div class="col-md-6 mb-2">
             <h2>International Logistics Company</h2>
