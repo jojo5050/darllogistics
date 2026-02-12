@@ -641,9 +641,10 @@ class RouteController extends Controller
     {
         $route = Route::where('id', $request->id)->first();
         $route->delete();
-        return response()->json(['status' => 'success', 'message' => 'Route not found or no deliveries'], 204);
+        return response()->json(['status' => 'success', 
+        'message' => 'Route deleted successfully'], 200);
     }
-
+    
     public function invoice(Request $request, Route $route)
     {
         try{
