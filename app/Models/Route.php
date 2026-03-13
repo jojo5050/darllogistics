@@ -23,7 +23,8 @@ class Route extends Model
         'dispatcher_fee',
         'temperature',
         'weight',
-        'weightType'
+        'weightType',
+        'carrier_id'
     ];
 
     public function user()
@@ -74,5 +75,9 @@ class Route extends Model
     public function broker()
     {
         return $this->belongsTo(Broker::class);
+    }
+    public function carrier()
+    {
+        return $this->belongsTo(User::class, 'carrier_id');
     }
 }

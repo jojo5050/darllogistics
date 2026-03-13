@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\NotificationMailer;
 use App\Models\Bol;
 use App\Models\Broker;
+use App\Models\Carrier;
 use App\Models\ExtraFee;
 use App\Models\Invoice;
 use App\Models\Route;
@@ -209,6 +210,7 @@ class RouteController extends Controller
             'load_name' => 'required|string',
             'load_number' => 'required|string',
             'broker_id' => 'required|exists:brokers,id',
+            'carrier_id' => 'nullable|exists:users,id',
             'rate' => 'nullable|numeric|min:0',
 
             'temperature' => 'nullable|string',
@@ -247,6 +249,7 @@ class RouteController extends Controller
                 'dispatcher_id' => $validated['dispatcher_id'],
                 'load_name' => $validated['load_name'],
                 'load_number' => $validated['load_number'],
+                'carrier_id' => $validated['carrier_id'],
                 'broker_name' => $broker->name,
                 'broker_email' => $broker->email1,
                 'rate' => $validated['rate'],

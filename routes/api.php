@@ -5,6 +5,7 @@ use App\Http\Controllers\AssignedVehicleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BolController;
 use App\Http\Controllers\BrokerController;
+use App\Http\Controllers\CarrierController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DropController;
 use App\Http\Controllers\InvoiceController;
@@ -186,6 +187,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/accepted-routes/{id}', [RouteController::class, 'companyAcceptedRoutes']);
             Route::get('/rejected-routes/{id}', [RouteController::class, 'companyRejectedRoutes']);
             Route::get('/brokers/{comp_id}', [BrokerController::class, 'companyBrokers']);
+            Route::get('/carriers/{comp_id}', [CarrierController::class, 'companyCarriers']);
         });
 
         Route::post('/add-company-staff', [UserController::class, 'store']);
@@ -308,6 +310,15 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/{broker_id}', [BrokerController::class, 'show']);
             Route::put('/{broker_id}', [BrokerController::class, 'update']);
             Route::delete('/{broker_id}', [BrokerController::class, 'destroy']);
+        });
+
+        Route::prefix('carriers')->group(function () {
+            Route::get('/', [CarrierController::class, 'index']);
+            Route::post('/', [CarrierController::class, 'store']);
+            Route::get('/{carrier_id}', [CarrierController::class, 'show']);
+            Route::put('/{carrier_id}', [CarrierController::class, 'update']);
+            Route::delete('/{carrier_id}', [CarrierController::class, 'destroy']);
+            
         });
     });
 });
