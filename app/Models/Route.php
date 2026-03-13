@@ -78,6 +78,7 @@ class Route extends Model
     }
     public function carrier()
     {
-        return $this->belongsTo(User::class, 'carrier_id');
+        return $this->belongsTo(Carrier::class);
     }
+
 }
