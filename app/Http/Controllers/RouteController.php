@@ -214,10 +214,6 @@ class RouteController extends Controller
             'carrier_id' => 'required|exists:carriers,id',
             'rate' => 'nullable|numeric|min:0',
 
-            'temperature' => 'nullable|string',
-            'weight' => 'nullable|string',
-            'weightType' => 'nullable|string',
-
             'route' => 'required|array',
             'route.*.jobType' => 'required|in:pickup,delivery',
             'route.*.address' => 'required|string|max:255',
@@ -232,6 +228,7 @@ class RouteController extends Controller
             'route.*.goodsDescription' => 'nullable|string',
             'route.*.quantity' => 'nullable|integer|min:1',
             'route.*.weightType' => 'nullable|string|max:50',
+            'route.*.temperature' => 'nullable|string|max:50',
             'extra_fee' => 'nullable|array',
             'extra_fee.*.feeType' => 'nullable|string',
             'extra_fee.*.amount' => 'nullable|numeric|min:0',
@@ -253,15 +250,8 @@ class RouteController extends Controller
                 'load_number' => $validated['load_number'],
                 'broker_name' => $broker->name,
                 'broker_email' => $broker->email1,
-                'rate' => $validated['rate'],
-                'temperature' => $validated['temperature'],
-                'weight' => $validated['weight'],
-                'weightType' => $validated['weightType'],
-
-                // Adjust to these for testing on localhost
-               // 'temperature' => $request->input('temperature', 'N/A'),
-               // 'weight' => $request->input('weight', 'N/A'),
-              //  'weightType' => $request->input('weightType', 'N/A'),
+                'carrier_id' => $validated['carrier_id'],
+                'rate' => $validated['rate'], 
                 
             ]);
 

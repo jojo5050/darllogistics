@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class RouteJob extends Model
 {
     protected $fillable = [
-        'route_id', 'jobType', 'address', 'date', 'time', 'jobDescription',
+        'route_id', 'jobType', 'address', 'date', 'time', 'jobDescription', 'temperature',
         'email', 'phone', 'appointmentID', 'trailerType', 'loadingMethod',
         'goodsDescription', 'quantity', 'weightType'
     ];
