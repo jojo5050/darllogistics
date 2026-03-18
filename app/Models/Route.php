@@ -24,7 +24,8 @@ class Route extends Model
         'temperature',
         'weight',
         'weightType',
-        'carrier_id'
+        'carrier_id',
+        'deliveryProof'
     ];
 
     public function user()
@@ -66,6 +67,17 @@ class Route extends Model
     {
         return $this->hasMany(Bol::class);
     }
+
+    public function deliveryProof()
+    {
+        return $this->hasOne(DeliveryProof::class);
+    }
+
+    public function deliveryProofs()
+    {
+        return $this->hasMany(DeliveryProof::class);
+    }
+
 
     public function invoice()
     {

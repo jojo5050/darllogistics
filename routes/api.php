@@ -23,6 +23,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\WageController;
+use App\Http\Controllers\DeliveryProofController;
 use App\Models\Company;
 use App\Models\Payment;
 use App\Models\User;
@@ -277,6 +278,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
             Route::get('/rejected-routes/{driver_id}', [RouteController::class, 'driverRejectedRoutes']);
             Route::get('/accepted-routes/{driver_id}', [RouteController::class, 'driverAcceptedRoutes']);
+
+            Route::post('/upload-delivery-proof', [RouteController::class, 'UploadDeliveryProof']);
         });
 
         // Dispatchers
@@ -291,6 +294,15 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{bol}', [BolController::class, 'update']);
             Route::delete('/{bol}', [BolController::class, 'destroy']);
             Route::get('/driver-bols/{driver_id}', [BolController::class, 'driverBols']);
+        });
+
+        // Proof of Delivery
+        Route::prefix('deliveryProof')->group(function () {
+            Route::get('/', [DeliveryProofController::class, 'index']);
+            Route::get('/{deliveryProof}', [DeliveryProofController::class, 'show']);
+            Route::put('/{deliveryProof}', [DeliveryProofController::class, 'update']);
+            Route::delete('/{deliveryProof}', [DeliveryProofController::class, 'destroy']);
+            Route::get('/driver-deliveryProof/{driver_id}', [DeliveryProofController::class, 'driverDeliveryProof']);
         });
 
         // Invoices
