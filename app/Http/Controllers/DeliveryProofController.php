@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\DeliveryProof;
 
 class DeliveryProofController extends Controller
 {
@@ -73,7 +74,7 @@ class DeliveryProofController extends Controller
     }
 
    
-    public function edit(Bol $deliveryProof)
+    public function edit(DeliveryProof $deliveryProof)
     {
         //
     }
