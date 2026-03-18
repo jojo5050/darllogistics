@@ -635,7 +635,7 @@ class RouteController extends Controller
                 $path = env('APP_URL')."/"."storage"."/".$path;
                 $paths[] = $path;
 
-                $deliveryProof = new Bol();
+                $deliveryProof = new DeliveryProof();
                 $deliveryProof->deliveryProof = $path;
                 $deliveryProof->company_id = $request->company_id;
                 $deliveryProof->user_id = $request->driver_id;
@@ -645,7 +645,7 @@ class RouteController extends Controller
                 $deliveryProof_ids[] = $deliveryProof->id;
             }
 
-            $data = Bol::whereIn('id', $deliveryProof_ids)
+            $data = DeliveryProof::whereIn('id', $deliveryProof_ids)
                 ->with(['route', 'user', 'company'])
                 ->get();
 

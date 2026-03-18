@@ -10,7 +10,7 @@ class DeliveryProofController extends Controller
     public function index()
     {
         try{
-            $data =DeliveryProof::with(['user', 'company'])->paginate(30);
+            $data =DLPRV::with(['user', 'company'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Delivery Proof fecthed successfully.',
@@ -28,7 +28,7 @@ class DeliveryProofController extends Controller
     public function driverDeliveryProof(Request $request)
     {
         try{
-            $data = DeliveryProof::where('user_id', $request->driver_id)->with(['user', 'company'])->paginate(30);
+            $data = DLPRV::where('user_id', $request->driver_id)->with(['user', 'company'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Delivery Proof fecthed successfully.',
