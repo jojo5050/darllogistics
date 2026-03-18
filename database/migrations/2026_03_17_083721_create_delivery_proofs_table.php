@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('deliveryProofs', function (Blueprint $table) {
+        Schema::create('delivery_proofs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('route_id')->constrained('routes')->onDelete('cascade');
             $table->string('status')->nullable();
-            $table->string('deliveryProof');
+            $table->string('delivery_proof');
             $table->timestamps();
         });
     }
@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('deliveryProofs', function (Blueprint $table) {
+        Schema::table('delivery_proofs', function (Blueprint $table) {
             //
         });
     }

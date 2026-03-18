@@ -55,10 +55,10 @@ class DeliveryProofController extends Controller
         //
     }
 
-    public function show(DeliveryProof $deliveryProof)
+    public function show(DeliveryProof $delivery_proof)
     {
         try{
-            $data = $deliveryProof->load(['user', 'company']);
+            $data = $delivery_proof->load(['user', 'company']);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Delivery Proof fecthed successfully.',
@@ -74,22 +74,22 @@ class DeliveryProofController extends Controller
     }
 
    
-    public function edit(DeliveryProof $deliveryProof)
+    public function edit(DeliveryProof $delivery_proof)
     {
         //
     }
 
    
-    public function update(Request $request, DeliveryProof $deliveryProof)
+    public function update(Request $request, DeliveryProof $delivery_proof)
     {
         //
     }
 
 
-    public function destroy(DeliveryProof $deliveryProof)
+    public function destroy(DeliveryProof $delivery_proof)
     {
         try{
-            $deliveryProof->delete();
+            $delivery_proof->delete();
             return response()->json([
                 'status' => 'success',
                 'message' => 'Delivery Proof deleted successfully.',

@@ -21,7 +21,7 @@ class RouteController extends Controller
     public function index()
     {
         try{
-            $data = Route::with(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::with(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Routes fecthed successfully.',
@@ -39,7 +39,7 @@ class RouteController extends Controller
     public function deliveredRoutes(Request $request)
     {
         try{
-            $data = Route::where('status', 'delivered')->with(['user', 'bols','deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::where('status', 'delivered')->with(['user', 'bols','delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Delivered routes fecthed successfully.',
@@ -57,7 +57,7 @@ class RouteController extends Controller
     public function pickedupRoutes(Request $request)
     {
         try{
-            $data = Route::where('status', 'picked')->with(['user', 'company', 'bols', 'deliveryProofs', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::where('status', 'picked')->with(['user', 'company', 'bols', 'delivery_proofs', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Picked up routes fecthed successfully.',
@@ -75,7 +75,7 @@ class RouteController extends Controller
     public function pendingRoutes(Request $request)
     {
         try{
-            $data = Route::where('status', 'pending')->with(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::where('status', 'pending')->with(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Pending routes fecthed successfully.',
@@ -93,7 +93,7 @@ class RouteController extends Controller
     public function driverDeliveredRoutes(Request $request)
     {
         try{
-            $data = Route::where('status', 'delivered')->where('driver_id', $request->driver_id)->with(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::where('status', 'delivered')->where('driver_id', $request->driver_id)->with(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Driver delivered routes fecthed successfully.',
@@ -111,7 +111,7 @@ class RouteController extends Controller
     public function driverPendingRoutes(Request $request)
     {
         try{
-            $data = Route::where('status', 'pending')->where('driver_id', $request->driver_id)->with(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::where('status', 'pending')->where('driver_id', $request->driver_id)->with(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Driver pending routes fecthed successfully.',
@@ -129,7 +129,7 @@ class RouteController extends Controller
     public function driverPickedRoutes(Request $request)
     {
         try{
-            $data = Route::where('status', 'picked')->where('driver_id', $request->driver_id)->with(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::where('status', 'picked')->where('driver_id', $request->driver_id)->with(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Driver picked routes fecthed successfully.',
@@ -147,7 +147,7 @@ class RouteController extends Controller
     public function driverAcceptedRoutes(Request $request)
     {
         try{
-            $data = Route::where('status', 'accepted')->where('driver_id', $request->driver_id)->with(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::where('status', 'accepted')->where('driver_id', $request->driver_id)->with(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Driver accepted routes fecthed successfully.',
@@ -165,7 +165,7 @@ class RouteController extends Controller
     public function driverRejectedRoutes(Request $request)
     {
         try{
-            $data = Route::where('status', 'rejected')->where('driver_id', $request->driver_id)->with(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::where('status', 'rejected')->where('driver_id', $request->driver_id)->with(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Driver rejected routes fecthed successfully.',
@@ -183,7 +183,7 @@ class RouteController extends Controller
     public function driverRoutes(Request $request)
     {
         try{
-            $data = Route::where('driver_id', $request->driver_id)->with(['driver', 'company', 'bols', 'deliveryProofs', 'dispatcher', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::where('driver_id', $request->driver_id)->with(['driver', 'company', 'bols', 'delivery_proofs', 'dispatcher', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Driver assigned routes fecthed successfully.',
@@ -331,7 +331,7 @@ class RouteController extends Controller
             if ($route->isEmpty()) {
                 return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
             }
-            $data = $route->load(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
+            $data = $route->load(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
         }catch(Exception $e){
             return response()->json([
@@ -349,7 +349,7 @@ class RouteController extends Controller
             if ($route->isEmpty()) {
                 return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
             }
-            $data = $route->load(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
+            $data = $route->load(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
         }catch(Exception $e){
             return response()->json([
@@ -367,7 +367,7 @@ class RouteController extends Controller
             if ($route->isEmpty()) {
                 return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
             }
-            $data = $route->load(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
+            $data = $route->load(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
         }catch(Exception $e){
             return response()->json([
@@ -385,7 +385,7 @@ class RouteController extends Controller
             if ($route->isEmpty()) {
                 return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
             }
-            $data = $route->load(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
+            $data = $route->load(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
         }catch(Exception $e){
             return response()->json([
@@ -403,7 +403,7 @@ class RouteController extends Controller
             if ($route->isEmpty()) {
                 return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
             }
-            $data = $route->load(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
+            $data = $route->load(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
             return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
         }catch(Exception $e){
             return response()->json([
@@ -529,7 +529,7 @@ class RouteController extends Controller
     public function rejectedRoutes(Request $request)
     {
         try{
-            $data = Route::where('status', 'rejected')->with(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::where('status', 'rejected')->with(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Rejected routes fecthed successfully.',
@@ -547,7 +547,7 @@ class RouteController extends Controller
     public function acceptedRoutes(Request $request)
     {
         try{
-            $data = Route::where('status', 'accepted')->with(['user', 'bols', 'deliveryProofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            $data = Route::where('status', 'accepted')->with(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Accepted routes fecthed successfully.',
@@ -631,18 +631,18 @@ class RouteController extends Controller
             $deliveryProof_ids = [];
 
             foreach ($request->file('image') as $file) {
-                $path = $file->store('deliveryProof/images', 'public');
+                $path = $file->store('delivery_proof/images', 'public');
                 $path = env('APP_URL')."/"."storage"."/".$path;
                 $paths[] = $path;
 
-                $deliveryProof = new DeliveryProof();
-                $deliveryProof->deliveryProof = $path;
-                $deliveryProof->company_id = $request->company_id;
-                $deliveryProof->user_id = $request->driver_id;
-                $deliveryProof->route_id = $request->route_id;
-                $deliveryProof->save();
+                $delivery_proof = new DeliveryProof();
+                $delivery_proof->delivery_proof = $path;
+                $delivery_proof->company_id = $request->company_id;
+                $delivery_proof->user_id = $request->driver_id;
+                $delivery_proof->route_id = $request->route_id;
+                $delivery_proof->save();
 
-                $deliveryProof_ids[] = $deliveryProof->id;
+                $deliveryProof_ids[] = $delivery_proof->id;
             }
 
             $data = DeliveryProof::whereIn('id', $deliveryProof_ids)
@@ -678,7 +678,7 @@ class RouteController extends Controller
             ]);
 
             $route->update($validated);
-            return response()->json(['message' => 'Route updated ', 'status' => 'success', 'data' => $route->load(['user', 'bols', 'deliveryProofs', 'dispatcher', 'driver', 'jobs', 'extraFees', 'company', 'invoice'])], 201);
+            return response()->json(['message' => 'Route updated ', 'status' => 'success', 'data' => $route->load(['user', 'bols', 'delivery_proofs', 'dispatcher', 'driver', 'jobs', 'extraFees', 'company', 'invoice'])], 201);
 
         } catch (\Exception $e) {
             return response()->json([

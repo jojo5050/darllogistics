@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class DeliveryProof extends Model
 {
+    
     protected $fillable = [
         'company_id',
         'user_id',
         'route_id',
-        'deliveryProof',
+        'delivery_proof',
     ];
 
     public function user()

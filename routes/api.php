@@ -297,11 +297,11 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
         // Proof of Delivery
-        Route::prefix('deliveryProof')->group(function () {
+        Route::prefix('delivery_proof')->group(function () {
             Route::get('/', [DeliveryProofController::class, 'index']);
-            Route::get('/{deliveryProof}', [DeliveryProofController::class, 'show']);
-            Route::put('/{deliveryProof}', [DeliveryProofController::class, 'update']);
-            Route::delete('/{deliveryProof}', [DeliveryProofController::class, 'destroy']);
+            Route::get('/{delivery_proof}', [DeliveryProofController::class, 'show']);
+            Route::put('/{delivery_proof}', [DeliveryProofController::class, 'update']);
+            Route::delete('/{delivery_proof}', [DeliveryProofController::class, 'destroy']);
             Route::get('/driver-deliveryProof/{driver_id}', [DeliveryProofController::class, 'driverDeliveryProof']);
         });
 
