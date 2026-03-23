@@ -72,6 +72,24 @@ class RouteController extends Controller
         }
     }
 
+    public function confirmedRoutes(Request $request)
+    {
+        try{
+            $data = Route::where('status', 'rate_confirmed')->with(['user', 'company', 'bols', 'delivery_proofs', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice'])->paginate(30);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Confirmed routes fecthed successfully.',
+                'data' => $data,
+            ], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
     public function pendingRoutes(Request $request)
     {
         try{
@@ -360,6 +378,26 @@ class RouteController extends Controller
         }
     }
 
+    public function companyConfirmedRoutes(Request $request)
+    {
+        try{
+            $route = Route::where('company_id', $request->id)->where('status', 'rate_confirmed')->paginate(30);
+            if ($route->isEmpty()) {
+                return response()->json(['status' => 'failed', 'data' => [], 'message' => 'Routes not found'], 404);
+            }
+            $data = $route->load(['user', 'bols', 'delivery_proofs', 'company', 'dispatcher', 'driver', 'jobs', 'extraFees', 'invoice']);
+            return response()->json(['data' => $data, 'message' => 'Data fetched successfully', 'status' => 'success'], 201);
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+    
+
     public function companyPendingRoutes(Request $request)
     {
         try{
@@ -454,6 +492,29 @@ class RouteController extends Controller
             ], 201);
         }
     }
+
+    public function confirmRate(Request $request)
+    {
+
+        try{
+            $route = Route::find($request->id);
+            if($route)
+            {
+                $route->status = 'rate_confirmed';
+                $route->save();
+
+                return response()->json(['data' => $route, 'message' => 'Load Confirmed successfully', 'status' => 'success'], 201);
+            }
+        }catch(Exception $e){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'Error: '.$e->getMessage(),
+                'data' => [],
+            ], 201);
+        }
+    }
+
+   
 
     public function assignRoute(Request $request)
     {

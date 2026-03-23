@@ -184,6 +184,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/routes/{id}', [RouteController::class, 'companyRoutes']);
             Route::get('/delivered-routes/{id}', [RouteController::class, 'companyDeliveredRoutes']);
             Route::get('/pickedup-routes/{id}', [RouteController::class, 'companyPickedUpRoutes']);
+            Route::get('/confirmed-routes/{id}', [RouteController::class, 'companyConfirmedRoutes']);
             Route::get('/pending-routes/{id}', [RouteController::class, 'companyPendingRoutes']);
             Route::get('/accepted-routes/{id}', [RouteController::class, 'companyAcceptedRoutes']);
             Route::get('/rejected-routes/{id}', [RouteController::class, 'companyRejectedRoutes']);
@@ -204,10 +205,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/pickup-route/{id}', [RouteController::class, 'pickupRoute']);
             Route::get('/delivered-routes', [RouteController::class, 'deliveredRoutes']);
             Route::get('/pickedup-routes', [RouteController::class, 'pickedupRoutes']);
+            Route::get('/confirmed-routes', [RouteController::class, 'confirmedRoutes']);
             Route::get('/pending-routes', [RouteController::class, 'pendingRoutes']);
             Route::get('/rejected-routes', [RouteController::class, 'rejectedRoutes']);
             Route::get('/accepted-routes', [RouteController::class, 'acceptedRoutes']);
             Route::get('/invoice/{route}', [RouteController::class, 'invoice']);
+            Route::get('/verify-load-rate/{id}', [RouteController::class, 'confirmRate']);
         });
 
         Route::get('/deliveries', [RouteJobController::class, 'deliveries']);
